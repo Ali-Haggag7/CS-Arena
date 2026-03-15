@@ -1,11 +1,11 @@
-import { UserIcon } from "lucide-react";
 import { defineField, defineType } from "sanity";
+import { ProjectsIcon } from "@sanity/icons";
 
 export const project = defineType({
   name: "project",
-  title: "Project", // Name of the document type in the Sanity Studio
+  title: "Project",
   type: "document",
-  icon: UserIcon,
+  icon: ProjectsIcon,
   fields: [
     defineField({
       name: "title",
@@ -16,8 +16,10 @@ export const project = defineType({
       name: "slug",
       type: "slug",
       options: {
-        source: "title", // Automatically generates the slug from the title
+        source: "title",
+        maxLength: 96,
       },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "author",
@@ -30,24 +32,22 @@ export const project = defineType({
       type: "text",
       validation: (Rule) => Rule.required().min(20).max(500),
     }),
-    // professional touch 1: GitHub repository link with validation
     defineField({
       name: "githubLink",
       type: "url",
       validation: (Rule) =>
         Rule.required().custom((url) => {
-          if (typeof url === 'string' && !url.includes("github.com")) {
+          if (typeof url === "string" && !url.includes("github.com")) {
             return "Must be a valid GitHub repository URL";
           }
           return true;
         }),
     }),
-    // professional touch 2: Tech stack as an array of strings with validation
     defineField({
       name: "techStack",
       type: "array",
       of: [{ type: "string" }],
-      validation: (Rule) => Rule.required().min(1).max(5), // at least 1 tech, at most 5
+      validation: (Rule) => Rule.required().min(1).max(10),
     }),
     defineField({
       name: "image",
@@ -58,12 +58,11 @@ export const project = defineType({
       name: "pitch",
       type: "markdown",
     }),
-    // professional touch 3: Upvotes and views with initial values and read-only in the studio
     defineField({
       name: "upvotes",
       type: "number",
       initialValue: 0,
-      readOnly: true, // this field will be updated via API, not manually in the studio
+      readOnly: true,
     }),
     defineField({
       name: "views",
@@ -71,11 +70,34 @@ export const project = defineType({
       initialValue: 0,
       readOnly: true,
     }),
-    // professional touch 4: A boolean field to indicate if the project is actively looking for contributors
     defineField({
       name: "isLookingForContributors",
       type: "boolean",
       initialValue: false,
     }),
+  ],
+  preview: {
+    select: {
+      title: "title",
+      subtitle: "author.name",
+      media: "image",
+    },
+  },
+  orderings: [
+    {
+      title: "Most Upvoted",
+      name: "upvotesDesc",
+      by: [{ field: "upvotes", direction: "desc" }],
+    },
+    {
+      title: "Most Viewed",
+      name: "viewsDesc",
+      by: [{ field: "views", direction: "desc" }],
+    },
+    {
+      title: "Latest",
+      name: "createdAtDesc",
+      by: [{ field: "_createdAt", direction: "desc" }],
+    },
   ],
 });

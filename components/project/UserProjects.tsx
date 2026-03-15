@@ -1,24 +1,27 @@
 import React from "react";
 import { client } from "@/sanity/lib/client";
 import { PROJECTS_BY_AUTHOR_QUERY } from "@/sanity/lib/queries";
-import ProjectCard from "./ProjectCard";
+import ProjectCard, { ProjectTypeCard } from "./ProjectCard";
 
-/**
- * UserProjects Component
- * Fetches and renders a grid of projects created by a specific user.
- */
 const UserProjects = async ({ id }: { id: string }) => {
-  const projects = await client.fetch(PROJECTS_BY_AUTHOR_QUERY, { id });
+  const projects: ProjectTypeCard[] = await client.fetch(
+    PROJECTS_BY_AUTHOR_QUERY,
+    { id }
+  );
+
+  if (!projects?.length) {
+    return (
+      <p className="no-result col-span-full">
+        No projects submitted yet.
+      </p>
+    );
+  }
 
   return (
     <>
-      {projects.length > 0 ? (
-        projects.map((project: any) => (
-          <ProjectCard key={project._id} post={project} />
-        ))
-      ) : (
-        <p className="no-result">No projects found for this user.</p>
-      )}
+      {projects.map((project) => (
+        <ProjectCard key={project._id} post={project} />
+      ))}
     </>
   );
 };

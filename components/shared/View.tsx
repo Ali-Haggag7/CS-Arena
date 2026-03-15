@@ -5,24 +5,33 @@ import { unstable_after as after } from "next/server";
 import { Eye } from "lucide-react";
 
 const View = async ({ id }: { id: string }) => {
-  // Fetch only the views to keep it lightweight
-  const { views: totalViews } = await client
-    .withConfig({ useCdn: false }) // ensure fresh data
+  const result = await client
+    .withConfig({ useCdn: false })
     .fetch(PROJECT_VIEWS_QUERY, { id });
 
-  // Update the view count in the background using Next.js 'after'
-  after(
-    async () =>
-      await writeClient
-        .patch(id)
-        .set({ views: totalViews + 1 })
-        .commit()
-  );
+  // Return null if result is not found, to avoid rendering the view count for non-existent projects
+  if (!result) return null;
+
+  const totalViews: number = result.views ?? 0;
+
+  // Increment in background after response is sent
+  after(async () => {
+    await writeClient
+      .patch(id)
+      .setIfMissing({ views: 0 })
+      .inc({ views: 1 }) // ✅ atomic increment بدل set
+      .commit();
+  });
 
   return (
-    <div className="flex gap-2 items-center text-primary">
-      <Eye className="size-6" />
-      <span className="text-20-medium">{totalViews} Views</span>
+    <div
+      className="flex gap-2 items-center text-primary"
+      aria-label={`${totalViews} views`}
+    >
+      <Eye className="size-6" aria-hidden="true" />
+      <span className="text-20-medium">
+        {totalViews} {totalViews === 1 ? "View" : "Views"}
+      </span>
     </div>
   );
 };

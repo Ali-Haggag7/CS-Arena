@@ -1,50 +1,68 @@
 import React, { Suspense } from "react";
 import { client } from "@/sanity/lib/client";
 import { PROJECTS_QUERY } from "@/sanity/lib/queries";
-import ProjectCard from "@/components/project/ProjectCard";
+import ProjectCard, { ProjectTypeCard } from "@/components/project/ProjectCard";
 import { Skeleton } from "@/components/shadcn/skeleton";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Explore Projects | CS-Arena",
+    title: "Explore Projects",
     description: "Discover top computer science graduation projects and startup ideas.",
 };
 
-// Component to fetch and render projects
+// ─── Projects List ────────────────────────────────────────────────────────────
+
 const AllProjects = async () => {
-    // We pass null for the search query to get everything
-    const projects = await client.fetch(PROJECTS_QUERY, { search: null });
+    const projects: ProjectTypeCard[] = await client.fetch(PROJECTS_QUERY, {
+        search: null,
+        tech: null,
+    });
+
+    if (!projects?.length) {
+        return (
+            <p className="no-result col-span-full">
+                No projects found in the arena yet.
+            </p>
+        );
+    }
 
     return (
         <ul className="mt-7 card_grid">
-            {projects?.length > 0 ? (
-                projects.map((post: any) => (
-                    <ProjectCard key={post?._id} post={post} />
-                ))
-            ) : (
-                <p className="no-result">No projects found in the arena yet.</p>
-            )}
+            {projects.map((post) => (
+                <ProjectCard key={post._id} post={post} />
+            ))}
         </ul>
     );
 };
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 const ExploreProjectsPage = () => {
     return (
-        <main className="min-h-screen bg-white font-work-sans pt-20 pb-24">
+        <main className="min-h-screen bg-white dark:bg-black font-work-sans pt-20 pb-24">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
 
                 {/* Header */}
                 <div className="mb-12">
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-black-300 tracking-tight">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-black dark:text-white tracking-tight">
                         Explore <span className="text-primary">Projects</span>
                     </h1>
-                    <p className="text-20-medium text-black-200 mt-4 max-w-2xl">
-                        Browse through the most innovative computer science projects submitted by developers worldwide.
+                    <p className="text-20-medium text-black/50 dark:text-white/50 mt-4 max-w-2xl">
+                        Browse through the most innovative computer science projects
+                        submitted by developers worldwide.
                     </p>
                 </div>
 
-                {/* Dynamic Content */}
-                <Suspense fallback={<Skeleton className="h-96 w-full rounded-xl" />}>
+                {/* Content */}
+                <Suspense
+                    fallback={
+                        <ul className="mt-7 card_grid">
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <Skeleton key={i} className="h-[300px] w-full rounded-2xl" />
+                            ))}
+                        </ul>
+                    }
+                >
                     <AllProjects />
                 </Suspense>
 

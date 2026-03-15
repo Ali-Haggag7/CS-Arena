@@ -7,15 +7,56 @@ import slugify from "slugify";
 import { z } from "zod";
 import { auth } from "@/auth";
 
-// Initialize Resend with the API key from environment variables
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-/**
- * Server Action to handle upvoting/downvoting a project.
- * Uses Sanity's 'inc' to safely add (+1) or remove (-1) an upvote.
- */
-export const toggleUpvoteProject = async (projectId: string, isUpvoting: boolean) => {
+// ─── Zod Schema ───────────────────────────────────────────────────────────────
+
+const formSchema = z.object({
+  title: z
+    .string()
+    .min(3, "Title must be at least 3 characters")
+    .max(100, "Title is too long"),
+  description: z
+    .string()
+    .min(10, "Description is too short")
+    .max(500, "Description is too long"),
+  techStack: z
+    .string()
+    .min(2, "Please provide at least one technology"),
+  image: z
+    .string()
+    .url("Please provide a valid image URL"),
+  githubLink: z
+    .string()
+    .url("Please provide a valid URL")
+    .regex(
+      /^https:\/\/(www\.)?github\.com\/.+/,
+      "Must be a valid GitHub repository URL"
+    ),
+  pitch: z
+    .string()
+    .min(10, "Project details must be at least 10 characters"),
+});
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type ActionResult<T = void> =
+  | { success: true; data?: T }
+  | { success: false; error: string; validationErrors?: Record<string, string[]> };
+
+// ─── Upvote ───────────────────────────────────────────────────────────────────
+
+export const toggleUpvoteProject = async (
+  projectId: string,
+  isUpvoting: boolean
+): Promise<ActionResult> => {
   try {
+    const session = await auth();
+
+    if (!session?.id) {
+      return { success: false, error: "You must be logged in to vote." };
+    }
+
     await writeClient
       .patch(projectId)
       .setIfMissing({ upvotes: 0 })
@@ -25,78 +66,86 @@ export const toggleUpvoteProject = async (projectId: string, isUpvoting: boolean
     revalidatePath(`/project/${projectId}`);
     return { success: true };
   } catch (error) {
-    console.error("Failed to toggle upvote:", error);
-    return { success: false, error: "Failed to toggle upvote" };
+    console.error("[toggleUpvoteProject]", error);
+    return { success: false, error: "Failed to toggle upvote." };
   }
 };
 
-/**
- * Server Action to send a "Join Team" email notification using Resend.
- * Notifies the project owner that a developer is interested in collaborating.
- */
+// ─── Join Team Email ──────────────────────────────────────────────────────────
+
 export const sendJoinTeamEmail = async (
   ownerEmail: string,
   projectName: string,
   senderName: string
-) => {
+): Promise<ActionResult> => {
+  if (!ownerEmail || !projectName || !senderName) {
+    return { success: false, error: "Missing required fields." };
+  }
+
   try {
-    const { data, error } = await resend.emails.send({
-      from: "CS-Arena <onboarding@resend.dev>", // Default testing email for Resend free tier
-      to: ownerEmail, // Must be your verified Resend email during testing
-      subject: `🚀 New Teammate Request for ${projectName}!`,
+    const { error } = await resend.emails.send({
+      from: "CS-Arena <noreply@cs-arena.dev>",
+      to: ownerEmail,
+      subject: `New Contributor Request — ${projectName}`,
       html: `
-        <div style="font-family: sans-serif; padding: 20px; color: #333;">
-          <h2 style="color: #e50914;">CS-Arena Notification</h2>
-          <p>Hello!</p>
-          <p>Great news! <strong>${senderName}</strong> has just seen your project <strong>"${projectName}"</strong> on the arena and is very interested in joining your team as an open-source contributor.</p>
-          <p>Log in to your dashboard to connect with them and start building something awesome together.</p>
-          <br/>
-          <p>Best regards,<br/>CS-Arena Team</p>
-        </div>
+        <!DOCTYPE html>
+        <html>
+          <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9f9f9; padding: 40px 0;">
+            <div style="max-width: 560px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 40px; border: 1px solid #eee;">
+              <div style="margin-bottom: 24px;">
+                <span style="font-size: 24px; font-weight: 800; color: #EE2B69;">CS-Arena</span>
+              </div>
+              <h2 style="font-size: 20px; color: #111; margin-bottom: 16px;">
+                Someone wants to join your team 🚀
+              </h2>
+              <p style="color: #555; line-height: 1.6;">
+                <strong>${senderName}</strong> is interested in contributing to
+                <strong>"${projectName}"</strong> as an open-source collaborator.
+              </p>
+              <p style="color: #555; line-height: 1.6;">
+                Log in to CS-Arena to connect with them and start building together.
+              </p>
+              
+                href="https://cs-arena.vercel.app"
+                style="display: inline-block; margin-top: 24px; background: #EE2B69; color: #fff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600;"
+              >
+                View on CS-Arena
+              </a>
+              <p style="margin-top: 32px; color: #aaa; font-size: 12px;">
+                You received this email because someone found your project on CS-Arena.
+              </p>
+            </div>
+          </body>
+        </html>
       `,
     });
 
     if (error) {
-      console.error("Resend API Error:", error);
+      console.error("[sendJoinTeamEmail] Resend error:", error);
       return { success: false, error: error.message };
     }
 
     return { success: true };
   } catch (error) {
-    console.error("Failed to send email:", error);
-    return { success: false, error: "Failed to send email" };
+    console.error("[sendJoinTeamEmail]", error);
+    return { success: false, error: "Failed to send email." };
   }
 };
 
-// Zod Schema for validation
-const formSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Description is too short").max(500, "Description is too long"),
-  techStack: z.string().min(2, "Please provide at least one technology"),
-  image: z.string().url("Please provide a valid image URL"),
-  githubLink: z
-    .string()
-    .url("Please provide a valid URL")
-    .regex(/^https:\/\/(www\.)?github\.com\/.+/, "Must be a valid GitHub repository URL"),
-  pitch: z.string().min(10, "Project details must be at least 10 characters"),
-});
+// ─── Create Project ───────────────────────────────────────────────────────────
 
-/**
- * Server Action to create a new project in Sanity.
- * Validates data, generates a slug, and associates the project with the logged-in user.
- */
-export const createProject = async (formData: FormData, pitch: string) => {
+export const createProject = async (
+  formData: FormData,
+  pitch: string
+): Promise<ActionResult<{ projectId: string }>> => {
   try {
     const session = await auth();
 
-    if (!session || !session.id) {
+    if (!session?.id) {
       return { success: false, error: "You must be logged in to submit a project." };
     }
 
-    const authorId = session.id;
-
-    // 2. Extract Data
-    const data = {
+    const raw = {
       title: formData.get("title") as string,
       description: formData.get("description") as string,
       techStack: formData.get("techStack") as string,
@@ -105,50 +154,47 @@ export const createProject = async (formData: FormData, pitch: string) => {
       pitch,
     };
 
-    // 3. Validate Data with Zod
-    formSchema.parse(data);
+    const parsed = formSchema.safeParse(raw);
 
-    // 4. Generate Slug and Format Tech Stack
-    const slug = slugify(data.title, { lower: true, strict: true });
-    // Convert "Next.js, Tailwind" into an array: ["Next.js", "Tailwind"]
-    const techStackArray = data.techStack.split(",").map((tech) => tech.trim()).filter(Boolean);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: "Validation failed.",
+        validationErrors: parsed.error.flatten().fieldErrors,
+      };
+    }
 
-    // 5. Prepare Sanity Document
-    const newProject = {
+    const { title, description, techStack, image, githubLink } = parsed.data;
+
+    const slug = slugify(title, { lower: true, strict: true });
+    const techStackArray = techStack
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+
+    const result = await writeClient.create({
       _type: "project",
-      title: data.title,
+      title,
       slug: { _type: "slug", current: slug },
-      description: data.description,
+      description,
       techStack: techStackArray,
-      image: data.image,
-      githubLink: data.githubLink,
+      image,
+      githubLink,
       pitch,
       views: 0,
       upvotes: 0,
       isLookingForContributors: false,
       author: {
         _type: "reference",
-        _ref: authorId,
+        _ref: session.id,
       },
-    };
+    });
 
-    // 6. Write to Sanity
-    const result = await writeClient.create(newProject);
+    revalidatePath("/");
 
-    return { success: true, projectId: result._id };
-  } catch (error: any) {
-    console.error("Failed to create project:", error);
-
-    if (error instanceof z.ZodError) {
-      const fieldErrors = error.flatten().fieldErrors;
-
-      return {
-        success: false,
-        error: "Validation failed",
-        validationErrors: fieldErrors
-      };
-    }
-
+    return { success: true, data: { projectId: result._id } };
+  } catch (error) {
+    console.error("[createProject]", error);
     return { success: false, error: "An unexpected error occurred." };
   }
 };

@@ -1,65 +1,54 @@
-import SearchForm from "@/components/shared/SearchForm";
-import TechFilters from "@/components/shared/TechFilters";
-import ProjectCard, { ProjectTypeCard } from "@/components/project/ProjectCard";
+import { Suspense } from "react";
 import { PROJECTS_QUERY } from "@/sanity/lib/queries";
 import { sanityFetch, SanityLive } from "@/sanity/lib/live";
+import HeroSection from "@/components/shared/HeroSection";
+import ProjectsGrid from "@/components/shared/ProjectsGrid";
 
-/**
- * Main Landing Page for CS-Arena.
- * Implements Server Components and Sanity Live API for real-time updates.
- */
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ query?: string }>;
+  searchParams: Promise<{ query?: string; tech?: string }>;
 }) {
-  // Extract the search query from the URL parameters (e.g., ?query=react)
-  const query = (await searchParams).query;
-  const params = { search: query || null };
+  const { query, tech } = await searchParams;
+  const params = { search: query || null, tech: tech || null };
 
-  // Fetch projects from Sanity using the live fetcher for real-time UI updates
   const { data: posts } = await sanityFetch({ query: PROJECTS_QUERY, params });
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="pink_container">
-        <h1 className="heading">
-          Showcase Your Code, <br />
-          Dominate The Arena
-        </h1>
+      <HeroSection query={query} />
 
-        <p className="sub-heading !max-w-3xl">
-          Submit your CS graduation projects, find open-source contributors,
-          and get headhunted by top tech recruiters.
-        </p>
-
-        {/* The Search Form Component */}
-        <SearchForm query={query} />
-
-        {/* Tech Filters for quick-click filtering */}
-        <TechFilters />
-      </section>
-
-      {/* Projects Grid Section */}
       <section className="section_container">
-        <p className="text-30-semibold">
-          {query ? `Search results for "${query}"` : "Explore Top Projects"}
-        </p>
+        <div className="flex items-center justify-between mb-7">
+          <p className="text-30-semibold">
+            {query
+              ? `Results for "${query}"`
+              : tech
+                ? `Projects in ${tech}`
+                : "Explore Top Projects"}
+          </p>
+          <p className="text-16-medium text-black/40 dark:text-white/40">
+            {posts?.length ?? 0} projects
+          </p>
+        </div>
 
-        <ul className="mt-7 card_grid">
-          {posts?.length > 0 ? (
-            posts.map((post: ProjectTypeCard) => (
-              <ProjectCard key={post?._id} post={post} />
-            ))
-          ) : (
-            <p className="no-results">No projects found in the arena yet.</p>
-          )}
-        </ul>
+        <Suspense fallback={<ProjectsGridSkeleton />}>
+          <ProjectsGrid posts={posts} />
+        </Suspense>
       </section>
 
-      {/* Enables real-time content updates without refreshing the page */}
-      {/* <SanityLive /> */}
+      <SanityLive />
     </>
   );
 }
+
+const ProjectsGridSkeleton = () => (
+  <ul className="mt-7 card_grid">
+    {Array.from({ length: 6 }).map((_, i) => (
+      <li
+        key={i}
+        className="w-full h-[300px] rounded-2xl bg-black/5 dark:bg-white/5 animate-pulse"
+      />
+    ))}
+  </ul>
+);
