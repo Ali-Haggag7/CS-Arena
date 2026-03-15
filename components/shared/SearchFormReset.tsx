@@ -1,24 +1,27 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import { useCallback } from "react";
 
 const SearchFormReset = () => {
+    const router = useRouter();
+
     const reset = useCallback(() => {
         const form = document.querySelector(".search-form") as HTMLFormElement;
         if (form) form.reset();
-    }, []);
+        router.push("/");
+    }, [router]);
 
     return (
-        <Link
-            href="/"
+        <button
+            type="button"
             onClick={reset}
             aria-label="Clear search"
-            className="search-btn text-white transition-transform hover:scale-105 active:scale-95 flex justify-center items-center"
+            className="size-8 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors duration-200"
         >
-            <X className="size-5" aria-hidden="true" />
-        </Link>
+            <X className="size-3.5 text-white/60" aria-hidden="true" />
+        </button>
     );
 };
 

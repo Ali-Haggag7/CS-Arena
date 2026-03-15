@@ -11,6 +11,8 @@ const SearchForm = ({ query }: { query?: string }) => {
             role="search"
             aria-label="Search projects"
         >
+            <Search className="size-4 text-white/30 shrink-0" aria-hidden="true" />
+
             <input
                 name="query"
                 defaultValue={query}
@@ -23,14 +25,14 @@ const SearchForm = ({ query }: { query?: string }) => {
                 aria-label="Search query"
             />
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 shrink-0">
                 {query && <SearchFormReset />}
                 <button
                     type="submit"
                     aria-label="Submit search"
                     className="search-btn text-white transition-transform hover:scale-105 active:scale-95"
                 >
-                    <Search className="size-5" aria-hidden="true" />
+                    <Search className="size-4" aria-hidden="true" />
                 </button>
             </div>
         </Form>

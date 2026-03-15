@@ -22,7 +22,9 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const post = await client.fetch(PROJECT_BY_ID_QUERY, { id });
+  const post = await client
+    .withConfig({ useCdn: false })
+    .fetch(PROJECT_BY_ID_QUERY, { id });
   if (!post) return {};
   return {
     title: post.title,
