@@ -10,8 +10,6 @@ export const metadata: Metadata = {
     description: "Discover top computer science graduation projects and startup ideas.",
 };
 
-// ─── Projects List ────────────────────────────────────────────────────────────
-
 const AllProjects = async () => {
     const projects: ProjectTypeCard[] = await client.fetch(PROJECTS_QUERY, {
         search: null,
@@ -20,9 +18,7 @@ const AllProjects = async () => {
 
     if (!projects?.length) {
         return (
-            <p className="no-result col-span-full">
-                No projects found in the arena yet.
-            </p>
+            <p className="no-result col-span-full">No projects found in the arena yet.</p>
         );
     }
 
@@ -35,11 +31,9 @@ const AllProjects = async () => {
     );
 };
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
 const ExploreProjectsPage = () => {
     return (
-        <main className="min-h-screen bg-white dark:bg-black font-work-sans pt-20 pb-24">
+        <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0f] font-work-sans pt-20 pb-24">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
 
                 {/* Header */}
@@ -47,18 +41,17 @@ const ExploreProjectsPage = () => {
                     <h1 className="text-4xl md:text-5xl font-extrabold text-black dark:text-white tracking-tight">
                         Explore <span className="text-primary">Projects</span>
                     </h1>
-                    <p className="text-20-medium text-black/50 dark:text-white/50 mt-4 max-w-2xl">
+                    <p className="text-[17px] text-black/50 dark:text-white/40 mt-4 max-w-2xl">
                         Browse through the most innovative computer science projects
                         submitted by developers worldwide.
                     </p>
                 </div>
 
-                {/* Content */}
                 <Suspense
                     fallback={
                         <ul className="mt-7 card_grid">
                             {Array.from({ length: 6 }).map((_, i) => (
-                                <Skeleton key={i} className="h-[300px] w-full rounded-2xl" />
+                                <Skeleton key={i} className="h-[300px] w-full rounded-2xl bg-white/5" />
                             ))}
                         </ul>
                     }

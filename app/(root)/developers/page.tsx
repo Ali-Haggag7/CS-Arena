@@ -11,23 +11,15 @@ export const metadata: Metadata = {
     description: "Connect with projects looking for open-source contributors and team members.",
 };
 
-// ─── Team Projects ────────────────────────────────────────────────────────────
-
 const TeamProjects = async () => {
-    const projects: ProjectTypeCard[] = await client.fetch(
-        PROJECTS_LOOKING_FOR_TEAM_QUERY
-    );
+    const projects: ProjectTypeCard[] = await client.fetch(PROJECTS_LOOKING_FOR_TEAM_QUERY);
 
     if (!projects?.length) {
         return (
-            <div className="col-span-full flex flex-col items-center justify-center p-12 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/5 dark:border-white/10">
-                <Users className="size-16 text-black/20 dark:text-white/20 mb-4" aria-hidden="true" />
-                <p className="text-20-medium text-black dark:text-white">
-                    No projects looking for a team yet.
-                </p>
-                <p className="text-16-medium text-black/40 dark:text-white/40 mt-2">
-                    Check back later or submit your own project!
-                </p>
+            <div className="col-span-full flex flex-col items-center justify-center p-12 glass-card rounded-2xl">
+                <Users className="size-16 text-white/10 mb-4" aria-hidden="true" />
+                <p className="text-[18px] font-semibold text-black dark:text-white">No projects looking for a team yet.</p>
+                <p className="text-[14px] text-black/40 dark:text-white/30 mt-2">Check back later or submit your own project!</p>
             </div>
         );
     }
@@ -41,11 +33,9 @@ const TeamProjects = async () => {
     );
 };
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
 const FindDevelopersPage = () => {
     return (
-        <main className="min-h-screen bg-white dark:bg-black font-work-sans pt-20 pb-24">
+        <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0f] font-work-sans pt-20 pb-24">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
 
                 {/* Header */}
@@ -54,22 +44,21 @@ const FindDevelopersPage = () => {
                         <h1 className="text-4xl md:text-5xl font-extrabold text-black dark:text-white tracking-tight">
                             Find <span className="text-primary">Developers</span>
                         </h1>
-                        <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-14-bold px-4 py-2 rounded-full border border-green-200 dark:border-green-800 flex items-center gap-2">
-                            <Users className="size-4" aria-hidden="true" />
+                        <span className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[13px] font-semibold px-4 py-1.5 rounded-full border border-emerald-500/20 flex items-center gap-1.5">
+                            <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                             Hiring Now
                         </span>
                     </div>
-                    <p className="text-20-medium text-black/50 dark:text-white/50 max-w-2xl">
+                    <p className="text-[17px] text-black/50 dark:text-white/40 max-w-2xl">
                         These projects are actively looking for contributors. Find a tech stack you love and join the team!
                     </p>
                 </div>
 
-                {/* Content */}
                 <Suspense
                     fallback={
                         <ul className="mt-7 card_grid">
                             {Array.from({ length: 6 }).map((_, i) => (
-                                <Skeleton key={i} className="h-[300px] w-full rounded-2xl" />
+                                <Skeleton key={i} className="h-[300px] w-full rounded-2xl bg-white/5" />
                             ))}
                         </ul>
                     }

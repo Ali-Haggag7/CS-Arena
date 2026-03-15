@@ -11,23 +11,22 @@ export default async function Home({
 }) {
   const { query, tech } = await searchParams;
   const params = { search: query || null, tech: tech || null };
-
   const { data: posts } = await sanityFetch({ query: PROJECTS_QUERY, params });
 
   return (
     <>
       <HeroSection query={query} />
 
-      <section className="section_container">
+      <section className="section_container bg-[#0d0d0f]">
         <div className="flex items-center justify-between mb-7">
-          <p className="text-30-semibold">
+          <p className="text-[22px] font-bold text-white">
             {query
               ? `Results for "${query}"`
               : tech
                 ? `Projects in ${tech}`
                 : "Explore Top Projects"}
           </p>
-          <p className="text-16-medium text-black/40 dark:text-white/40">
+          <p className="text-[14px] font-medium text-white/30">
             {posts?.length ?? 0} projects
           </p>
         </div>
@@ -47,7 +46,7 @@ const ProjectsGridSkeleton = () => (
     {Array.from({ length: 6 }).map((_, i) => (
       <li
         key={i}
-        className="w-full h-[300px] rounded-2xl bg-black/5 dark:bg-white/5 animate-pulse"
+        className="w-full h-[300px] rounded-2xl bg-white/5 animate-pulse"
       />
     ))}
   </ul>

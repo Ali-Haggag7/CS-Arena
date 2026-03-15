@@ -12,120 +12,101 @@ export const metadata: Metadata = {
     description: "Top ranked computer science projects based on community upvotes.",
 };
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 interface LeaderboardProject {
     _id: string;
     title: string;
     upvotes: number;
     views: number;
     techStack?: string[];
-    author?: {
-        image?: string;
-        username?: string;
-        _id?: string;
-    };
+    author?: { image?: string; username?: string; _id?: string };
 }
 
-// ─── Rank Badge ───────────────────────────────────────────────────────────────
-
 const RankBadge = ({ index }: { index: number }) => {
-    if (index === 0) return <Trophy className="size-8 text-yellow-500 fill-yellow-500" aria-label="1st place" />;
-    if (index === 1) return <Medal className="size-8 text-gray-400 fill-gray-400" aria-label="2nd place" />;
-    if (index === 2) return <Medal className="size-8 text-amber-700 fill-amber-700" aria-label="3rd place" />;
-    return <span className="text-24-black text-black/30 dark:text-white/30 w-8 text-center">#{index + 1}</span>;
+    if (index === 0) return <Trophy className="size-7 text-yellow-500 fill-yellow-500" />;
+    if (index === 1) return <Medal className="size-7 text-gray-400 fill-gray-400" />;
+    if (index === 2) return <Medal className="size-7 text-amber-600 fill-amber-600" />;
+    return <span className="text-[16px] font-bold text-white/20 w-7 text-center">#{index + 1}</span>;
 };
-
-// ─── Ranked Projects ──────────────────────────────────────────────────────────
 
 const RankedProjects = async () => {
     const topProjects: LeaderboardProject[] = await client.fetch(LEADERBOARD_QUERY);
 
     if (!topProjects?.length) {
         return (
-            <div className="text-center py-20 bg-black/5 dark:bg-white/5 rounded-3xl border border-black/5 dark:border-white/10">
-                <Trophy className="size-16 text-black/20 dark:text-white/20 mx-auto mb-4" aria-hidden="true" />
-                <p className="text-20-medium">The arena is quiet...</p>
-                <p className="text-16-medium text-black/40 dark:text-white/40 mt-2">
-                    No projects have been upvoted yet. Be the first!
-                </p>
+            <div className="text-center py-20 glass-card rounded-3xl">
+                <Trophy className="size-16 text-white/10 mx-auto mb-4" aria-hidden="true" />
+                <p className="text-[18px] font-semibold text-white/50">The arena is quiet...</p>
+                <p className="text-[14px] text-white/30 mt-2">No projects upvoted yet. Be the first!</p>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col gap-4 mt-10" role="list" aria-label="Leaderboard rankings">
+        <div className="flex flex-col gap-3 mt-10" role="list">
             {topProjects.map((project, index) => {
                 const isFirst = index === 0;
-
                 return (
                     <Link
                         href={`/project/${project._id}`}
                         key={project._id}
                         role="listitem"
                         aria-label={`#${index + 1} - ${project.title}`}
-                        className={`flex items-center gap-6 p-5 rounded-2xl border transition-all duration-300 hover:shadow-md hover:-translate-y-1
-              bg-white dark:bg-white/5
+                        className={`flex items-center gap-5 p-4 rounded-2xl border transition-all duration-300 hover:-translate-y-0.5 glass-card glass-hover
               ${isFirst
-                                ? "border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.15)]"
-                                : "border-black/5 dark:border-white/10"
+                                ? "border-yellow-500/30 shadow-[0_0_20px_rgba(234,179,8,0.08)]"
+                                : "border-white/[0.06]"
                             }`}
                     >
                         {/* Rank */}
-                        <div className="flex items-center justify-center min-w-[50px]">
+                        <div className="flex items-center justify-center min-w-[44px]">
                             <RankBadge index={index} />
                         </div>
 
                         {/* Avatar */}
                         <Image
-                            src={project.author?.image || "https://placehold.co/48x48"}
-                            alt={project.author?.username ?? "Author avatar"}
-                            width={48}
-                            height={48}
-                            className={`rounded-full object-cover shrink-0 ${isFirst ? "ring-2 ring-yellow-500 ring-offset-2 dark:ring-offset-black" : ""
+                            src={project.author?.image || "https://placehold.co/44x44"}
+                            alt={project.author?.username ?? "Author"}
+                            width={44} height={44}
+                            className={`rounded-full object-cover shrink-0 ring-1 ${isFirst ? "ring-yellow-500/50" : "ring-white/10"
                                 }`}
                         />
 
                         {/* Info */}
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                                <h3 className={`text-20-medium truncate ${isFirst ? "text-yellow-600 font-bold" : "text-black dark:text-white"
+                                <h3 className={`text-[16px] font-semibold truncate ${isFirst ? "text-yellow-400" : "text-white"
                                     }`}>
                                     {project.title}
                                 </h3>
                                 {project.techStack?.[0] && (
-                                    <span className="hidden sm:inline-block px-2 py-1 bg-primary/10 text-primary text-12-medium rounded-full whitespace-nowrap">
+                                    <span className="hidden sm:inline-block px-2 py-0.5 bg-primary/10 text-primary text-[11px] font-medium rounded-full border border-primary/20">
                                         {project.techStack[0]}
                                     </span>
                                 )}
                             </div>
-                            <p className="text-14-normal text-black/40 dark:text-white/40 truncate mt-1">
-                                by @{project.author?.username ?? "unknown"}
+                            <p className="text-[13px] text-white/30 truncate mt-0.5">
+                                @{project.author?.username ?? "unknown"}
                             </p>
                         </div>
 
                         {/* Stats */}
                         <div className="flex items-center gap-4 sm:gap-6 shrink-0">
                             <div className="flex flex-col items-center">
-                                <div className="flex items-center gap-1.5 text-primary">
-                                    <ThumbsUp className={`size-5 ${isFirst ? "fill-primary" : ""}`} aria-hidden="true" />
-                                    <span className="text-16-bold">{project.upvotes ?? 0}</span>
+                                <div className="flex items-center gap-1 text-primary">
+                                    <ThumbsUp className={`size-4 ${isFirst ? "fill-primary" : ""}`} />
+                                    <span className="text-[15px] font-bold">{project.upvotes ?? 0}</span>
                                 </div>
-                                <span className="text-12-medium text-black/30 dark:text-white/30 uppercase tracking-wider hidden sm:block mt-1">
-                                    Votes
-                                </span>
+                                <span className="text-[10px] text-white/20 uppercase tracking-wider hidden sm:block mt-0.5">Votes</span>
                             </div>
 
-                            <div className="w-px h-8 bg-black/10 dark:bg-white/10 hidden sm:block" />
+                            <div className="w-px h-7 bg-white/[0.06] hidden sm:block" />
 
                             <div className="hidden sm:flex flex-col items-center">
-                                <div className="flex items-center gap-1.5 text-black/50 dark:text-white/50">
-                                    <Eye className="size-5" aria-hidden="true" />
-                                    <span className="text-16-bold">{project.views ?? 0}</span>
+                                <div className="flex items-center gap-1 text-white/30">
+                                    <Eye className="size-4" />
+                                    <span className="text-[15px] font-bold">{project.views ?? 0}</span>
                                 </div>
-                                <span className="text-12-medium text-black/30 dark:text-white/30 uppercase tracking-wider mt-1">
-                                    Views
-                                </span>
+                                <span className="text-[10px] text-white/20 uppercase tracking-wider mt-0.5">Views</span>
                             </div>
                         </div>
                     </Link>
@@ -135,36 +116,31 @@ const RankedProjects = async () => {
     );
 };
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
 const LeaderboardPage = () => {
     return (
-        <main className="min-h-screen bg-white dark:bg-black font-work-sans pt-20 pb-24">
+        <main className="min-h-screen bg-[#0d0d0f] font-work-sans pt-20 pb-24">
             <div className="max-w-4xl mx-auto px-6 lg:px-8">
 
                 {/* Header */}
                 <div className="text-center mb-12">
-                    <div className="inline-flex items-center justify-center p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-full mb-6">
-                        <Trophy className="size-10 text-yellow-600" aria-hidden="true" />
+                    <div className="inline-flex items-center justify-center size-16 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl mb-6">
+                        <Trophy className="size-8 text-yellow-500" />
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-black dark:text-white tracking-tight mb-4">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
                         Global <span className="text-primary">Leaderboard</span>
                     </h1>
-                    <p className="text-20-medium text-black/50 dark:text-white/50 max-w-2xl mx-auto">
+                    <p className="text-[17px] text-white/40 max-w-2xl mx-auto">
                         The most upvoted projects in CS-Arena. Does your code have what it takes to reach #1?
                     </p>
                 </div>
 
-                {/* List */}
-                <Suspense
-                    fallback={
-                        <div className="flex flex-col gap-4 mt-10">
-                            {Array.from({ length: 5 }).map((_, i) => (
-                                <Skeleton key={i} className="h-24 w-full rounded-2xl" />
-                            ))}
-                        </div>
-                    }
-                >
+                <Suspense fallback={
+                    <div className="flex flex-col gap-3 mt-10">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                            <Skeleton key={i} className="h-20 w-full rounded-2xl bg-white/5" />
+                        ))}
+                    </div>
+                }>
                     <RankedProjects />
                 </Suspense>
 

@@ -11,23 +11,31 @@ export const metadata: Metadata = {
 
 const CreateProjectPage = async () => {
   const session = await auth();
-
-  // Redirect unauthenticated users instead of showing a broken form
   if (!session?.id) redirect("/");
 
   return (
-    <main className="min-h-screen bg-white dark:bg-black font-work-sans pb-24">
+    <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0f] font-work-sans pb-24">
 
       {/* Header */}
-      <section className="pink_container !min-h-[230px]">
-        <h1 className="heading">Pitch Your Code</h1>
-        <p className="sub-heading !max-w-3xl mt-4">
-          Showcase your architecture, stack, and features to the global developer community.
-        </p>
+      <section className="relative overflow-hidden min-h-[230px] flex flex-col items-center justify-center py-12 px-6 bg-gray-900 dark:bg-[#0d0d0f]">
+        <div className="absolute inset-0 grid-bg opacity-50" aria-hidden="true" />
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[150px] rounded-full opacity-10 blur-[60px] pointer-events-none"
+          style={{ background: "radial-gradient(ellipse, #3b82f6 0%, transparent 70%)" }}
+          aria-hidden="true"
+        />
+        <div className="relative z-10 text-center">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">
+            Pitch Your <span className="text-primary">Code</span>
+          </h1>
+          <p className="text-[17px] text-white/50 max-w-2xl">
+            Showcase your architecture, stack, and features to the global developer community.
+          </p>
+        </div>
       </section>
 
       {/* Form */}
-      <div className="max-w-4xl mx-auto px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto px-6 lg:px-8">
         <ProjectForm />
       </div>
 

@@ -9,28 +9,28 @@ const Navbar = async () => {
   const session = await auth();
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-black/5 dark:border-white/5 font-work-sans transition-all duration-300">
-      <nav className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+    <header className="sticky top-0 z-50 bg-white/80 dark:bg-[#0d0d0f]/80 backdrop-blur-xl border-b border-black/5 dark:border-white/[0.06] font-work-sans transition-all duration-300">
+      <nav className="max-w-7xl mx-auto flex justify-between items-center px-6 py-3.5">
 
         {/* Logo */}
         <Link
           href="/"
-          className="transition-transform hover:scale-105 duration-300"
+          className="flex items-center gap-2 transition-opacity hover:opacity-80 duration-300"
           aria-label="CS Arena Home"
         >
-          <Image
-            src="/logo.png"
-            alt="CS Arena"
-            width={144}
-            height={30}
-            priority
-          />
+          <div className="flex items-center gap-2">
+            <div className="size-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+              <span className="text-primary font-black text-sm">CS</span>
+            </div>
+            <span className="font-black text-[18px] text-black dark:text-white tracking-tight">
+              Arena
+            </span>
+          </div>
         </Link>
 
         {/* Actions */}
-        <div className="flex items-center gap-4 text-black dark:text-white">
+        <div className="flex items-center gap-3">
 
-          {/* Theme Toggle */}
           <ThemeToggle />
 
           {session?.user ? (
@@ -38,11 +38,11 @@ const Navbar = async () => {
               {/* Create Project */}
               <Link
                 href="/project/create"
-                className="flex items-center gap-2 text-14-bold bg-primary text-white px-5 py-2.5 rounded-full hover:bg-black/80 dark:hover:bg-white dark:hover:text-black hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+                className="flex items-center gap-2 text-[13px] font-semibold bg-primary text-white px-4 py-2 rounded-full hover:bg-primary-600 hover:shadow-glow hover:-translate-y-0.5 transition-all duration-300"
                 aria-label="Create new project"
               >
                 <span className="max-sm:hidden">Create Project</span>
-                <BadgePlus className="size-5" />
+                <BadgePlus className="size-4" />
               </Link>
 
               {/* Logout */}
@@ -54,11 +54,11 @@ const Navbar = async () => {
               >
                 <button
                   type="submit"
-                  className="flex items-center gap-2 text-14-medium text-black/70 dark:text-white/70 hover:text-red-500 dark:hover:text-red-400 transition-colors duration-300"
+                  className="flex items-center gap-2 text-[13px] font-medium text-black/50 dark:text-white/40 hover:text-red-500 dark:hover:text-red-400 transition-colors duration-300 px-2"
                   aria-label="Logout"
                 >
                   <span className="max-sm:hidden">Logout</span>
-                  <LogOut className="size-5 sm:hidden" />
+                  <LogOut className="size-4 sm:hidden" />
                 </button>
               </form>
 
@@ -68,19 +68,18 @@ const Navbar = async () => {
                 className="group"
                 aria-label={`${session?.user?.name}'s profile`}
               >
-                <Avatar className="size-10 ring-2 ring-transparent group-hover:ring-primary group-hover:ring-offset-2 dark:group-hover:ring-offset-black transition-all duration-300">
+                <Avatar className="size-9 ring-1 ring-white/10 group-hover:ring-primary/50 group-hover:ring-offset-1 dark:group-hover:ring-offset-[#0d0d0f] transition-all duration-300">
                   <AvatarImage
                     src={session?.user?.image ?? ""}
                     alt={session?.user?.name ?? "User avatar"}
                   />
-                  <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                  <AvatarFallback className="bg-primary/10 text-primary font-bold text-sm">
                     {session?.user?.name?.charAt(0)?.toUpperCase() ?? "U"}
                   </AvatarFallback>
                 </Avatar>
               </Link>
             </>
           ) : (
-            /* Login */
             <form
               action={async () => {
                 "use server";
@@ -89,10 +88,10 @@ const Navbar = async () => {
             >
               <button
                 type="submit"
-                className="flex items-center gap-2 bg-black dark:bg-white text-white dark:text-black px-6 py-2.5 rounded-full text-16-bold hover:bg-primary dark:hover:bg-primary dark:hover:text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                className="flex items-center gap-2 glass border border-white/10 text-white px-5 py-2 rounded-full text-[13px] font-semibold hover:border-primary/40 hover:bg-primary/10 transition-all duration-300"
                 aria-label="Login with GitHub"
               >
-                <Github className="size-5" />
+                <Github className="size-4" />
                 <span>Login with GitHub</span>
               </button>
             </form>

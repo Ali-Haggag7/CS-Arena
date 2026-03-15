@@ -9,27 +9,22 @@
     --radius: 0.5rem;
   }
 
-  /* Dark mode base colors */
   html.dark {
     color-scheme: dark;
   }
 
-  /* Smooth theme transition */
   * {
     @apply transition-colors duration-200;
   }
 
-  /* Remove transition on page load to avoid flash */
   .no-transition * {
     transition: none !important;
   }
 
-  /* Base colors for the whole app */
   body {
-    @apply bg-white dark:bg-black text-black dark:text-white;
+    @apply bg-gray-50 dark:bg-[#0d0d0f] text-black dark:text-white;
   }
 
-  /* Better scrollbar */
   ::-webkit-scrollbar {
     @apply w-1.5;
   }
@@ -39,10 +34,9 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-black/20 dark:bg-white/20 rounded-full;
+    @apply bg-black/20 dark:bg-white/10 rounded-full;
   }
 
-  /* Selection color */
   ::selection {
     @apply bg-primary/30 text-black dark:text-white;
   }
@@ -53,7 +47,21 @@
     @apply flex justify-between items-center;
   }
 
-  /* ─── Typography (Colors removed to allow Tailwind utility overrides) ─── */
+  /* ─── Glass Effect ───────────────────────────────────────── */
+
+  .glass {
+    @apply bg-white/80 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10;
+  }
+
+  .glass-card {
+    @apply bg-white dark:bg-white/[0.03] backdrop-blur-xl border border-gray-200 dark:border-white/[0.08] shadow-sm dark:shadow-glass;
+  }
+
+  .glass-hover {
+    @apply hover:border-primary/30 dark:hover:bg-white/[0.06] dark:hover:border-white/20 transition-all duration-300;
+  }
+
+  /* ─── Typography ─────────────────────────────────────────── */
 
   .text-30-extrabold {
     @apply text-[30px] font-extrabold;
@@ -113,24 +121,24 @@
 
   /* ─── Layout ─────────────────────────────────────────────── */
 
-  .pink_container {
-    @apply w-full bg-primary min-h-[530px] pattern flex justify-center items-center flex-col py-10 px-6;
+  .hero_container {
+    @apply w-full min-h-[580px] flex justify-center items-center flex-col py-16 px-6 relative overflow-hidden bg-gray-900 dark:bg-[#0d0d0f];
   }
 
-  .tag {
-    @apply bg-secondary px-6 py-3 font-work-sans font-bold rounded-sm uppercase relative tag-tri text-black;
+  .pink_container {
+    @apply hero_container;
   }
 
   .heading {
-    @apply uppercase bg-black px-6 py-3 font-work-sans font-extrabold text-white sm:text-[54px] sm:leading-[64px] text-[36px] leading-[46px] max-w-5xl text-center my-5;
+    @apply font-work-sans font-extrabold text-white sm:text-[54px] sm:leading-[64px] text-[36px] leading-[46px] max-w-4xl text-center my-5;
   }
 
   .sub-heading {
-    @apply font-medium text-[20px] text-white max-w-2xl text-center break-words;
+    @apply font-medium text-[18px] text-white/60 max-w-2xl text-center break-words;
   }
 
   .section_container {
-    @apply px-6 py-10 max-w-7xl mx-auto;
+    @apply px-6 py-10 max-w-7xl mx-auto bg-gray-50 dark:bg-[#0d0d0f];
   }
 
   .card_grid {
@@ -142,35 +150,39 @@
   }
 
   .no-result {
-    @apply text-black/40 dark:text-white/40 text-sm font-normal;
+    @apply text-black/40 dark:text-white/30 text-sm font-normal;
+  }
+
+  .tag {
+    @apply bg-primary/10 text-primary border border-primary/20 px-4 py-1.5 rounded-full text-sm font-medium;
   }
 
   /* ─── Profile ────────────────────────────────────────────── */
 
   .profile_container {
-    @apply w-full pb-10 pt-20 px-6 max-w-7xl mx-auto lg:flex-row flex-col flex gap-10;
+    @apply w-full pb-10 pt-20 px-6 max-w-7xl mx-auto bg-gray-50 dark:bg-[#0d0d0f] lg:flex-row flex-col flex gap-10;
   }
 
   .profile_card {
-    @apply w-80 px-6 pb-6 pt-20 flex flex-col justify-center items-center bg-primary border-[5px] border-black shadow-100 rounded-[30px] relative z-0 h-fit max-lg:w-full;
+    @apply w-80 px-6 pb-6 pt-20 flex flex-col justify-center items-center glass-card rounded-[30px] relative z-0 h-fit max-lg:w-full border border-primary/20;
   }
 
   .profile_title {
-    @apply w-11/12 bg-white dark:bg-zinc-900 border-[5px] border-black rounded-[20px] px-5 py-3 absolute -top-9 after:absolute after:content-[''] after:-top-1 after:right-0 after:-skew-y-6 after:bg-black after:-z-[1] after:rounded-[20px] after:w-full after:h-[60px] before:absolute before:content-[''] before:-bottom-1 before:left-0 before:-skew-y-6 before:w-full before:h-[60px] before:bg-black before:-z-[1] before:rounded-[20px] shadow-100;
+    @apply w-11/12 glass border border-gray-200 dark:border-white/10 rounded-[20px] px-5 py-3 absolute -top-9;
   }
 
   .profile_image {
-    @apply rounded-full object-cover border-[3px] border-black;
+    @apply rounded-full object-cover ring-2 ring-primary/30;
   }
 
   /* ─── Project Details ────────────────────────────────────── */
 
   .divider {
-    @apply border-dotted bg-zinc-400 dark:bg-zinc-600 max-w-4xl my-10 mx-auto;
+    @apply border-gray-200 dark:border-white/10 max-w-4xl my-10 mx-auto;
   }
 
   .view_skeleton {
-    @apply bg-zinc-400 h-10 w-24 rounded-lg fixed bottom-3 right-3;
+    @apply bg-gray-200 dark:bg-white/10 h-10 w-24 rounded-lg fixed bottom-3 right-3;
   }
 
   /* ─── Navbar ─────────────────────────────────────────────── */
@@ -179,44 +191,40 @@
     @apply p-0 focus-visible:ring-0 bg-none rounded-full drop-shadow-md !important;
   }
 
-  .login {
-    @apply border-[5px] py-4 border-black bg-white text-black relative shadow-100 font-work-sans font-medium hover:shadow-none transition-all duration-500 !important;
-  }
-
   /* ─── Search ─────────────────────────────────────────────── */
 
   .search-form {
-    @apply max-w-3xl w-full mx-auto min-h-[80px] bg-white border-[5px] border-black rounded-[80px] text-[24px] mt-8 px-5 flex flex-row items-center gap-5;
+    @apply max-w-2xl w-full mx-auto min-h-[60px] glass border border-gray-300 dark:border-white/20 rounded-full text-[18px] mt-8 px-6 flex flex-row items-center gap-4;
   }
 
   .search-input {
-    @apply flex-1 font-bold placeholder:font-semibold placeholder:text-black/40 w-full h-auto outline-none bg-transparent text-black;
+    @apply flex-1 font-medium placeholder:text-gray-400 dark:placeholder:text-white/30 w-full h-auto outline-none bg-transparent text-white;
   }
 
   .search-btn {
-    @apply size-[50px] rounded-full bg-black flex justify-center items-center !important;
+    @apply size-[42px] rounded-full bg-primary flex justify-center items-center hover:bg-primary-600 transition-colors !important;
   }
 
   /* ─── Project Card ───────────────────────────────────────── */
 
   .startup-card {
-    @apply bg-white dark:bg-white/5 border-[5px] border-black dark:border-white/10 py-6 px-5 rounded-[22px] shadow-200 hover:border-primary transition-all duration-300 hover:shadow-300 hover:bg-primary/5;
+    @apply glass-card glass-hover rounded-2xl py-5 px-5 cursor-pointer;
   }
 
   .startup_card_date {
-    @apply font-medium text-[16px] bg-primary/10 px-4 py-2 rounded-full text-primary;
+    @apply font-medium text-[13px] bg-primary/10 text-primary px-3 py-1 rounded-full border border-primary/20;
   }
 
   .startup-card_desc {
-    @apply font-normal text-[16px] line-clamp-2 my-3 text-black/60 dark:text-white/60 break-words;
+    @apply font-normal text-[14px] line-clamp-2 my-3 text-black/60 dark:text-white/50 break-words;
   }
 
   .startup-card_img {
-    @apply w-full h-[164px] rounded-[10px] object-cover;
+    @apply w-full h-[160px] rounded-xl object-cover;
   }
 
   .startup-card_btn {
-    @apply rounded-full bg-black dark:bg-white dark:text-black font-medium text-[16px] text-white px-5 py-3 !important;
+    @apply rounded-full bg-primary hover:bg-primary-600 font-medium text-[14px] text-white px-5 py-2 transition-colors !important;
   }
 
   /* ─── View ───────────────────────────────────────────────── */
@@ -226,11 +234,29 @@
   }
 
   .view-text {
-    @apply font-medium text-[16px] bg-primary/10 px-4 py-2 rounded-lg capitalize text-black dark:text-white;
+    @apply font-medium text-[14px] bg-primary/10 text-primary px-4 py-2 rounded-lg border border-primary/20;
   }
 
   .category-tag {
-    @apply font-medium text-[16px] bg-primary/10 px-4 py-2 rounded-full;
+    @apply font-medium text-[14px] bg-primary/10 text-primary px-4 py-2 rounded-full border border-primary/20;
+  }
+
+  /* ─── Glow Effects ───────────────────────────────────────── */
+
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+
+  .glow-blue-lg {
+    box-shadow: 0 0 60px rgba(59, 130, 246, 0.15);
+  }
+
+  /* ─── Grid Pattern ───────────────────────────────────────── */
+
+  .grid-bg {
+    background-image: linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+    background-size: 50px 50px;
   }
 
   /* ─── Patterns & Decorative ──────────────────────────────── */
@@ -238,8 +264,8 @@
   .pattern {
     background-image: linear-gradient(to right,
         transparent 49.5%,
-        rgba(251, 232, 67, 0.2) 49.5%,
-        rgba(251, 232, 67, 0.6) 50.5%,
+        rgba(59, 130, 246, 0.1) 49.5%,
+        rgba(59, 130, 246, 0.2) 50.5%,
         transparent 50.5%);
     background-size: 5% 100%;
     background-position: center;
@@ -247,7 +273,7 @@
   }
 
   .tag-tri {
-    @apply before:content-[''] before:absolute before:top-2 before:left-2 before:border-t-[10px] before:border-t-black before:border-r-[10px] before:border-r-transparent after:content-[''] after:absolute after:bottom-2 after:right-2 after:border-b-[10px] after:border-b-black after:border-l-[10px] after:border-l-transparent;
+    @apply before:content-[''] before:absolute before:top-2 before:left-2 before:border-t-[10px] before:border-t-primary before:border-r-[10px] before:border-r-transparent after:content-[''] after:absolute after:bottom-2 after:right-2 after:border-b-[10px] after:border-b-primary after:border-l-[10px] after:border-l-transparent;
   }
 }
 
@@ -257,17 +283,30 @@
   padding: 10px !important;
 }
 
-/* Dark mode for markdown editor */
+/* Light mode markdown editor */
+.w-md-editor {
+  background-color: #ffffff !important;
+  color: #000 !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.w-md-editor-toolbar {
+  background-color: #f9fafb !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Dark mode markdown editor */
 .dark .w-md-editor {
-  background-color: #1a1a1a !important;
+  background-color: #111114 !important;
   color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 .dark .w-md-editor-toolbar {
-  background-color: #1a1a1a !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: #111114 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 .dark .w-md-editor-content {
-  background-color: #1a1a1a !important;
+  background-color: #111114 !important;
 }

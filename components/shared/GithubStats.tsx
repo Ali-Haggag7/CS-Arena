@@ -125,11 +125,11 @@ const GithubStats = async ({ githubLink }: { githubLink: string }) => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`View ${repo} on GitHub`}
-                    className="flex items-center gap-2 bg-[#24292e] dark:bg-white/10 text-white px-6 py-3 rounded-full hover:bg-primary transition-all duration-300 text-16-medium shadow-md hover:shadow-xl hover:-translate-y-1 w-full sm:w-auto justify-center"
+                    className="flex items-center gap-2 bg-gray-900 dark:bg-white/10 text-white px-5 py-2.5 rounded-full hover:bg-primary transition-all duration-300 text-[14px] font-medium hover:-translate-y-0.5 w-full sm:w-auto justify-center"
                 >
-                    <Github className="size-5" aria-hidden="true" />
+                    <Github className="size-4" aria-hidden="true" />
                     <span>View on GitHub</span>
-                    <ExternalLink className="size-4 opacity-70" aria-hidden="true" />
+                    <ExternalLink className="size-3.5 opacity-70" aria-hidden="true" />
                 </Link>
 
             </div>

@@ -47,8 +47,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${workSans.variable} ${cairo.variable}`}>
+    <html lang="en" suppressHydrationWarning className="dark">
+      <body className={`${workSans.variable} ${cairo.variable} bg-[#0d0d0f]`}>
         <Providers>
           {children}
           <Toaster />

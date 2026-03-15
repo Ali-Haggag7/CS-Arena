@@ -17,15 +17,11 @@ const HeroSection = ({ query }: { query?: string }) => {
         let timeout: NodeJS.Timeout;
 
         if (!deleting && displayed.length < current.length) {
-            timeout = setTimeout(() => {
-                setDisplayed(current.slice(0, displayed.length + 1));
-            }, 80);
+            timeout = setTimeout(() => setDisplayed(current.slice(0, displayed.length + 1)), 80);
         } else if (!deleting && displayed.length === current.length) {
             timeout = setTimeout(() => setDeleting(true), 1800);
         } else if (deleting && displayed.length > 0) {
-            timeout = setTimeout(() => {
-                setDisplayed(current.slice(0, displayed.length - 1));
-            }, 45);
+            timeout = setTimeout(() => setDisplayed(current.slice(0, displayed.length - 1)), 45);
         } else if (deleting && displayed.length === 0) {
             setDeleting(false);
             setWordIndex((prev) => (prev + 1) % TYPEWRITER_WORDS.length);
@@ -35,37 +31,50 @@ const HeroSection = ({ query }: { query?: string }) => {
     }, [displayed, deleting, wordIndex]);
 
     return (
-        <section className="pink_container relative overflow-hidden">
-            {/* Subtle grid background — CSS only, zero JS cost */}
+        <section className="relative overflow-hidden min-h-[580px] flex flex-col items-center justify-center py-16 px-6 bg-gray-900 dark:bg-[#0d0d0f]">
+
+            {/* Grid background */}
+            <div className="absolute inset-0 grid-bg opacity-100" aria-hidden="true" />
+
+            {/* Blue glow */}
             <div
-                className="absolute inset-0 opacity-[0.03] dark:opacity-[0.06]"
-                style={{
-                    backgroundImage:
-                        "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)",
-                    backgroundSize: "40px 40px",
-                }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full opacity-20 blur-[100px] pointer-events-none"
+                style={{ background: "radial-gradient(ellipse, #3b82f6 0%, transparent 70%)" }}
                 aria-hidden="true"
             />
 
+            {/* Badge */}
+            <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="relative z-10 mb-6"
+            >
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-primary/10 text-primary border border-primary/20">
+                    <span className="size-1.5 rounded-full bg-primary animate-pulse" />
+                    CS Arena — Open for submissions
+                </span>
+            </motion.div>
+
             {/* Heading */}
             <motion.h1
-                className="heading relative z-10"
+                className="relative z-10 font-work-sans font-extrabold text-white text-center sm:text-[58px] sm:leading-[68px] text-[36px] leading-[46px] max-w-4xl my-3"
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
             >
                 Showcase Your{" "}
-                <span className="text-primary inline-block min-w-[120px]">
+                <span className="text-primary relative">
                     {displayed}
-                    <span className="animate-pulse">|</span>
+                    <span className="animate-pulse text-primary/70">|</span>
                 </span>
                 <br />
-                Dominate The Arena
+                <span className="text-white/80">Dominate The Arena</span>
             </motion.h1>
 
             {/* Subheading */}
             <motion.p
-                className="sub-heading !max-w-3xl relative z-10"
+                className="relative z-10 text-[17px] font-medium text-white/50 max-w-xl text-center mt-2 leading-relaxed"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
@@ -76,7 +85,7 @@ const HeroSection = ({ query }: { query?: string }) => {
 
             {/* Search */}
             <motion.div
-                className="w-full relative z-10"
+                className="w-full relative z-10 max-w-2xl"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.25, ease: "easeOut" }}
