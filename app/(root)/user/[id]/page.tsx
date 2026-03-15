@@ -42,15 +42,15 @@ const UserProfile = async ({
   const isOwnProfile = session?.id === id;
 
   return (
-    <section className="profile_container bg-[#0d0d0f] min-h-screen">
+    <section className="profile_container bg-gray-50 dark:bg-[#0d0d0f] min-h-screen">
 
       {/* Profile Card */}
       <div className="w-80 max-lg:w-full flex-shrink-0">
         <div className="glass-card rounded-3xl px-6 pb-8 pt-8 flex flex-col items-center border border-primary/10 relative">
 
           {/* Name Banner */}
-          <div className="w-full glass border border-white/10 rounded-2xl px-4 py-3 mb-6 text-center">
-            <h3 className="text-[16px] font-black text-white uppercase tracking-wide line-clamp-1">
+          <div className="w-full glass border border-gray-200 dark:border-white/10 rounded-2xl px-4 py-3 mb-6 text-center">
+            <h3 className="text-[16px] font-black text-black dark:text-white uppercase tracking-wide line-clamp-1">
               {user.name}
             </h3>
           </div>
@@ -63,11 +63,11 @@ const UserProfile = async ({
             priority
           />
 
-          <p className="text-[22px] font-extrabold text-white mt-5 text-center">
+          <p className="text-[22px] font-extrabold text-black dark:text-white mt-5 text-center">
             @{user.username}
           </p>
 
-          <p className="mt-2 text-center text-[13px] text-white/40 leading-relaxed max-w-[220px]">
+          <p className="mt-2 text-center text-[13px] text-black/50 dark:text-white/40 leading-relaxed max-w-[220px]">
             {user.bio || "Passionate developer crafting awesome projects."}
           </p>
 
@@ -83,7 +83,7 @@ const UserProfile = async ({
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${user.name}'s GitHub profile`}
-              className="mt-4 flex items-center gap-2 text-[13px] font-medium text-white/30 hover:text-primary transition-colors duration-200"
+              className="mt-4 flex items-center gap-2 text-[13px] font-medium text-black/30 dark:text-white/30 hover:text-primary transition-colors duration-200"
             >
               <Github className="size-4" aria-hidden="true" />
               <span>@{user.username}</span>
@@ -94,7 +94,7 @@ const UserProfile = async ({
 
       {/* Projects Section */}
       <div className="flex-1 flex flex-col gap-5 lg:-mt-5">
-        <p className="text-[24px] font-bold text-white">
+        <p className="text-[24px] font-bold text-black dark:text-white">
           {isOwnProfile ? "Your Projects" : `${user.name}'s Projects`}
         </p>
 
@@ -103,7 +103,7 @@ const UserProfile = async ({
             fallback={
               <div className="card_grid-sm w-full">
                 {Array.from({ length: 3 }).map((_, i) => (
-                  <Skeleton key={i} className="h-64 w-full rounded-xl bg-white/5" />
+                  <Skeleton key={i} className="h-64 w-full rounded-xl bg-black/5 dark:bg-white/5" />
                 ))}
               </div>
             }

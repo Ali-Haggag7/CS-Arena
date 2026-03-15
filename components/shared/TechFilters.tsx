@@ -33,12 +33,13 @@ const TechFilters = () => {
             className="w-full mt-6 relative"
         >
             {/* Left fade */}
-            <div className="absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-[#0d0d0f] to-transparent z-10 pointer-events-none sm:hidden" />
+            <div className="absolute left-0 top-0 bottom-2 w-12 bg-gradient-to-r from-gray-900 dark:from-[#0d0d0f] to-transparent z-10 pointer-events-none sm:hidden" />
 
             {/* Right fade */}
-            <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-[#0d0d0f] to-transparent z-10 pointer-events-none sm:hidden" />
+            <div className="absolute right-0 top-0 bottom-2 w-12 bg-gradient-to-l from-gray-900 dark:from-[#0d0d0f] to-transparent z-10 pointer-events-none sm:hidden" />
 
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0 px-6 sm:px-0">
+            {/* Scrollable */}
+            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0 px-8 sm:px-0">
                 {POPULAR_TECHS.map((tech) => {
                     const isActive = currentTech.toLowerCase() === tech.toLowerCase();
                     return (
