@@ -17,16 +17,16 @@ export default async function Home({
     <>
       <HeroSection query={query} />
 
-      <section className="section_container bg-[#0d0d0f]">
+      <section className="section_container">
         <div className="flex items-center justify-between mb-7">
-          <p className="text-[22px] font-bold text-white">
+          <p className="text-[22px] font-bold text-black dark:text-white">
             {query
               ? `Results for "${query}"`
               : tech
                 ? `Projects in ${tech}`
                 : "Explore Top Projects"}
           </p>
-          <p className="text-[14px] font-medium text-white/30">
+          <p className="text-[14px] font-medium text-black/30 dark:text-white/30">
             {posts?.length ?? 0} projects
           </p>
         </div>
@@ -46,7 +46,7 @@ const ProjectsGridSkeleton = () => (
     {Array.from({ length: 6 }).map((_, i) => (
       <li
         key={i}
-        className="w-full h-[300px] rounded-2xl bg-white/5 animate-pulse"
+        className="w-full h-[300px] rounded-2xl bg-black/5 dark:bg-white/5 animate-pulse"
       />
     ))}
   </ul>

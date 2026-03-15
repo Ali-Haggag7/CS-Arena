@@ -11,7 +11,7 @@ const SearchForm = ({ query }: { query?: string }) => {
             role="search"
             aria-label="Search projects"
         >
-            <Search className="size-4 text-white/30 shrink-0" aria-hidden="true" />
+            <Search className="size-4 text-black/30 dark:text-white/30 shrink-0" aria-hidden="true" />
 
             <input
                 name="query"

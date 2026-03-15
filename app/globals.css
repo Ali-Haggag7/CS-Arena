@@ -203,11 +203,11 @@
   /* ─── Search ─────────────────────────────────────────────── */
 
   .search-form {
-    @apply max-w-2xl w-full mx-auto min-h-[52px] glass border border-white/10 rounded-full mt-8 px-4 flex flex-row items-center gap-3;
+    @apply max-w-2xl w-full mx-auto min-h-[52px] bg-white/80 dark:bg-white/5 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-full mt-8 px-4 flex flex-row items-center gap-3;
   }
 
   .search-input {
-    @apply flex-1 font-medium placeholder:text-white/25 w-full h-auto outline-none bg-transparent text-white text-[15px];
+    @apply flex-1 font-medium placeholder:text-black/30 dark:placeholder:text-white/25 w-full h-auto outline-none bg-transparent text-black dark:text-white text-[15px];
   }
 
   .search-btn {
