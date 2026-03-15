@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  turbopack: {},
   images: {
     dangerouslyAllowSVG: true,
     remotePatterns: [
