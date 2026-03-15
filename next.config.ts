@@ -15,9 +15,6 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "placehold.co" },
     ],
   },
-  experimental: {
-    cacheComponents: true,
-  },
 };
 
 export default withSentryConfig(nextConfig, {
