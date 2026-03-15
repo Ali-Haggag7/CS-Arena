@@ -1,7 +1,7 @@
 import { client } from "@/sanity/lib/client";
 import { PROJECT_VIEWS_QUERY } from "@/sanity/lib/queries";
 import { writeClient } from "@/sanity/lib/write-client";
-import { unstable_after as after } from "next/server";
+import { after } from "next/server";
 import { Eye } from "lucide-react";
 
 const View = async ({ id }: { id: string }) => {
