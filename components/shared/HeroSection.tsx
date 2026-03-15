@@ -58,7 +58,7 @@ const HeroSection = ({ query }: { query?: string }) => {
 
             {/* Heading */}
             <motion.h1
-                className="relative z-10 font-work-sans font-extrabold text-white text-center sm:text-[58px] sm:leading-[68px] text-[36px] leading-[46px] max-w-4xl my-3"
+                className="relative z-10 font-work-sans font-extrabold text-white text-center text-4xl sm:text-5xl md:text-6xl leading-tight max-w-4xl"
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}

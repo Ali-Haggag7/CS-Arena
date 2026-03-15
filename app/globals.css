@@ -37,6 +37,15 @@
     @apply bg-black/20 dark:bg-white/10 rounded-full;
   }
 
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
   ::selection {
     @apply bg-primary/30 text-black dark:text-white;
   }

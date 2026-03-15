@@ -28,29 +28,37 @@ const TechFilters = () => {
 
     return (
         <div
-            className="flex flex-wrap justify-center gap-2 mt-8"
             role="group"
             aria-label="Filter by technology"
+            className="w-full mt-6 relative"
         >
-            {POPULAR_TECHS.map((tech) => {
-                const isActive = currentTech.toLowerCase() === tech.toLowerCase();
-                return (
-                    <button
-                        key={tech}
-                        type="button"
-                        onClick={() => handleFilter(tech)}
-                        aria-pressed={isActive}
-                        aria-label={`Filter by ${tech}`}
-                        className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-300 border
-                                ${isActive
-                                ? "bg-primary text-white border-primary shadow-glow"
-                                : "bg-white/5 text-white/50 border-white/10 hover:border-primary/40 hover:text-primary hover:bg-primary/5"
-                            }`}
-                    >
-                        {tech}
-                    </button>
-                );
-            })}
+            {/* Left fade */}
+            <div className="absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-[#0d0d0f] to-transparent z-10 pointer-events-none sm:hidden" />
+
+            {/* Right fade */}
+            <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-[#0d0d0f] to-transparent z-10 pointer-events-none sm:hidden" />
+
+            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory sm:flex-wrap sm:justify-center sm:overflow-visible sm:pb-0 px-6 sm:px-0">
+                {POPULAR_TECHS.map((tech) => {
+                    const isActive = currentTech.toLowerCase() === tech.toLowerCase();
+                    return (
+                        <button
+                            key={tech}
+                            type="button"
+                            onClick={() => handleFilter(tech)}
+                            aria-pressed={isActive}
+                            aria-label={`Filter by ${tech}`}
+                            className={`px-4 py-1.5 rounded-full text-[13px] font-medium transition-all duration-300 border whitespace-nowrap shrink-0 snap-start
+                                    ${isActive
+                                    ? "bg-primary text-white border-primary shadow-glow"
+                                    : "bg-white/5 text-white/50 border-white/10 hover:border-primary/40 hover:text-primary hover:bg-primary/5"
+                                }`}
+                        >
+                            {tech}
+                        </button>
+                    );
+                })}
+            </div>
         </div>
     );
 };
