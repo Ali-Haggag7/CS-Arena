@@ -5,6 +5,7 @@ import "./globals.css";
 import "easymde/dist/easymde.min.css";
 import { Toaster } from "@/components/shadcn/toaster";
 import Providers from "@/components/shared/Providers";
+import { getLocale, getMessages } from "next-intl/server";
 
 const workSans = localFont({
   src: [
@@ -27,10 +28,7 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "CS Arena",
-    template: "%s | CS Arena",
-  },
+  title: { default: "CS Arena", template: "%s | CS Arena" },
   description: "Pitch, Vote and Grow — A platform for CS developers",
   keywords: ["CS", "developers", "projects", "open source", "leaderboard"],
   authors: [{ name: "Ali Haggag" }],
@@ -41,15 +39,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en" suppressHydrationWarning className="dark">
-      <body className={`${workSans.variable} ${cairo.variable} bg-[#0d0d0f]`}>
-        <Providers>
+    <html
+      lang={locale}
+      dir={locale === "ar" ? "rtl" : "ltr"}
+      suppressHydrationWarning
+      className="dark"
+    >
+      <body className={`${workSans.variable} ${cairo.variable} ${locale === "ar" ? "font-cairo" : ""} bg-[#0d0d0f]`}>
+        <Providers locale={locale} messages={messages}>
           {children}
           <Toaster />
         </Providers>

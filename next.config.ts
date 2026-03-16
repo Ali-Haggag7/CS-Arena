@@ -1,5 +1,8 @@
 import { withSentryConfig } from "@sentry/nextjs";
+import createNextIntlPlugin from "next-intl/plugin";
 import type { NextConfig } from "next";
+
+const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   typescript: {
@@ -17,13 +20,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, {
-  org: "cs-arena",
-  project: "cs-arena",
-  silent: !process.env.CI,
-  widenClientFileUpload: true,
-  reactComponentAnnotation: { enabled: true },
-  sourcemaps: { disable: false },
-  disableLogger: true,
-  automaticVercelMonitors: true,
-});
+export default withNextIntl(
+  withSentryConfig(nextConfig, {
+    org: "cs-arena",
+    project: "cs-arena",
+    silent: !process.env.CI,
+    widenClientFileUpload: true,
+    reactComponentAnnotation: { enabled: true },
+    sourcemaps: { disable: false },
+    disableLogger: true,
+    automaticVercelMonitors: true,
+  })
+);

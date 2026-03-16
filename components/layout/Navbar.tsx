@@ -4,9 +4,14 @@ import { Github } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/avatar";
 import ThemeToggle from "@/components/shared/ThemeToggle";
 import MobileMenu from "@/components/shared/MobileMenu";
+import LanguageToggle from "@/components/shared/LanguageToggle";
+import { getLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 const Navbar = async () => {
   const session = await auth();
+  const locale = await getLocale();
+  const t = await getTranslations("nav");
 
   return (
     <header className="sticky top-0 z-30 bg-white/90 dark:bg-[#0d0d0f]/90 backdrop-blur-xl border-b border-black/5 dark:border-white/[0.06] font-work-sans">
@@ -22,6 +27,7 @@ const Navbar = async () => {
 
         {/* Desktop Actions */}
         <div className="hidden sm:flex items-center gap-3">
+          <LanguageToggle currentLocale={locale} />
           <ThemeToggle />
 
           {session?.user ? (
@@ -30,7 +36,7 @@ const Navbar = async () => {
                 href="/project/create"
                 className="flex items-center gap-1.5 text-[13px] font-semibold bg-primary text-white px-4 py-2 rounded-full hover:bg-primary-600 hover:shadow-glow hover:-translate-y-0.5 transition-all duration-300"
               >
-                Create Project
+                {t("create")}
               </Link>
 
               <form action={async () => { "use server"; await signOut({ redirectTo: "/" }); }}>
@@ -38,7 +44,7 @@ const Navbar = async () => {
                   type="submit"
                   className="text-[13px] font-medium text-black/50 dark:text-white/40 hover:text-red-500 dark:hover:text-red-400 transition-colors px-2"
                 >
-                  Logout
+                  {t("logout")}
                 </button>
               </form>
 
@@ -58,14 +64,15 @@ const Navbar = async () => {
                 className="flex items-center gap-2 bg-gray-900 dark:bg-white/10 border border-gray-800 dark:border-white/10 text-white px-4 py-2 rounded-full text-[13px] font-semibold hover:bg-primary hover:border-primary transition-all duration-300"
               >
                 <Github className="size-4" />
-                Login with GitHub
+                {t("login")}
               </button>
             </form>
           )}
         </div>
 
-        {/* Mobile: Theme + Hamburger */}
+        {/* Mobile */}
         <div className="flex sm:hidden items-center gap-2">
+          <LanguageToggle currentLocale={locale} />
           <ThemeToggle />
           <MobileMenu session={session} />
         </div>

@@ -3,6 +3,7 @@ import { PROJECTS_QUERY } from "@/sanity/lib/queries";
 import { sanityFetch, SanityLive } from "@/sanity/lib/live";
 import HeroSection from "@/components/shared/HeroSection";
 import ProjectsGrid from "@/components/shared/ProjectsGrid";
+import { getLocale, getTranslations } from "next-intl/server";
 
 export default async function Home({
   searchParams,
@@ -12,22 +13,24 @@ export default async function Home({
   const { query, tech } = await searchParams;
   const params = { search: query || null, tech: tech || null };
   const { data: posts } = await sanityFetch({ query: PROJECTS_QUERY, params });
+  const locale = await getLocale();
+  const t = await getTranslations("home");
 
   return (
     <>
-      <HeroSection query={query} />
+      <HeroSection query={query} locale={locale} />
 
       <section className="section_container">
         <div className="flex items-center justify-between mb-7">
           <p className="text-[22px] font-bold text-black dark:text-white">
             {query
-              ? `Results for "${query}"`
+              ? `${t("results")} "${query}"`
               : tech
-                ? `Projects in ${tech}`
-                : "Explore Top Projects"}
+                ? `${t("projects_in")} ${tech}`
+                : t("explore")}
           </p>
           <p className="text-[14px] font-medium text-black/30 dark:text-white/30">
-            {posts?.length ?? 0} projects
+            {posts?.length ?? 0} {t("projects_count")}
           </p>
         </div>
 

@@ -4,16 +4,21 @@ import { motion } from "framer-motion";
 import SearchForm from "@/components/shared/SearchForm";
 import TechFilters from "@/components/shared/TechFilters";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
-const TYPEWRITER_WORDS = ["Code", "Projects", "Ideas", "Skills"];
+const TYPEWRITER_WORDS_EN = ["Code", "Projects", "Ideas", "Skills"];
+const TYPEWRITER_WORDS_AR = ["كودك", "مشاريعك", "أفكارك", "مهاراتك"];
 
-const HeroSection = ({ query }: { query?: string }) => {
+const HeroSection = ({ query, locale }: { query?: string; locale: string }) => {
+    const t = useTranslations("hero");
+    const words = locale === "ar" ? TYPEWRITER_WORDS_AR : TYPEWRITER_WORDS_EN;
+
     const [wordIndex, setWordIndex] = useState(0);
     const [displayed, setDisplayed] = useState("");
     const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
-        const current = TYPEWRITER_WORDS[wordIndex];
+        const current = words[wordIndex];
         let timeout: NodeJS.Timeout;
 
         if (!deleting && displayed.length < current.length) {
@@ -24,21 +29,18 @@ const HeroSection = ({ query }: { query?: string }) => {
             timeout = setTimeout(() => setDisplayed(current.slice(0, displayed.length - 1)), 45);
         } else if (deleting && displayed.length === 0) {
             setDeleting(false);
-            setWordIndex((prev) => (prev + 1) % TYPEWRITER_WORDS.length);
+            setWordIndex((prev) => (prev + 1) % words.length);
         }
 
         return () => clearTimeout(timeout);
-    }, [displayed, deleting, wordIndex]);
+    }, [displayed, deleting, wordIndex, words]);
 
     return (
-        <section className="relative overflow-hidden min-h-[580px] flex flex-col items-center justify-center py-16 px-6 bg-gray-900 dark:bg-[#0d0d0f]">
+        <section className="relative overflow-hidden min-h-[100svh] sm:min-h-[580px] flex flex-col items-center justify-center py-12 sm:py-16 px-4 sm:px-6 bg-gray-900 dark:bg-[#0d0d0f]">
 
-            {/* Grid background */}
-            <div className="absolute inset-0 grid-bg opacity-100" aria-hidden="true" />
-
-            {/* Blue glow */}
+            <div className="absolute inset-0 grid-bg" aria-hidden="true" />
             <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full opacity-20 blur-[100px] pointer-events-none"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[200px] sm:w-[600px] sm:h-[300px] rounded-full opacity-15 sm:opacity-20 blur-[80px] sm:blur-[100px] pointer-events-none"
                 style={{ background: "radial-gradient(ellipse, #3b82f6 0%, transparent 70%)" }}
                 aria-hidden="true"
             />
@@ -48,44 +50,43 @@ const HeroSection = ({ query }: { query?: string }) => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="relative z-10 mb-6"
+                className="relative z-10 mb-5 sm:mb-6"
             >
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-primary/10 text-primary border border-primary/20">
-                    <span className="size-1.5 rounded-full bg-primary animate-pulse" />
-                    CS Arena — Open for submissions
+                <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full text-[12px] sm:text-sm font-medium bg-primary/10 text-primary border border-primary/20">
+                    <span className="size-1.5 rounded-full bg-primary animate-pulse shrink-0" />
+                    {t("badge")}
                 </span>
             </motion.div>
 
             {/* Heading */}
             <motion.h1
-                className="relative z-10 font-work-sans font-extrabold text-white text-center text-4xl sm:text-5xl md:text-6xl leading-tight max-w-4xl"
+                className="relative z-10 font-work-sans font-extrabold text-white text-center text-[32px] leading-[40px] xs:text-[40px] xs:leading-[50px] sm:text-[58px] sm:leading-[68px] max-w-4xl my-3"
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
             >
-                Showcase Your{" "}
-                <span className="text-primary relative">
+                {t("title1")}{" "}
+                <span className="text-primary">
                     {displayed}
                     <span className="animate-pulse text-primary/70">|</span>
                 </span>
                 <br />
-                <span className="text-white/80">Dominate The Arena</span>
+                <span className="text-white/80">{t("title2")}</span>
             </motion.h1>
 
             {/* Subheading */}
             <motion.p
-                className="relative z-10 text-[17px] font-medium text-white/50 max-w-xl text-center mt-2 leading-relaxed"
+                className="relative z-10 text-[14px] sm:text-[17px] font-medium text-white/50 max-w-sm sm:max-w-xl text-center mt-2 leading-relaxed px-2"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
             >
-                Submit your CS graduation projects, find open-source contributors,
-                and get headhunted by top tech recruiters.
+                {t("subtitle")}
             </motion.p>
 
             {/* Search */}
             <motion.div
-                className="w-full relative z-10 max-w-2xl"
+                className="w-full relative z-10 max-w-2xl mt-2"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.25, ease: "easeOut" }}
@@ -102,6 +103,22 @@ const HeroSection = ({ query }: { query?: string }) => {
             >
                 <TechFilters />
             </motion.div>
+
+            {/* Scroll hint */}
+            <motion.div
+                className="absolute bottom-6 left-1/2 -translate-x-1/2 sm:hidden z-10"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1, duration: 0.5 }}
+            >
+                <div className="flex flex-col items-center gap-1">
+                    <div className="w-px h-8 bg-gradient-to-b from-white/20 to-transparent" />
+                    <span className="text-[10px] text-white/20 uppercase tracking-widest">
+                        {locale === "ar" ? "مرر" : "Scroll"}
+                    </span>
+                </div>
+            </motion.div>
+
         </section>
     );
 };

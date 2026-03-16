@@ -1,0 +1,25 @@
+{
+    "nav": {
+        "create": "Create Project",
+        "logout": "Logout",
+        "login": "Login with GitHub"
+    },
+    "hero": {
+        "badge": "CS Arena — Open for submissions",
+        "title1": "Showcase Your",
+        "title2": "Dominate The Arena",
+        "subtitle": "Submit your CS graduation projects, find open-source contributors, and get headhunted by top tech recruiters."
+    },
+    "home": {
+        "explore": "Explore Top Projects",
+        "results": "Results for",
+        "projects_in": "Projects in",
+        "projects_count": "projects",
+        "no_projects": "No projects here yet",
+        "no_projects_sub": "Be the first to showcase your CS project to the world.",
+        "submit": "Submit Your Project"
+    },
+    "search": {
+        "placeholder": "Search projects, tech stacks..."
+    }
+}
