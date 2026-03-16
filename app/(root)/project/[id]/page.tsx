@@ -13,6 +13,7 @@ import UpvoteButton from "@/components/project/UpvoteButton";
 import GithubStats from "@/components/shared/GithubStats";
 import JoinTeamButton from "@/components/shared/JoinTeamButton";
 import ProjectCard, { ProjectTypeCard } from "@/components/project/ProjectCard";
+import { Calendar, Layers, Sparkles, Activity } from "lucide-react";
 
 const md = markdownit({ html: false, linkify: true, typographer: true });
 
@@ -27,7 +28,7 @@ export async function generateMetadata({
     .fetch(PROJECT_BY_ID_QUERY, { id });
   if (!post) return {};
   return {
-    title: post.title,
+    title: `${post.title} | CS-Arena`,
     description: post.description,
     openGraph: {
       title: post.title,
@@ -54,150 +55,172 @@ const ProjectDetails = async ({
   const parsedContent = md.render(post.pitch || "");
 
   return (
-    <>
-      {/* Hero */}
-      <section className="relative overflow-hidden min-h-[280px] flex flex-col items-center justify-center py-12 sm:py-16 px-4 sm:px-6 bg-gray-900 dark:bg-[#0d0d0f]">
-        <div className="absolute inset-0 grid-bg" aria-hidden="true" />
+    <main className="min-h-screen bg-slate-50 dark:bg-[#0d0d0f] font-work-sans pb-24 transition-colors duration-300">
+
+      {/* ─── Hero Section (Now fully supports Light/Dark mode) ─── */}
+      <section className="relative overflow-hidden pt-32 pb-48 px-4 sm:px-6 bg-white dark:bg-[#0a0a0c] border-b border-slate-200 dark:border-white/5 transition-colors duration-300">
+        <div className="absolute inset-0 grid-bg opacity-20 dark:opacity-30" aria-hidden="true" />
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[500px] h-[200px] rounded-full opacity-10 blur-[80px] pointer-events-none"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-30 dark:opacity-20 blur-[100px] pointer-events-none"
           style={{ background: "radial-gradient(ellipse, #3b82f6 0%, transparent 70%)" }}
           aria-hidden="true"
         />
-        <div className="relative z-10 flex flex-col items-center gap-3 text-center">
-          <span className="tag">{formatDate(post._createdAt)}</span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white max-w-4xl leading-tight">
+
+        <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto">
+          {/* Date Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 text-xs font-semibold mb-6 shadow-sm dark:shadow-none backdrop-blur-sm">
+            <Calendar className="size-3.5 text-primary" />
+            <span>Published {formatDate(post._createdAt)}</span>
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-black dark:text-white leading-tight tracking-tight mb-6">
             {post.title}
           </h1>
-          <p className="text-[15px] sm:text-[17px] text-white/50 max-w-2xl px-2">
+
+          <p className="text-base sm:text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
             {post.description}
           </p>
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="section_container bg-gray-50 dark:bg-[#0d0d0f]">
+      {/* ─── Main Content Container (Negative Margin to overlap Hero) ─── */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 sm:-mt-32 relative z-20">
 
         {/* Project Image */}
         {post.image && (
-          <div className="relative w-full h-[220px] sm:h-[380px] rounded-2xl overflow-hidden mb-8 border border-black/5 dark:border-white/[0.06]">
+          <div className="relative w-full h-[250px] sm:h-[400px] md:h-[500px] rounded-[2rem] overflow-hidden shadow-2xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-[#111115] mb-8 group">
             <Image
               src={post.image}
               alt={post.title ?? "Project thumbnail"}
               fill
-              className="object-cover"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
               priority
               sizes="(max-width: 768px) 100vw, 1200px"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 dark:from-[#0d0d0f]/60 to-transparent" />
+            {/* Subtle inner gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 dark:from-black/60 to-transparent pointer-events-none" />
           </div>
         )}
 
-        <div className="space-y-8 max-w-4xl mx-auto">
+        {/* ─── Fixed Author & Actions Bar ─── */}
+        <div className="bg-white dark:bg-[#111115] rounded-[1.5rem] p-5 sm:p-6 border border-slate-200 dark:border-white/10 shadow-sm mb-10">
 
-          {/* Author + Join Team */}
-          <div className="glass-card p-4 sm:p-6 rounded-2xl">
-            <div className="flex justify-between items-center gap-4 flex-wrap">
-              <Link
-                href={`/user/${post.author?._id}`}
-                className="flex gap-3 sm:gap-4 items-center group"
-                aria-label={`View ${post.author?.name}'s profile`}
-              >
-                <Image
-                  src={post.author?.image || "https://placehold.co/48x48"}
-                  alt={post.author?.name ?? "Author"}
-                  width={48} height={48}
-                  className="rounded-full ring-1 ring-black/10 dark:ring-white/10 group-hover:ring-primary/40 transition-all duration-300 shrink-0"
-                />
-                <div>
-                  <p className="text-[16px] font-semibold text-black dark:text-white group-hover:text-primary transition-colors duration-200">
-                    {post.author?.name}
-                  </p>
-                  <p className="text-[13px] text-black/40 dark:text-white/30">
-                    @{post.author?.username}
-                  </p>
-                </div>
-              </Link>
+          {/* Top Row: Author & Join Team Button */}
+          <div className="flex justify-between items-center gap-4 flex-wrap">
+            <Link
+              href={`/user/${post.author?._id}`}
+              className="flex gap-3 sm:gap-4 items-center group"
+              aria-label={`View ${post.author?.name}'s profile`}
+            >
+              <Image
+                src={post.author?.image || "https://placehold.co/48x48"}
+                alt={post.author?.name ?? "Author"}
+                width={48} height={48}
+                className="rounded-full ring-2 ring-slate-100 dark:ring-white/5 group-hover:ring-primary/40 transition-all duration-300 shrink-0 object-cover"
+              />
+              <div>
+                <p className="text-base font-bold text-black dark:text-white group-hover:text-primary transition-colors duration-200">
+                  {post.author?.name}
+                </p>
+                <p className="text-sm text-slate-500 dark:text-white/40 font-medium mt-0.5">
+                  @{post.author?.username}
+                </p>
+              </div>
+            </Link>
 
-              {post.isLookingForContributors && (
-                <JoinTeamButton
-                  projectName={post.title}
-                  ownerEmail={post.author?.email ?? ""}
-                />
-              )}
-            </div>
-
-            {post.githubLink && (
-              <Suspense fallback={<Skeleton className="h-20 w-full mt-5 rounded-xl bg-black/5 dark:bg-white/5" />}>
-                <GithubStats githubLink={post.githubLink} />
-              </Suspense>
+            {post.isLookingForContributors && (
+              <JoinTeamButton
+                projectName={post.title}
+                ownerEmail={post.author?.email ?? ""}
+              />
             )}
           </div>
 
-          {/* Tech Stack */}
-          {post.techStack && post.techStack.length > 0 && (
-            <div>
-              <h3 className="text-[18px] sm:text-[20px] font-bold text-black dark:text-white mb-4">
-                Tech Stack
-              </h3>
-              <div className="flex gap-2 flex-wrap">
-                {post.techStack.map((tech: string) => (
-                  <Link
-                    key={tech}
-                    href={`/?tech=${tech.toLowerCase()}`}
-                    className="px-3 sm:px-4 py-1.5 sm:py-2 bg-primary/10 text-primary rounded-full text-[13px] sm:text-[14px] font-medium border border-primary/20 hover:bg-primary hover:text-white transition-all duration-200"
-                  >
-                    {tech}
-                  </Link>
-                ))}
+          {/* Bottom Row: Github Stats (Fixed double border issue) */}
+          {post.githubLink && (
+            <Suspense fallback={<Skeleton className="h-20 w-full mt-5 rounded-xl bg-slate-100 dark:bg-white/5" />}>
+              <div className="w-full mt-3"> {/* Removed border-t classes from here */}
+                <GithubStats githubLink={post.githubLink} />
               </div>
+            </Suspense>
+          )}
+        </div>
+
+        {/* ─── Tech Stack ─── */}
+        {post.techStack && post.techStack.length > 0 && (
+          <div className="mb-12">
+            <h3 className="flex items-center gap-2 text-lg font-bold text-black dark:text-white mb-4">
+              <Layers className="size-5 text-primary" />
+              Technologies Used
+            </h3>
+            <div className="flex gap-2.5 flex-wrap">
+              {post.techStack.map((tech: string) => (
+                <Link
+                  key={tech}
+                  href={`/?tech=${tech.toLowerCase()}`}
+                  className="px-4 py-2 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-white/70 rounded-lg text-sm font-semibold border border-slate-200 dark:border-white/5 hover:bg-primary hover:text-white hover:border-primary transition-all duration-300"
+                >
+                  {tech}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ─── Markdown Content (Project Pitch) ─── */}
+        <div className="bg-white dark:bg-[#111115] rounded-[2rem] p-6 sm:p-10 border border-slate-200 dark:border-white/10 shadow-sm mb-8">
+          <h3 className="flex items-center gap-2 text-xl font-bold text-black dark:text-white mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
+            <Sparkles className="size-5 text-primary" />
+            Project Architecture
+          </h3>
+
+          {parsedContent ? (
+            <article
+              className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-h2:text-2xl prose-a:text-primary hover:prose-a:text-blue-500 prose-img:rounded-2xl prose-img:border prose-img:border-slate-100 dark:prose-img:border-white/10 prose-code:text-primary dark:prose-code:text-blue-300 prose-code:bg-primary/5 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none leading-relaxed break-words"
+              dangerouslySetInnerHTML={{ __html: parsedContent }}
+            />
+          ) : (
+            <div className="text-center py-10">
+              <p className="text-slate-500 dark:text-white/40 text-sm">
+                No detailed architecture or pitch provided for this project.
+              </p>
             </div>
           )}
+        </div>
 
-          <hr className="border-black/5 dark:border-white/[0.06]" />
-
-          {/* Pitch */}
-          <div>
-            <h3 className="text-[18px] sm:text-[20px] font-bold text-black dark:text-white mb-5">
-              Project Details
-            </h3>
-            {parsedContent ? (
-              <article
-                className="prose dark:prose-invert max-w-4xl font-work-sans break-words"
-                dangerouslySetInnerHTML={{ __html: parsedContent }}
-              />
-            ) : (
-              <p className="text-black/30 dark:text-white/30 text-sm">
-                No details provided.
-              </p>
-            )}
+        {/* ─── Engagement Bar (Upvotes & Views) ─── */}
+        <div className="bg-white dark:bg-[#111115] rounded-2xl p-6 border border-slate-200 dark:border-white/10 shadow-sm flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <Activity className="size-5 text-slate-400 dark:text-white/30 hidden sm:block" />
+            <span className="text-sm font-semibold text-slate-500 dark:text-white/50">
+              Project Engagement
+            </span>
           </div>
-
-          <hr className="border-black/5 dark:border-white/[0.06]" />
-
-          {/* Upvotes + Views */}
-          <div className="flex justify-between items-center py-2">
-            <UpvoteButton projectId={post._id} initialUpvotes={post.upvotes ?? 0} />
-            <Suspense fallback={<Skeleton className="h-8 w-24 rounded-lg bg-black/5 dark:bg-white/5" />}>
+          <div className="flex items-center gap-6">
+            <Suspense fallback={<Skeleton className="h-8 w-16 rounded-lg bg-slate-100 dark:bg-white/5" />}>
               <View id={id} />
             </Suspense>
+            <div className="w-px h-6 bg-slate-200 dark:bg-white/10" />
+            <UpvoteButton projectId={post._id} initialUpvotes={post.upvotes ?? 0} />
           </div>
         </div>
-      </section>
 
-      {/* Related Projects */}
+      </div>
+
+      {/* ─── Related Projects Section ─── */}
       {relatedProjects?.length > 0 && (
-        <section className="section_container bg-gray-50 dark:bg-[#0d0d0f] mt-4 pb-24">
-          <h3 className="text-[20px] sm:text-[22px] font-bold text-black dark:text-white mb-7">
-            Related Projects
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 mb-10">
+          <h3 className="text-2xl font-bold text-black dark:text-white mb-8">
+            Explore Similar Projects
           </h3>
-          <ul className="card_grid">
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {relatedProjects.map((project: ProjectTypeCard) => (
               <ProjectCard key={project._id} post={project} />
             ))}
           </ul>
         </section>
       )}
-    </>
+    </main>
   );
 };
 

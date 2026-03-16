@@ -52,7 +52,7 @@ export default async function RootLayout({
       suppressHydrationWarning
       className="dark"
     >
-      <body className={`${workSans.variable} ${cairo.variable} ${locale === "ar" ? "font-cairo" : ""} bg-[#0d0d0f]`}>
+      <body className={`${workSans.variable} ${cairo.variable} ${locale === "ar" ? "font-cairo" : ""} bg-gray-50 dark:bg-[#0d0d0f]`}>
         <Providers locale={locale} messages={messages}>
           {children}
           <Toaster />

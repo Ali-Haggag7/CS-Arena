@@ -80,7 +80,13 @@ export const PROJECTS_BY_AUTHOR_QUERY = defineQuery(`
 `);
 
 export const PROJECTS_LOOKING_FOR_TEAM_QUERY = defineQuery(`
-  *[_type == "project" && isLookingForContributors == true] | order(_createdAt desc) {
+  *[
+    _type == "project" &&
+    defined(slug.current) &&
+    isLookingForContributors == true &&
+    (!defined($search) || title match $search + "*" || author->name match $search + "*" || $search in techStack) &&
+    (!defined($tech) || $tech in techStack)
+  ] | order(_createdAt desc) {
     ${PROJECT_FIELDS}
   }
 `);
@@ -120,5 +126,20 @@ export const PROJECTS_STATS_QUERY = defineQuery(`
     "total": count(*[_type == "project"]),
     "contributors": count(*[_type == "project" && isLookingForContributors == true]),
     "developers": count(*[_type == "author"])
+  }
+`);
+
+// Changelog query
+export const CHANGELOG_QUERY = defineQuery(`
+  *[_type == "changelog"] | order(publishedAt desc) {
+    _id,
+    version,
+    title,
+    summary,
+    publishedAt,
+    changes[] {
+      type,
+      description
+    }
   }
 `);

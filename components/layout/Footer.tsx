@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, Linkedin, Twitter } from "lucide-react";
+import { Github, Linkedin, Twitter, ArrowRight, Heart } from "lucide-react";
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
@@ -11,8 +11,8 @@ const Footer = () => {
     ];
 
     const resourceLinks = [
-        { href: "/coming-soon", label: "Blog" },
-        { href: "/coming-soon", label: "Documentation" },
+        { href: "/blog", label: "Blog" },
+        { href: "/docs", label: "Documentation" },
         { href: "/open-source", label: "Open Source" },
     ];
 
@@ -30,8 +30,12 @@ const Footer = () => {
     ];
 
     return (
-        <footer className="bg-[#080809] text-white pt-16 pb-8 border-t border-white/[0.06] mt-20 font-work-sans">
-            <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <footer className="relative bg-white dark:bg-[#0a0a0c] pt-16 pb-8 border-t border-slate-200 dark:border-white/[0.06] mt-20 font-work-sans transition-colors duration-300 overflow-hidden">
+
+            {/* Top Premium Glow Line */}
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/50 dark:via-primary/30 to-transparent" />
+
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
 
                 {/* Top Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-16">
@@ -39,19 +43,19 @@ const Footer = () => {
                     {/* Brand */}
                     <div className="lg:col-span-2">
                         <Link href="/" className="flex items-center gap-2 mb-6 w-fit group" aria-label="CS Arena Home">
-                            <div className="size-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                            <div className="size-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all duration-300">
                                 <span className="text-primary font-black text-sm">CS</span>
                             </div>
-                            <span className="text-[18px] font-black text-white tracking-tight">Arena</span>
+                            <span className="text-[18px] font-black text-black dark:text-white tracking-tight">Arena</span>
                         </Link>
 
-                        <p className="text-[14px] text-white/30 max-w-sm leading-relaxed mb-6">
+                        <p className="text-[14px] text-slate-500 dark:text-white/40 max-w-sm leading-relaxed mb-6">
                             The ultimate platform for Computer Science students to showcase
                             their code, find open-source contributors, and get headhunted by
                             top tech recruiters.
                         </p>
 
-                        <ul className="flex gap-2" aria-label="Social media links">
+                        <ul className="flex gap-3" aria-label="Social media links">
                             {socialLinks.map(({ href, label, icon: Icon }) => (
                                 <li key={label}>
                                     <Link
@@ -59,9 +63,9 @@ const Footer = () => {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         aria-label={label}
-                                        className="size-9 bg-white/5 border border-white/[0.06] rounded-full flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 hover:-translate-y-0.5 transition-all duration-300"
+                                        className="size-9 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/[0.06] rounded-full flex items-center justify-center hover:bg-black hover:text-white dark:hover:bg-primary/10 dark:hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 group/social"
                                     >
-                                        <Icon className="size-4 text-white/30 hover:text-primary transition-colors" />
+                                        <Icon className="size-4 text-slate-500 dark:text-white/40 group-hover/social:text-white dark:group-hover/social:text-primary transition-colors" />
                                     </Link>
                                 </li>
                             ))}
@@ -74,14 +78,15 @@ const Footer = () => {
                 </div>
 
                 {/* Divider */}
-                <div className="w-full h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent mb-8" />
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-white/[0.06] to-transparent mb-8" />
 
-                {/* Bottom */}
-                <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[13px] text-white/20">
+                {/* Bottom Bar */}
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[13px] text-slate-500 dark:text-white/40">
                     <p>© {currentYear} CS-Arena. All rights reserved.</p>
-                    <div className="flex items-center gap-1.5">
-                        <span>Built with passion in Egypt</span>
-                        <span className="text-primary animate-pulse" role="img" aria-label="love">❤️</span>
+                    <div className="flex items-center gap-1.5 font-medium">
+                        <span>Built with passion in</span>
+                        <span className="text-black dark:text-white font-bold ml-0.5">Egypt</span>
+                        <Heart className="size-4 text-red-500 fill-red-500 animate-pulse ml-0.5" />
                     </div>
                 </div>
 
@@ -99,9 +104,9 @@ const FooterColumn = ({
 }) => (
     <div>
         {/* Title and accent line */}
-        <div className="flex items-center gap-2 mb-5">
+        <div className="flex items-center gap-2 mb-6">
             <div className="w-1 h-4 bg-primary rounded-full" />
-            <h3 className="text-[12px] font-bold text-white uppercase tracking-widest">
+            <h3 className="text-[13px] font-bold text-black dark:text-white uppercase tracking-widest">
                 {title}
             </h3>
         </div>
@@ -110,10 +115,11 @@ const FooterColumn = ({
                 <li key={label}>
                     <Link
                         href={href}
-                        className="text-[14px] text-white/30 hover:text-primary transition-colors duration-200 flex items-center gap-1.5 group"
+                        className="text-[14px] text-slate-500 dark:text-white/40 hover:text-primary dark:hover:text-primary transition-all duration-300 flex items-center gap-2 group"
                     >
-                        <span className="w-0 group-hover:w-2 h-px bg-primary transition-all duration-200 overflow-hidden" />
-                        {label}
+                        {/* Hover Arrow Effect */}
+                        <ArrowRight className="size-3 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
+                        <span>{label}</span>
                     </Link>
                 </li>
             ))}
