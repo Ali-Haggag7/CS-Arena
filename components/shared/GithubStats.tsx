@@ -115,7 +115,7 @@ const GithubStats = async ({ githubLink }: { githubLink: string }) => {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`View ${repo} on GitHub`}
-                        className="flex items-center justify-center gap-2 bg-gray-900 dark:bg-white/10 text-white py-2.5 px-5 rounded-full hover:bg-primary transition-all duration-300 text-[13px] font-semibold hover:-translate-y-0.5 w-full sm:w-auto"
+                        className="flex items-center justify-center gap-2 bg-gray-900 dark:bg-white/10 dark:hover:bg-primary text-white py-2.5 px-5 rounded-full hover:bg-primary transition-all duration-300 text-[13px] font-semibold hover:-translate-y-0.5 w-full sm:w-auto"
                     >
                         <Github className="size-4" aria-hidden="true" />
                         <span>View on GitHub</span>

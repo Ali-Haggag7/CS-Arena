@@ -59,7 +59,7 @@ const JoinTeamButton = ({
                 disabled={isSending || !session}
                 aria-label={`Request to join the team for ${projectName}`}
                 aria-busy={isSending ? "true" : "false"}
-                className="flex items-center gap-2 text-[13px] font-semibold bg-gray-900 dark:bg-white/10 hover:bg-primary text-white px-5 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"            >
+                className="flex items-center gap-2 text-[13px] font-semibold bg-gray-900 dark:bg-white/10 hover:bg-primary dark:hover:bg-primary text-white px-5 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"            >
                 {isSending ? (
                     <Loader2 className="size-5 animate-spin" aria-hidden="true" />
                 ) : (

@@ -158,7 +158,7 @@ const ProjectDetails = async ({
                 <Link
                   key={tech}
                   href={`/?tech=${tech.toLowerCase()}`}
-                  className="px-4 py-2 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-white/70 rounded-lg text-sm font-semibold border border-slate-200 dark:border-white/5 hover:bg-primary hover:text-white hover:border-primary transition-all duration-300"
+                  className="px-4 py-2 bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-white dark:hover:bg-primary rounded-lg text-sm font-semibold border border-slate-200 dark:border-white/5 hover:bg-primary hover:text-white hover:border-primary transition-all duration-300"
                 >
                   {tech}
                 </Link>
