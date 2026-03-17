@@ -1,0 +1,72 @@
+---
+title: Local Setup
+description: Set up CS-Arena locally for development and contribution.
+---
+
+# Local Setup
+
+This guide walks you through setting up CS-Arena for local development so you can start contributing.
+
+## Fork the Repository
+
+Start by forking the repo on GitHub, then clone your fork:
+```bash
+git clone https://github.com/YOUR_USERNAME/CS-Arena.git
+cd CS-Arena
+```
+
+## Install Dependencies
+```bash
+npm install
+```
+
+## Environment Variables
+
+You'll need accounts for the following services:
+
+| Service | Purpose | Free Tier |
+|---|---|---|
+| Sanity | CMS & database | ✅ Yes |
+| GitHub OAuth | Authentication | ✅ Yes |
+| Google OAuth | Authentication | ✅ Yes |
+| Sentry | Error tracking | ✅ Yes |
+
+Create your `.env.local`:
+```env
+NEXT_PUBLIC_SANITY_PROJECT_ID=
+NEXT_PUBLIC_SANITY_DATASET=production
+SANITY_API_TOKEN=
+
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=
+
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+```
+
+## Run the Dev Server
+```bash
+npm run dev
+```
+
+## Sanity Studio
+
+To access the CMS locally:
+```bash
+# Navigate to:
+http://localhost:3000/studio
+```
+
+## Branch Naming
+
+When working on a feature or fix, create a new branch:
+```bash
+# Feature
+git checkout -b feat/your-feature-name
+
+# Bug fix
+git checkout -b fix/your-bug-name
+```

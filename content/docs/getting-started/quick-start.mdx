@@ -1,0 +1,58 @@
+---
+title: Quick Start
+description: Get CS-Arena running on your machine in under 5 minutes.
+---
+
+# Quick Start
+
+Get up and running with CS-Arena locally in just a few steps.
+
+## Prerequisites
+
+Before you begin, make sure you have the following installed:
+
+| Tool | Version |
+|---|---|
+| `Node.js` | 18.0 or higher |
+| `npm` or `pnpm` | Latest |
+| `Git` | Any recent version |
+
+## 1. Clone the Repository
+```bash
+git clone https://github.com/Ali-Haggag7/CS-Arena.git
+cd CS-Arena
+```
+
+## 2. Install Dependencies
+```bash
+npm install
+```
+
+## 3. Set Up Environment Variables
+
+Create a `.env.local` file in the root directory:
+```bash
+cp .env.example .env.local
+```
+
+Then fill in the required values:
+```env
+# Sanity CMS
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
+NEXT_PUBLIC_SANITY_DATASET=production
+SANITY_API_TOKEN=your_token
+
+# Auth
+NEXTAUTH_SECRET=your_secret
+GITHUB_CLIENT_ID=your_github_id
+GITHUB_CLIENT_SECRET=your_github_secret
+GOOGLE_CLIENT_ID=your_google_id
+GOOGLE_CLIENT_SECRET=your_google_secret
+```
+
+## 4. Run the Development Server
+```bash
+npm run dev
+```
+
+> Open [http://localhost:3000](http://localhost:3000) in your browser. You should see CS-Arena running locally!
