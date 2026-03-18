@@ -13,16 +13,16 @@ const Footer = async () => {
     ];
 
     const resourceLinks = [
-        { href: "/blog", label: t("link_blog") },
-        { href: "/docs", label: t("link_docs") },
-        { href: "/open-source", label: t("link_opensource") },
+        { href: "/blog", prefetch: true, label: t("link_blog") },
+        { href: "/docs", prefetch: true, label: t("link_docs") },
+        { href: "/open-source", prefetch: true, label: t("link_opensource") },
     ];
 
     const legalLinks = [
-        { href: "/about", label: t("link_about") },
-        { href: "/privacy", label: t("link_privacy") },
-        { href: "/terms", label: t("link_terms") },
-        { href: "/cookies", label: t("link_cookies") },
+        { href: "/about", prefetch: true, label: t("link_about") },
+        { href: "/privacy", prefetch: true, label: t("link_privacy") },
+        { href: "/terms", prefetch: true, label: t("link_terms") },
+        { href: "/cookies", prefetch: true, label: t("link_cookies") },
     ];
 
     const socialLinks = [
@@ -95,7 +95,7 @@ const FooterColumn = ({
     links,
 }: {
     title: string;
-    links: { href: string; label: string }[];
+    links: { href: string; label: string; prefetch?: boolean }[];
 }) => (
     <div>
         <div className="flex items-center gap-2 mb-6">
@@ -105,10 +105,11 @@ const FooterColumn = ({
             </h3>
         </div>
         <ul className="flex flex-col gap-3">
-            {links.map(({ href, label }) => (
+            {links.map(({ href, label, prefetch }) => (
                 <li key={label}>
                     <Link
                         href={href}
+                        prefetch={prefetch}
                         className="text-[14px] text-slate-500 dark:text-white/40 hover:text-primary dark:hover:text-primary transition-all duration-300 flex items-center gap-2 group"
                     >
                         <ArrowRight className="size-3 opacity-0 rtl:rotate-180 -ms-5 group-hover:opacity-100 group-hover:ms-0 transition-all duration-300" />
