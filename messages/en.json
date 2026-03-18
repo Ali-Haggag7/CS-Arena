@@ -303,5 +303,11 @@
         "title_template": "%s | CS Arena",
         "description": "Pitch, Vote and Grow — A platform for CS developers",
         "keywords": "CS, developers, projects, open source, leaderboard"
+    },
+    "not_found": {
+        "title": "404",
+        "subtitle": "Page Not Found",
+        "description": "Sorry, the page you are looking for doesn't exist or has been moved.",
+        "back_home": "Back to Home"
     }
 }
