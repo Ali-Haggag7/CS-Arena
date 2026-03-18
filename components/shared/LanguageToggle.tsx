@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 const LanguageToggle = ({ currentLocale }: { currentLocale: string }) => {
     const [isPending, startTransition] = useTransition();
@@ -31,7 +32,13 @@ const LanguageToggle = ({ currentLocale }: { currentLocale: string }) => {
         text-black/60 dark:text-white/60 disabled:opacity-50"
             aria-label="Toggle language"
         >
-            {currentLocale === "en" ? "ع" : "EN"}
+            {isPending ? (
+                <Loader2 className="size-4 animate-spin text-primary" />
+            ) : currentLocale === "en" ? (
+                "ع"
+            ) : (
+                "EN"
+            )}
         </button>
     );
 };

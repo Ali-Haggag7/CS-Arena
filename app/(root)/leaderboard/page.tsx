@@ -161,6 +161,25 @@ const RankedProjects = async () => {
     );
 };
 
+// ─── Skeletons ────────────────────────────────────────────────────────────
+
+const LeaderboardSkeleton = () => (
+    <div className="flex flex-col gap-4 mt-10 relative z-10">
+        {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none relative overflow-hidden h-[88px]">
+                <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-slate-100 dark:via-white/5 to-transparent" />
+                <Skeleton className="size-10 rounded-full bg-slate-200 dark:bg-white/10 shrink-0" />
+                <Skeleton className="size-12 rounded-full bg-slate-200 dark:bg-white/10 shrink-0" />
+                <div className="flex-1 space-y-2">
+                    <Skeleton className="h-5 w-1/3 rounded-md bg-slate-200 dark:bg-white/10" />
+                    <Skeleton className="h-3 w-1/4 rounded-md bg-slate-200 dark:bg-white/10" />
+                </div>
+                <Skeleton className="h-8 w-16 rounded-md bg-slate-200 dark:bg-white/10 shrink-0" />
+            </div>
+        ))}
+    </div>
+);
+
 // ─── Main Page Component ──────────────────────────────────────────────────
 
 const LeaderboardPage = async () => {
@@ -195,23 +214,8 @@ const LeaderboardPage = async () => {
                     </p>
                 </div>
 
-                {/* Ranked List */}
-                <Suspense fallback={
-                    <div className="flex flex-col gap-4 mt-10 relative z-10">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                            <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-none relative overflow-hidden h-[88px]">
-                                <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-slate-100 dark:via-white/5 to-transparent" />
-                                <Skeleton className="size-10 rounded-full bg-slate-200 dark:bg-white/10 shrink-0" />
-                                <Skeleton className="size-12 rounded-full bg-slate-200 dark:bg-white/10 shrink-0" />
-                                <div className="flex-1 space-y-2">
-                                    <Skeleton className="h-5 w-1/3 rounded-md bg-slate-200 dark:bg-white/10" />
-                                    <Skeleton className="h-3 w-1/4 rounded-md bg-slate-200 dark:bg-white/10" />
-                                </div>
-                                <Skeleton className="h-8 w-16 rounded-md bg-slate-200 dark:bg-white/10 shrink-0" />
-                            </div>
-                        ))}
-                    </div>
-                }>
+                {/* Ranked List - Instant Loading with Suspense */}
+                <Suspense fallback={<LeaderboardSkeleton />}>
                     <RankedProjects />
                 </Suspense>
 

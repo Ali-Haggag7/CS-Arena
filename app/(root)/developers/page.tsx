@@ -111,10 +111,10 @@ const FindDevelopersPage = async ({
                     </p>
                 </div>
 
-                {/* Filters Section */}
-                <Suspense fallback={<Skeleton className="h-20 w-full rounded-2xl bg-white dark:bg-white/5 mb-8 border border-slate-200 dark:border-white/10" />}>
+                {/* Filters Section (No Suspense Needed) */}
+                <div className="mb-8 relative z-10">
                     <ProjectFilters />
-                </Suspense>
+                </div>
 
                 {/* Content Section */}
                 <Suspense

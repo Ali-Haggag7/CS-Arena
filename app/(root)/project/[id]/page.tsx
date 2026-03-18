@@ -39,13 +39,7 @@ export async function generateMetadata({
   };
 }
 
-const ProjectDetails = async ({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) => {
-  const { id } = await params;
-
+async function ProjectContent({ id }: { id: string }) {
   const [post, relatedProjects] = await Promise.all([
     client.withConfig({ useCdn: false }).fetch(PROJECT_BY_ID_QUERY, { id }),
     client.fetch(RELATED_PROJECTS_QUERY, { id, techStack: [] }),
@@ -54,15 +48,11 @@ const ProjectDetails = async ({
   if (!post) return notFound();
 
   const parsedContent = md.render(post.pitch || "");
-
-  // Fetch translations and locale
   const t = await getTranslations("project_details");
   const locale = await getLocale();
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-[#0d0d0f] font-work-sans pb-24 transition-colors duration-300">
-
-      {/* ─── Hero Section ─── */}
+    <>
       <section className="relative overflow-hidden pt-32 pb-48 px-4 sm:px-6 bg-white dark:bg-[#0a0a0c] border-b border-slate-200 dark:border-white/5 transition-colors duration-300">
         <div className="absolute inset-0 grid-bg opacity-20 dark:opacity-30" aria-hidden="true" />
         <div
@@ -72,7 +62,6 @@ const ProjectDetails = async ({
         />
 
         <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto">
-          {/* Date Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 text-xs font-semibold mb-6 shadow-sm dark:shadow-none backdrop-blur-sm">
             <Calendar className="size-3.5 text-primary" />
             <span>{t("published", { date: formatDate(post._createdAt, locale) })}</span>
@@ -88,10 +77,7 @@ const ProjectDetails = async ({
         </div>
       </section>
 
-      {/* ─── Main Content Container ─── */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 sm:-mt-32 relative z-20">
-
-        {/* Project Image */}
         {post.image && (
           <div className="relative w-full h-[250px] sm:h-[400px] md:h-[500px] rounded-[2rem] overflow-hidden shadow-2xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-[#111115] mb-8 group">
             <Image
@@ -106,9 +92,7 @@ const ProjectDetails = async ({
           </div>
         )}
 
-        {/* ─── Fixed Author & Actions Bar ─── */}
         <div className="bg-white dark:bg-[#111115] rounded-[1.5rem] p-5 sm:p-6 border border-slate-200 dark:border-white/10 shadow-sm mb-10">
-
           <div className="flex justify-between items-center gap-4 flex-wrap">
             <Link
               href={`/user/${post.author?._id}`}
@@ -148,7 +132,6 @@ const ProjectDetails = async ({
           )}
         </div>
 
-        {/* ─── Tech Stack ─── */}
         {post.techStack && post.techStack.length > 0 && (
           <div className="mb-12">
             <h3 className="flex items-center gap-2 text-lg font-bold text-black dark:text-white mb-4">
@@ -169,7 +152,6 @@ const ProjectDetails = async ({
           </div>
         )}
 
-        {/* ─── Markdown Content (Project Pitch) ─── */}
         <div className="bg-white dark:bg-[#111115] rounded-[2rem] p-6 sm:p-10 border border-slate-200 dark:border-white/10 shadow-sm mb-8">
           <h3 className="flex items-center gap-2 text-xl font-bold text-black dark:text-white mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
             <Sparkles className="size-5 text-primary" />
@@ -190,7 +172,6 @@ const ProjectDetails = async ({
           )}
         </div>
 
-        {/* ─── Engagement Bar (Upvotes & Views) ─── */}
         <div className="bg-white dark:bg-[#111115] rounded-2xl p-6 border border-slate-200 dark:border-white/10 shadow-sm flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Activity className="size-5 text-slate-400 dark:text-white/30 hidden sm:block" />
@@ -206,10 +187,8 @@ const ProjectDetails = async ({
             <UpvoteButton projectId={post._id} initialUpvotes={post.upvotes ?? 0} />
           </div>
         </div>
-
       </div>
 
-      {/* ─── Related Projects Section ─── */}
       {relatedProjects?.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 mb-10">
           <h3 className="text-2xl font-bold text-black dark:text-white mb-8">
@@ -222,8 +201,48 @@ const ProjectDetails = async ({
           </ul>
         </section>
       )}
+    </>
+  );
+}
+
+const ProjectDetailsSkeleton = () => (
+  <div className="w-full">
+    <section className="relative overflow-hidden pt-32 pb-48 px-4 sm:px-6 bg-white dark:bg-[#0a0a0c] border-b border-slate-200 dark:border-white/5">
+      <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto">
+        <Skeleton className="h-8 w-32 rounded-full mb-6" />
+        <Skeleton className="h-14 sm:h-16 md:h-20 w-3/4 mb-6 rounded-xl" />
+        <Skeleton className="h-6 w-1/2 mb-2 rounded-lg" />
+        <Skeleton className="h-6 w-2/3 rounded-lg" />
+      </div>
+    </section>
+
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 sm:-mt-32 relative z-20">
+      <Skeleton className="w-full h-[250px] sm:h-[400px] md:h-[500px] rounded-[2rem] mb-8" />
+      <Skeleton className="h-28 w-full rounded-[1.5rem] mb-10" />
+      <Skeleton className="h-10 w-48 mb-4 rounded-lg" />
+      <div className="flex gap-2.5 flex-wrap mb-12">
+        <Skeleton className="h-10 w-24 rounded-lg" />
+        <Skeleton className="h-10 w-20 rounded-lg" />
+        <Skeleton className="h-10 w-28 rounded-lg" />
+      </div>
+      <Skeleton className="h-64 w-full rounded-[2rem] mb-8" />
+      <Skeleton className="h-24 w-full rounded-2xl" />
+    </div>
+  </div>
+);
+
+export default async function ProjectPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  return (
+    <main className="min-h-screen bg-slate-50 dark:bg-[#0d0d0f] font-work-sans pb-24 transition-colors duration-300">
+      <Suspense fallback={<ProjectDetailsSkeleton />}>
+        <ProjectContent id={id} />
+      </Suspense>
     </main>
   );
-};
-
-export default ProjectDetails;
+}
