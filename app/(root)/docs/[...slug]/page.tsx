@@ -137,6 +137,7 @@ export default async function DocsPage({
                             {prev ? (
                                 <Link
                                     href={`/docs/${prev.slug}`}
+                                    prefetch={true}
                                     className="flex flex-col items-start p-4 rounded-xl border border-slate-200 dark:border-white/10 hover:border-primary/50 hover:bg-white dark:hover:bg-white/5 transition-all duration-200 group w-full sm:w-auto min-w-[180px]"
                                 >
                                     <span className="text-[11px] font-semibold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-1.5 flex items-center gap-1">
@@ -152,6 +153,7 @@ export default async function DocsPage({
                             {next ? (
                                 <Link
                                     href={`/docs/${next.slug}`}
+                                    prefetch={true}
                                     className="flex flex-col items-end p-4 rounded-xl border border-slate-200 dark:border-white/10 hover:border-primary/50 hover:bg-white dark:hover:bg-white/5 transition-all duration-200 group w-full sm:w-auto min-w-[180px] text-end"
                                 >
                                     <span className="text-[11px] font-semibold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-1.5 flex items-center gap-1">
