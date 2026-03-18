@@ -36,7 +36,7 @@ const HeroSection = ({ query, locale }: { query?: string; locale: string }) => {
     }, [displayed, deleting, wordIndex, words]);
 
     return (
-        <section className="relative overflow-hidden min-h-[100svh] sm:min-h-[580px] flex flex-col items-center justify-center py-12 sm:py-16 px-4 sm:px-6 bg-gray-900 dark:bg-[#0d0d0f]">
+        <section className="relative overflow-hidden min-h-[100svh] sm:min-h-[580px] flex flex-col items-center justify-center py-12 sm:py-16 px-4 sm:px-6 bg-gray-950 dark:bg-[#0d0d0f]">
 
             <div className="absolute inset-0 grid-bg" aria-hidden="true" />
             <div

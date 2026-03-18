@@ -12,16 +12,16 @@ const SearchForm = ({ query }: { query?: string }) => {
         <Form
             action="/"
             scroll={false}
-            className="search-form"
+            className="search-form !bg-[#111115] !border-white/10 shadow-xl"
             role="search"
             aria-label={t("aria_form")}
         >
-            <Search className="size-4 text-black/30 dark:text-white/30 shrink-0" aria-hidden="true" />
+            <Search className="size-4 text-white/40 shrink-0" aria-hidden="true" />
 
             <input
                 name="query"
                 defaultValue={query}
-                className="search-input"
+                className="search-input !text-white placeholder:!text-white/40"
                 placeholder={t("placeholder")}
                 autoComplete="off"
                 autoCorrect="off"
