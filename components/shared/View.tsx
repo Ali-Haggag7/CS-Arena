@@ -3,7 +3,7 @@ import { PROJECT_VIEWS_QUERY } from "@/sanity/lib/queries";
 import { writeClient } from "@/sanity/lib/write-client";
 import { after } from "next/server";
 import { Eye } from "lucide-react";
-import { cookies } from "next/headers";
+import { getTranslations } from "next-intl/server";
 
 const View = async ({ id }: { id: string }) => {
   const result = await client
@@ -13,23 +13,17 @@ const View = async ({ id }: { id: string }) => {
   if (!result) return null;
 
   const totalViews: number = result.views ?? 0;
-
-  // Check if already viewed in this session
-  const cookieStore = await cookies();
-  const viewedKey = `viewed_${id}`;
-  const alreadyViewed = cookieStore.get(viewedKey);
+  const t = await getTranslations("project_components");
 
   after(async () => {
-    if (!alreadyViewed) {
-      // Set cookie for 1 hour
-      const cookieStore = await cookies();
-      cookieStore.set(viewedKey, "true", { maxAge: 3600 });
-
+    try {
       await writeClient
         .patch(id)
         .setIfMissing({ views: 0 })
         .inc({ views: 1 })
         .commit();
+    } catch (error) {
+      console.error("Failed to increment views:", error);
     }
   });
 
@@ -40,7 +34,7 @@ const View = async ({ id }: { id: string }) => {
     >
       <Eye className="size-5" aria-hidden="true" />
       <span className="text-[18px] font-semibold">
-        {totalViews} {totalViews === 1 ? "View" : "Views"}
+        {totalViews} {totalViews === 1 ? t("view_singular") : t("view_plural")}
       </span>
     </div>
   );

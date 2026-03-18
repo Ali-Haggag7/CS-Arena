@@ -9,18 +9,20 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/avatar";
 import { signIn, signOut } from "next-auth/react";
-
-const NAV_LINKS = [
-    { href: "/projects", label: "Explore Projects", icon: LayoutGrid },
-    { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
-    { href: "/developers", label: "Find Developers", icon: Users },
-    { href: "/open-source", label: "Open Source", icon: Code2 },
-    { href: "/about", label: "About", icon: BookOpen },
-];
+import { useTranslations } from "next-intl";
 
 const MobileMenu = ({ session }: { session: any }) => {
     const [open, setOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
+    const t = useTranslations("nav");
+
+    const NAV_LINKS = [
+        { href: "/projects", label: t("link_explore"), icon: LayoutGrid },
+        { href: "/leaderboard", label: t("link_leaderboard"), icon: Trophy },
+        { href: "/developers", label: t("link_developers"), icon: Users },
+        { href: "/open-source", label: t("link_opensource"), icon: Code2 },
+        { href: "/about", label: t("link_about"), icon: BookOpen },
+    ];
 
     useEffect(() => {
         setMounted(true);
@@ -53,7 +55,7 @@ const MobileMenu = ({ session }: { session: any }) => {
 
             {/* Drawer */}
             <div
-                className={`fixed top-0 right-0 h-screen w-[280px] bg-white dark:bg-[#111114] border-l border-gray-200 dark:border-white/[0.06] shadow-2xl overflow-y-auto transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "translate-x-full"
+                className={`fixed top-0 rtl:left-0 ltr:right-0 h-screen w-[280px] bg-white dark:bg-[#111114] ltr:border-l rtl:border-r border-gray-200 dark:border-white/[0.06] shadow-2xl overflow-y-auto transition-transform duration-300 ease-in-out font-work-sans ${open ? "translate-x-0" : "ltr:translate-x-full rtl:-translate-x-full"
                     }`}
                 style={{ zIndex: 9999 }}
             >
@@ -126,7 +128,7 @@ const MobileMenu = ({ session }: { session: any }) => {
                                 className="w-full flex items-center justify-center gap-2 bg-primary text-white py-2.5 rounded-xl text-[14px] font-semibold hover:bg-primary-600 transition-all duration-300"
                             >
                                 <BadgePlus className="size-4" />
-                                Create Project
+                                {t("create")}
                             </Link>
                             <button
                                 type="button"
@@ -137,7 +139,7 @@ const MobileMenu = ({ session }: { session: any }) => {
                                 className="w-full flex items-center justify-center gap-2 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-red-500 py-2.5 rounded-xl text-[14px] font-semibold hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-300"
                             >
                                 <LogOut className="size-4" />
-                                Logout
+                                {t("logout")}
                             </button>
                         </>
                     ) : (
@@ -150,7 +152,7 @@ const MobileMenu = ({ session }: { session: any }) => {
                             className="w-full flex items-center justify-center gap-2 bg-gray-900 dark:bg-white/10 text-white py-2.5 rounded-xl text-[14px] font-semibold hover:bg-primary transition-all duration-300"
                         >
                             <Github className="size-4" />
-                            Login with GitHub
+                            {t("login")}
                         </button>
                     )}
                 </div>

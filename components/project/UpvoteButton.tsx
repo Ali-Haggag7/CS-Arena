@@ -4,6 +4,7 @@ import { useState, useEffect, useTransition } from "react";
 import { ThumbsUp } from "lucide-react";
 import { toggleUpvoteProject } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from "next-intl";
 
 const UpvoteButton = ({
     projectId,
@@ -20,6 +21,7 @@ const UpvoteButton = ({
 
     const [optimisticCount, setOptimisticCount] = useState(initialUpvotes);
     const { toast } = useToast();
+    const t = useTranslations("project_components");
 
     useEffect(() => {
         const voted = localStorage.getItem(`upvote_${projectId}`) === "true";
@@ -81,8 +83,8 @@ const UpvoteButton = ({
                 }
 
                 toast({
-                    title: "Action failed",
-                    description: "Your vote could not be saved. Please try again.",
+                    title: t("upvote_error_title"),
+                    description: t("upvote_error_desc"),
                     variant: "destructive",
                 });
             }
@@ -108,7 +110,7 @@ const UpvoteButton = ({
                     }`}
             />
             <span className="text-[18px] font-semibold">
-                {optimisticCount} {optimisticCount === 1 ? "Upvote" : "Upvotes"}
+                {optimisticCount} {optimisticCount === 1 ? t("upvote_singular") : t("upvote_plural")}
             </span>
         </button>
     );

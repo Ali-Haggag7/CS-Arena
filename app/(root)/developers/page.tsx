@@ -5,12 +5,16 @@ import ProjectCard, { ProjectTypeCard } from "@/components/project/ProjectCard";
 import ProjectFilters from "@/components/project/ProjectFilters";
 import { Skeleton } from "@/components/shadcn/skeleton";
 import { Users } from "lucide-react";
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-    title: "Find Developers | CS-Arena",
-    description: "Connect with projects looking for open-source contributors and team members.",
-};
+// ─── Dynamic Metadata for i18n ────────────────────────────────────────────
+export async function generateMetadata() {
+    const t = await getTranslations("find_developers");
+    return {
+        title: t("title"),
+        description: t("description"),
+    };
+}
 
 // ─── Data Fetching Component ──────────────────────────────────────────────
 
@@ -22,6 +26,8 @@ const TeamProjects = async ({
     const search = searchParams.search || null;
     const tech = searchParams.tech || null;
     const sort = searchParams.sort || "newest";
+
+    const t = await getTranslations("find_developers");
 
     let projects: ProjectTypeCard[] = await client.fetch(PROJECTS_LOOKING_FOR_TEAM_QUERY, {
         search,
@@ -41,9 +47,9 @@ const TeamProjects = async ({
                 <div className="w-16 h-16 md:w-20 md:h-20 bg-emerald-50 dark:bg-emerald-500/10 rounded-full flex items-center justify-center mb-4 md:mb-5">
                     <Users className="size-8 md:size-10 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-black dark:text-white mb-2">No open roles right now</h3>
+                <h3 className="text-xl md:text-2xl font-bold text-black dark:text-white mb-2">{t("empty_title")}</h3>
                 <p className="text-sm md:text-base text-slate-500 dark:text-white/40 max-w-sm">
-                    No projects matching your filters are looking for a team. Try adjusting your search!
+                    {t("empty_sub")}
                 </p>
             </div>
         );
@@ -66,6 +72,7 @@ const FindDevelopersPage = async ({
     searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
     const resolvedParams = await searchParams;
+    const t = await getTranslations("find_developers");
 
     return (
         <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0f] font-work-sans pb-24 relative selection:bg-emerald-500/30 transition-colors duration-300">
@@ -89,15 +96,18 @@ const FindDevelopersPage = async ({
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
                         </span>
-                        <span>Actively Hiring</span>
+                        <span>{t("badge")}</span>
                     </div>
 
                     <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold text-black dark:text-white tracking-tight leading-tight max-w-4xl mb-4 sm:mb-6">
-                        Find <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-400">Developers</span>
+                        {t("heading1")}{" "}
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-400">
+                            {t("heading2")}
+                        </span>
                     </h1>
 
                     <p className="text-sm sm:text-lg md:text-xl text-slate-600 dark:text-white/50 max-w-2xl mx-auto leading-relaxed px-2">
-                        These projects are actively looking for contributors. Find a tech stack you love and join the team!
+                        {t("subtitle")}
                     </p>
                 </div>
 

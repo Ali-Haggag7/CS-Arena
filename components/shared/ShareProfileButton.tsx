@@ -2,9 +2,11 @@
 
 import React, { useState } from "react";
 import { Share2, Check } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const ShareProfileButton = () => {
     const [copied, setCopied] = useState(false);
+    const t = useTranslations("profile");
 
     const handleShare = async () => {
         try {
@@ -29,7 +31,7 @@ const ShareProfileButton = () => {
                 }`}
         >
             {copied ? <Check className="size-3.5" /> : <Share2 className="size-3.5" />}
-            <span>{copied ? "Link Copied!" : "Share Profile"}</span>
+            <span>{copied ? t("btn_copied") : t("btn_share")}</span>
         </button>
     );
 };

@@ -6,8 +6,8 @@ import dynamic from "next/dynamic";
 import { Send, AlertCircle, Loader2, FileCode2 } from "lucide-react";
 import { createProject } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from "next-intl";
 
-// Import UIW Editor and its commands to customize the toolbar
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import * as commands from "@uiw/react-md-editor/commands";
@@ -16,7 +16,6 @@ const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 type FieldErrors = Record<string, string[] | undefined>;
 
-// Clean and premium input styling
 const inputClass = (hasError: boolean) =>
   `w-full p-4 rounded-xl border text-[15px] font-medium
    bg-white dark:bg-[#111115]
@@ -42,8 +41,6 @@ const FieldError = ({ errors }: { errors?: string[] }) => {
   );
 };
 
-// ─── Custom Toolbar for Markdown (Mobile Friendly) ───
-// We remove full-screen, preview toggles, and heavy stuff that breaks the UI
 const editorCommands = [
   commands.bold,
   commands.italic,
@@ -58,7 +55,6 @@ const editorCommands = [
   commands.orderedListCommand,
 ];
 
-// Re-adding the view toggle buttons (Edit, Live, Preview) without the Fullscreen button
 const editorExtraCommands = [
   commands.codeEdit,
   commands.codeLive,
@@ -73,6 +69,7 @@ export default function ProjectForm() {
 
   const router = useRouter();
   const { toast } = useToast();
+  const t = useTranslations("create_project");
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -88,8 +85,8 @@ export default function ProjectForm() {
 
         if (result.success) {
           toast({
-            title: "Project deployed successfully! 🚀",
-            description: "Redirecting to your new project page...",
+            title: t("toast_success_title"),
+            description: t("toast_success_desc"),
             className: "bg-emerald-500 text-white border-none",
           });
           setTimeout(() => {
@@ -98,22 +95,22 @@ export default function ProjectForm() {
         } else {
           if (result.validationErrors) {
             setFieldErrors(result.validationErrors);
-            setGeneralError("Please fix the highlighted fields below.");
+            setGeneralError(t("error_general"));
             document.querySelector(".border-red-500")?.scrollIntoView({
               behavior: "smooth",
               block: "center",
             });
           } else {
-            setGeneralError(result.error ?? "Failed to create project.");
+            setGeneralError(result.error ?? t("error_fallback"));
           }
         }
       } catch {
-        setGeneralError("An unexpected error occurred. Please try again.");
+        setGeneralError(t("error_unexpected"));
       } finally {
         setIsSubmitting(false);
       }
     },
-    [pitch, router, toast]
+    [pitch, router, toast, t]
   );
 
   return (
@@ -122,100 +119,93 @@ export default function ProjectForm() {
       className="bg-white dark:bg-[#161618] p-6 sm:p-10 rounded-3xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl space-y-8 font-work-sans"
       noValidate
     >
-      {/* Form Header Inside Card */}
       <div className="flex items-center gap-4 border-b border-slate-100 dark:border-white/5 pb-6">
         <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
           <FileCode2 className="size-6 text-primary" />
         </div>
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-black dark:text-white">
-            Project Details
+            {t("form_header")}
           </h2>
           <p className="text-sm text-slate-500 dark:text-white/40 mt-1">
-            Fill in the information below to submit your repository.
+            {t("form_sub")}
           </p>
         </div>
       </div>
 
-      {/* Title */}
       <div>
         <label htmlFor="title" className={labelClass}>
-          Project Title <span className="text-red-500">*</span>
+          {t("label_title")} <span className="text-red-500">*</span>
         </label>
         <input
           id="title" name="title" required
-          placeholder="e.g., Flurry Social Media App"
+          placeholder={t("placeholder_title")}
           className={inputClass(!!fieldErrors.title)}
         />
         <FieldError errors={fieldErrors.title} />
       </div>
 
-      {/* Description */}
       <div>
         <label htmlFor="description" className={labelClass}>
-          Short Description <span className="text-red-500">*</span>
+          {t("label_desc")} <span className="text-red-500">*</span>
         </label>
         <textarea
           id="description" name="description" required rows={3}
-          placeholder="Briefly describe what your project does and the problem it solves..."
+          placeholder={t("placeholder_desc")}
           className={`${inputClass(!!fieldErrors.description)} resize-none`}
         />
         <FieldError errors={fieldErrors.description} />
       </div>
 
-      {/* Tech Stack & Image (Grid) */}
       <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
         <div>
           <label htmlFor="techStack" className={labelClass}>
-            Tech Stack <span className="text-red-500">*</span>
+            {t("label_tech")} <span className="text-red-500">*</span>
           </label>
           <input
             id="techStack" name="techStack" required
-            placeholder="Next.js, Tailwind, MongoDB..."
+            placeholder={t("placeholder_tech")}
             className={inputClass(!!fieldErrors.techStack)}
           />
           <p className="text-xs text-slate-400 dark:text-white/30 mt-2 font-medium">
-            Separate technologies with commas
+            {t("hint_tech")}
           </p>
           <FieldError errors={fieldErrors.techStack} />
         </div>
 
         <div>
           <label htmlFor="image" className={labelClass}>
-            Cover Image URL <span className="text-red-500">*</span>
+            {t("label_image")} <span className="text-red-500">*</span>
           </label>
           <input
             id="image" name="image" type="url" required
-            placeholder="https://example.com/cover-image.jpg"
+            placeholder={t("placeholder_image")}
             className={inputClass(!!fieldErrors.image)}
           />
           <FieldError errors={fieldErrors.image} />
         </div>
       </div>
 
-      {/* GitHub Link */}
       <div>
         <label htmlFor="githubLink" className={labelClass}>
-          GitHub Repository <span className="text-red-500">*</span>
+          {t("label_github")} <span className="text-red-500">*</span>
         </label>
         <input
           id="githubLink" name="githubLink" type="url" required
-          placeholder="https://github.com/your-username/your-repo"
+          placeholder={t("placeholder_github")}
           className={inputClass(!!fieldErrors.githubLink)}
         />
         <FieldError errors={fieldErrors.githubLink} />
       </div>
 
-      {/* Markdown Editor */}
-      <div data-color-mode="dark"> {/* Using dark mode to keep the editor sleek */}
+      <div data-color-mode="dark">
         <label className={labelClass}>
-          Project Architecture & Pitch <span className="text-red-500">*</span>
+          {t("label_pitch")} <span className="text-red-500">*</span>
         </label>
         <p className="text-sm text-slate-500 dark:text-white/40 mb-3">
-          Use Markdown to describe your architecture, core features, and setup instructions.
+          {t("hint_pitch")}
         </p>
 
-        {/* Wrapper to fix mobile overflow */}
         <div className={`rounded-xl overflow-hidden transition-all duration-300 w-full max-w-full ${fieldErrors.pitch
           ? "border-2 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)]"
           : "border border-slate-200 dark:border-white/10 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary"
@@ -223,13 +213,13 @@ export default function ProjectForm() {
           <MDEditor
             value={pitch}
             onChange={(value) => setPitch(value ?? "")}
-            preview="live" // Set to live by default so you can see the split screen
-            height={400} // Increased height for better split view experience
+            preview="live"
+            height={400}
             commands={editorCommands}
-            extraCommands={editorExtraCommands} // Re-added the preview toggle buttons
+            extraCommands={editorExtraCommands}
             style={{ borderRadius: 0, border: "none", backgroundColor: "transparent" }}
             textareaProps={{
-              placeholder: "## Project Architecture\n\nExplain how you built this...",
+              placeholder: t("placeholder_pitch"),
               "aria-label": "Project pitch editor",
             }}
             previewOptions={{
@@ -240,7 +230,6 @@ export default function ProjectForm() {
         <FieldError errors={fieldErrors.pitch} />
       </div>
 
-      {/* General Error Banner */}
       {generalError && (
         <div
           role="alert"
@@ -251,7 +240,6 @@ export default function ProjectForm() {
         </div>
       )}
 
-      {/* Submit Button */}
       <button
         type="submit"
         disabled={isSubmitting}
@@ -260,12 +248,12 @@ export default function ProjectForm() {
         {isSubmitting ? (
           <>
             <Loader2 className="size-5 animate-spin" />
-            <span>Deploying to Arena...</span>
+            <span>{t("btn_submitting")}</span>
           </>
         ) : (
           <>
-            <span>Submit Project</span>
-            <Send className="size-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            <span>{t("btn_submit")}</span>
+            <Send className="size-5 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 group-hover:-translate-y-1 transition-transform" />
           </>
         )}
       </button>

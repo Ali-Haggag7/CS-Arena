@@ -1,0 +1,78 @@
+---
+title: الإعداد المحلي
+description: قم بإعداد CS-Arena محلياً للتطوير والمساهمة.
+---
+
+# الإعداد المحلي
+
+يأخذك هذا الدليل خطوة بخطوة لإعداد CS-Arena للتطوير المحلي حتى تتمكن من البدء في المساهمة.
+
+## عمل Fork للمستودع
+
+ابدأ بعمل Fork للمستودع على GitHub، ثم قم باستنساخ نسختك (Clone):
+
+```bash
+git clone [https://github.com/YOUR_USERNAME/CS-Arena.git](https://github.com/YOUR_USERNAME/CS-Arena.git)
+cd CS-Arena
+```
+
+## تثبيت الحزم والاعتماديات
+
+```bash
+npm install
+```
+
+## متغيرات البيئة
+
+ستحتاج إلى حسابات للخدمات التالية:
+
+| الخدمة | الهدف | الباقة المجانية |
+|---|---|---|
+| Sanity | إدارة المحتوى وقاعدة البيانات | ✅ نعم |
+| GitHub OAuth | المصادقة | ✅ نعم |
+| Google OAuth | المصادقة | ✅ نعم |
+| Sentry | تتبع الأخطاء | ✅ نعم |
+
+قم بإنشاء ملف `.env.local` الخاص بك:
+
+```env
+NEXT_PUBLIC_SANITY_PROJECT_ID=
+NEXT_PUBLIC_SANITY_DATASET=production
+SANITY_API_TOKEN=
+
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=
+
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+```
+
+## تشغيل خادم التطوير
+
+```bash
+npm run dev
+```
+
+## استوديو Sanity
+
+للوصول إلى لوحة التحكم (CMS) محلياً:
+
+```bash
+# Navigate to:
+http://localhost:3000/studio
+```
+
+## تسمية الفروع (Branch Naming)
+
+عند العمل على ميزة جديدة أو إصلاح، قم بإنشاء فرع جديد:
+
+```bash
+# Feature
+git checkout -b feat/your-feature-name
+
+# Bug fix
+git checkout -b fix/your-bug-name
+```

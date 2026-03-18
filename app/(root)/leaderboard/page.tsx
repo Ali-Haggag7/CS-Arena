@@ -5,12 +5,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { Trophy, ThumbsUp, Eye, Medal, Flame } from "lucide-react";
 import { Skeleton } from "@/components/shadcn/skeleton";
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-    title: "Global Leaderboard | CS-Arena",
-    description: "Top ranked computer science projects based on community upvotes.",
-};
+export async function generateMetadata() {
+    const t = await getTranslations("leaderboard");
+    return {
+        title: t("title"),
+        description: t("description"),
+    };
+}
 
 interface LeaderboardProject {
     _id: string;
@@ -58,6 +61,7 @@ const RankBadge = ({ index }: { index: number }) => {
 
 const RankedProjects = async () => {
     const topProjects: LeaderboardProject[] = await client.fetch(LEADERBOARD_QUERY);
+    const t = await getTranslations("leaderboard");
 
     if (!topProjects?.length) {
         return (
@@ -65,8 +69,8 @@ const RankedProjects = async () => {
                 <div className="w-20 h-20 bg-slate-50 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-5">
                     <Trophy className="size-10 text-slate-300 dark:text-white/20" aria-hidden="true" />
                 </div>
-                <p className="text-xl font-bold text-black dark:text-white">The arena is quiet...</p>
-                <p className="text-sm text-slate-500 dark:text-white/40 mt-2">No projects upvoted yet. Be the first to claim the throne!</p>
+                <p className="text-xl font-bold text-black dark:text-white">{t("empty_title")}</p>
+                <p className="text-sm text-slate-500 dark:text-white/40 mt-2">{t("empty_sub")}</p>
             </div>
         );
     }
@@ -131,7 +135,7 @@ const RankedProjects = async () => {
                                     <span className="text-base sm:text-xl font-black">{project.upvotes ?? 0}</span>
                                 </div>
                                 <span className="text-[10px] sm:text-xs text-slate-400 dark:text-white/30 uppercase tracking-wider mt-0.5 font-semibold">
-                                    Votes
+                                    {t("votes")}
                                 </span>
                             </div>
 
@@ -145,7 +149,7 @@ const RankedProjects = async () => {
                                     <span className="text-sm sm:text-lg font-bold">{project.views ?? 0}</span>
                                 </div>
                                 <span className="text-[10px] sm:text-xs text-slate-400 dark:text-white/30 uppercase tracking-wider mt-0.5 font-semibold hidden sm:block">
-                                    Views
+                                    {t("views")}
                                 </span>
                             </div>
 
@@ -160,6 +164,8 @@ const RankedProjects = async () => {
 // ─── Main Page Component ──────────────────────────────────────────────────
 
 const LeaderboardPage = async () => {
+    const t = await getTranslations("leaderboard");
+
     return (
         <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0f] font-work-sans pb-24 relative selection:bg-primary/30 transition-colors duration-300">
 
@@ -177,15 +183,15 @@ const LeaderboardPage = async () => {
                 <div className="text-center mb-8 sm:mb-12">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-500 text-sm font-medium mb-4 sm:mb-6 backdrop-blur-sm shadow-sm">
                         <Flame className="size-4" />
-                        <span>Hall of Fame</span>
+                        <span>{t("badge")}</span>
                     </div>
 
                     <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold text-black dark:text-white tracking-tight leading-tight mb-4 sm:mb-6">
-                        Global <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-amber-500">Leaderboard</span>
+                        {t("heading1")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-amber-500">{t("heading2")}</span>
                     </h1>
 
                     <p className="text-sm sm:text-lg md:text-xl text-slate-600 dark:text-white/50 max-w-2xl mx-auto leading-relaxed px-2">
-                        The most upvoted projects in CS-Arena. Does your code have what it takes to reach the #1 spot?
+                        {t("subtitle")}
                     </p>
                 </div>
 

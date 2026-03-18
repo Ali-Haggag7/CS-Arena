@@ -1,5 +1,6 @@
 import { Star, GitFork, CircleDot, Github, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 interface GitHubData {
     stargazers_count: number;
@@ -46,6 +47,7 @@ const GithubStats = async ({ githubLink }: { githubLink: string }) => {
     if (!parsed) return null;
 
     const { owner, repo } = parsed;
+    const t = await getTranslations("project_components");
 
     try {
         const res = await fetch(
@@ -67,15 +69,13 @@ const GithubStats = async ({ githubLink }: { githubLink: string }) => {
         return (
             <div className="mt-5 pt-5 border-t border-black/5 dark:border-white/10">
 
-                {/* Mobile: grid, Desktop: flex row */}
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
 
-                    {/* Stats */}
                     <div className="grid grid-cols-4 sm:flex sm:gap-6 sm:items-center gap-2">
                         <StatItem
                             icon={<Star className="size-5 text-yellow-500 fill-yellow-500" />}
                             value={data.stargazers_count}
-                            label="Stars"
+                            label={t("gh_stars")}
                         />
 
                         <div className="hidden sm:block w-px h-8 bg-black/10 dark:bg-white/10" />
@@ -83,7 +83,7 @@ const GithubStats = async ({ githubLink }: { githubLink: string }) => {
                         <StatItem
                             icon={<GitFork className="size-5 text-primary" />}
                             value={data.forks_count}
-                            label="Forks"
+                            label={t("gh_forks")}
                         />
 
                         <div className="hidden sm:block w-px h-8 bg-black/10 dark:bg-white/10" />
@@ -91,7 +91,7 @@ const GithubStats = async ({ githubLink }: { githubLink: string }) => {
                         <StatItem
                             icon={<CircleDot className="size-5 text-emerald-500" />}
                             value={data.open_issues_count}
-                            label="Issues"
+                            label={t("gh_issues")}
                         />
 
                         {data.language && (
@@ -102,14 +102,13 @@ const GithubStats = async ({ githubLink }: { githubLink: string }) => {
                                         {data.language}
                                     </span>
                                     <span className="text-[11px] font-medium text-black/40 dark:text-white/30 uppercase tracking-widest">
-                                        Language
+                                        {t("gh_language")}
                                     </span>
                                 </div>
                             </>
                         )}
                     </div>
 
-                    {/* CTA */}
                     <Link
                         href={githubLink}
                         target="_blank"
@@ -118,7 +117,7 @@ const GithubStats = async ({ githubLink }: { githubLink: string }) => {
                         className="flex items-center justify-center gap-2 bg-gray-900 dark:bg-white/10 dark:hover:bg-primary text-white py-2.5 px-5 rounded-full hover:bg-primary transition-all duration-300 text-[13px] font-semibold hover:-translate-y-0.5 w-full sm:w-auto"
                     >
                         <Github className="size-4" aria-hidden="true" />
-                        <span>View on GitHub</span>
+                        <span>{t("gh_view")}</span>
                         <ExternalLink className="size-3.5 opacity-60" aria-hidden="true" />
                     </Link>
 

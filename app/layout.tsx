@@ -5,7 +5,7 @@ import "./globals.css";
 import "easymde/dist/easymde.min.css";
 import { Toaster } from "@/components/shadcn/toaster";
 import Providers from "@/components/shared/Providers";
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 
 const workSans = localFont({
   src: [
@@ -27,17 +27,23 @@ const cairo = Cairo({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: { default: "CS Arena", template: "%s | CS Arena" },
-  description: "Pitch, Vote and Grow — A platform for CS developers",
-  keywords: ["CS", "developers", "projects", "open source", "leaderboard"],
-  authors: [{ name: "Ali Haggag" }],
-  openGraph: {
-    title: "CS Arena",
-    description: "Pitch, Vote and Grow",
-    type: "website",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata");
+  return {
+    title: {
+      default: t("title"),
+      template: t("title_template"),
+    },
+    description: t("description"),
+    keywords: t("keywords").split(", "),
+    authors: [{ name: "Ali Haggag" }],
+    openGraph: {
+      title: t("title"),
+      description: t("description"),
+      type: "website",
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -52,7 +58,7 @@ export default async function RootLayout({
       suppressHydrationWarning
       className="dark"
     >
-      <body className={`${workSans.variable} ${cairo.variable} ${locale === "ar" ? "font-cairo" : ""} bg-gray-50 dark:bg-[#0d0d0f]`}>
+      <body className={`${workSans.variable} ${cairo.variable} font-work-sans antialiased bg-gray-50 dark:bg-[#0d0d0f]`}>
         <Providers locale={locale} messages={messages}>
           {children}
           <Toaster />

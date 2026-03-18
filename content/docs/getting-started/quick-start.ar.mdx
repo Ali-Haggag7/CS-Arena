@@ -1,0 +1,63 @@
+---
+title: بدء سريع
+description: قم بتشغيل CS-Arena على جهازك في أقل من 5 دقائق.
+---
+
+# بدء سريع
+
+ابدأ بتشغيل CS-Arena محلياً في بضع خطوات بسيطة.
+
+## المتطلبات الأساسية
+
+قبل البدء، تأكد من تثبيت الأدوات التالية على جهازك:
+
+| الأداة | الإصدار |
+|---|---|
+| `Node.js` | 18.0 أو أحدث |
+| `npm` أو `pnpm` | أحدث إصدار |
+| `Git` | أي إصدار حديث |
+
+## 1. استنساخ المستودع (Clone)
+
+```bash
+git clone [https://github.com/Ali-Haggag7/CS-Arena.git](https://github.com/Ali-Haggag7/CS-Arena.git)
+cd CS-Arena
+```
+
+## 2. تثبيت الحزم والاعتماديات
+
+```bash
+npm install
+```
+
+## 3. إعداد متغيرات البيئة
+
+قم بإنشاء ملف `.env.local` في المسار الرئيسي للمشروع:
+
+```bash
+cp .env.example .env.local
+```
+
+ثم قم بملء القيم المطلوبة بالبيانات الخاصة بك:
+
+```env
+# Sanity CMS
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
+NEXT_PUBLIC_SANITY_DATASET=production
+SANITY_API_TOKEN=your_token
+
+# Auth
+NEXTAUTH_SECRET=your_secret
+GITHUB_CLIENT_ID=your_github_id
+GITHUB_CLIENT_SECRET=your_github_secret
+GOOGLE_CLIENT_ID=your_google_id
+GOOGLE_CLIENT_SECRET=your_google_secret
+```
+
+## 4. تشغيل خادم التطوير
+
+```bash
+npm run dev
+```
+
+> افتح الرابط [http://localhost:3000](http://localhost:3000) في متصفحك. يجب أن ترى CS-Arena يعمل بنجاح على جهازك!

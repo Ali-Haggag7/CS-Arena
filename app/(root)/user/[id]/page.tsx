@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/shadcn/skeleton";
 import { Github } from "lucide-react";
 import Link from "next/link";
 import ShareProfileButton from "@/components/shared/ShareProfileButton";
+import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
   params,
@@ -19,9 +20,12 @@ export async function generateMetadata({
   const { id } = await params;
   const user = await client.fetch(AUTHOR_BY_ID_QUERY, { id });
   if (!user) return {};
+
+  const t = await getTranslations("profile");
+
   return {
     title: `${user.name} | CS-Arena`,
-    description: user.bio ?? `Explore ${user.name}'s computer science projects on CS Arena.`,
+    description: user.bio ?? t("seo_desc_fallback", { name: user.name }),
     openGraph: {
       title: `${user.name} on CS-Arena`,
       images: user.image ? [{ url: user.image }] : [],
@@ -40,12 +44,12 @@ const UserProfile = async ({
 
   if (!user) return notFound();
 
+  const t = await getTranslations("profile");
   const isOwnProfile = session?.id === id;
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0f] font-work-sans pt-24 pb-24 transition-colors duration-300 relative selection:bg-primary/30">
 
-      {/* Subtle Background Effects */}
       <div className="absolute inset-0 grid-bg opacity-30 dark:opacity-40 pointer-events-none" aria-hidden="true" />
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-20 dark:opacity-10 blur-[100px] pointer-events-none"
@@ -56,21 +60,17 @@ const UserProfile = async ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col lg:flex-row gap-10">
 
-          {/* ─── Profile Card (Sidebar) ─── */}
           <aside className="w-full lg:w-[340px] shrink-0">
             <div className="bg-white dark:bg-[#111115] rounded-[2rem] p-8 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-2xl flex flex-col items-center relative overflow-hidden group">
 
-              {/* Card Header Glow */}
               <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-primary/10 to-transparent opacity-50 pointer-events-none" />
 
-              {/* Name Banner */}
               <div className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 mb-8 text-center backdrop-blur-sm z-10">
                 <h1 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest line-clamp-1">
                   {user.name}
                 </h1>
               </div>
 
-              {/* Avatar with Ring */}
               <div className="relative mb-6 z-10">
                 <div className="absolute inset-0 rounded-full bg-primary/20 blur-md group-hover:bg-primary/40 transition-colors duration-500" />
                 <Image
@@ -82,16 +82,14 @@ const UserProfile = async ({
                 />
               </div>
 
-              {/* User Info */}
               <h2 className="text-2xl font-extrabold text-black dark:text-white text-center mb-3 z-10">
                 @{user.username}
               </h2>
 
               <p className="text-center text-sm text-slate-500 dark:text-white/50 leading-relaxed max-w-[240px] mb-8 z-10">
-                {user.bio || "Passionate software engineer crafting awesome digital experiences."}
+                {user.bio || t("default_bio")}
               </p>
 
-              {/* Actions & Links */}
               <div className="w-full flex flex-col items-center gap-4 z-10 border-t border-slate-100 dark:border-white/5 pt-6 mt-auto">
 
                 <ShareProfileButton />
@@ -102,10 +100,10 @@ const UserProfile = async ({
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${user.name}'s GitHub profile`}
-                    className="flex items-center gap-2 text-sm font-semibold text-slate-500 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors duration-200"
+                    className="flex items-center gap-2 text-sm font-semibold text-slate-500 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors duration-200 group/github"
                   >
-                    <Github className="size-4" aria-hidden="true" />
-                    <span>View GitHub</span>
+                    <Github className="size-4 group-hover/github:text-black dark:group-hover/github:text-white transition-colors" aria-hidden="true" />
+                    <span>{t("btn_github")}</span>
                   </Link>
                 )}
               </div>
@@ -113,10 +111,9 @@ const UserProfile = async ({
             </div>
           </aside>
 
-          {/* ─── Projects Section (Original Structure) ─── */}
           <div className="flex-1 flex flex-col gap-5 lg:-mt-5">
             <p className="text-[24px] font-bold text-black dark:text-white">
-              {isOwnProfile ? "Your Projects" : `${user.name}'s Projects`}
+              {isOwnProfile ? t("title_own_projects") : t("title_other_projects", { name: user.name })}
             </p>
 
             <ul className="card_grid-sm">

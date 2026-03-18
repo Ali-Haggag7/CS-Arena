@@ -319,3 +319,8 @@
 .dark .w-md-editor-content {
   background-color: #111114 !important;
 }
+
+html[dir="rtl"],
+html[dir="rtl"] .font-work-sans {
+  font-family: var(--font-cairo), sans-serif !important;
+}

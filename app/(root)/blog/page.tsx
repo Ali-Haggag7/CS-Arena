@@ -3,12 +3,16 @@ import { client } from "@/sanity/lib/client";
 import { CHANGELOG_QUERY } from "@/sanity/lib/queries";
 import { Sparkles, Zap, Bug, Trash2, Plus, Clock } from "lucide-react";
 import { Skeleton } from "@/components/shadcn/skeleton";
-import type { Metadata } from "next";
+import { getTranslations, getLocale } from "next-intl/server";
 
-export const metadata: Metadata = {
-    title: "Changelog | CS-Arena",
-    description: "Latest updates, improvements, and fixes to CS-Arena.",
-};
+// ─── Dynamic Metadata for i18n ────────────────────────────────────────────
+export async function generateMetadata() {
+    const t = await getTranslations("changelog");
+    return {
+        title: t("title"),
+        description: t("description"),
+    };
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
@@ -28,31 +32,8 @@ interface ChangelogEntry {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
-const changeConfig = {
-    new: {
-        label: "New",
-        icon: <Plus className="size-3" />,
-        className: "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30",
-    },
-    improved: {
-        label: "Improved",
-        icon: <Zap className="size-3" />,
-        className: "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/30",
-    },
-    fixed: {
-        label: "Fixed",
-        icon: <Bug className="size-3" />,
-        className: "bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-500/30",
-    },
-    removed: {
-        label: "Removed",
-        icon: <Trash2 className="size-3" />,
-        className: "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/30",
-    },
-};
-
-const formatDate = (dateStr: string) =>
-    new Date(dateStr).toLocaleDateString("en-US", {
+const formatDate = (dateStr: string, locale: string) =>
+    new Date(dateStr).toLocaleDateString(locale === "ar" ? "ar-EG" : "en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",
@@ -62,6 +43,31 @@ const formatDate = (dateStr: string) =>
 
 const ChangelogList = async () => {
     const entries: ChangelogEntry[] = await client.fetch(CHANGELOG_QUERY);
+    const t = await getTranslations("changelog");
+    const locale = await getLocale();
+
+    const changeConfig = {
+        new: {
+            label: t("type_new"),
+            icon: <Plus className="size-3" />,
+            className: "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30",
+        },
+        improved: {
+            label: t("type_improved"),
+            icon: <Zap className="size-3" />,
+            className: "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/30",
+        },
+        fixed: {
+            label: t("type_fixed"),
+            icon: <Bug className="size-3" />,
+            className: "bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-500/30",
+        },
+        removed: {
+            label: t("type_removed"),
+            icon: <Trash2 className="size-3" />,
+            className: "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/30",
+        },
+    };
 
     if (!entries?.length) {
         return (
@@ -69,8 +75,8 @@ const ChangelogList = async () => {
                 <div className="w-20 h-20 bg-slate-50 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-5">
                     <Clock className="size-10 text-slate-300 dark:text-white/20" />
                 </div>
-                <p className="text-xl font-bold text-black dark:text-white">No updates yet</p>
-                <p className="text-sm text-slate-500 dark:text-white/40 mt-2">Check back soon — we ship fast!</p>
+                <p className="text-xl font-bold text-black dark:text-white">{t("empty_title")}</p>
+                <p className="text-sm text-slate-500 dark:text-white/40 mt-2">{t("empty_sub")}</p>
             </div>
         );
     }
@@ -78,7 +84,7 @@ const ChangelogList = async () => {
     return (
         <div className="relative">
             {/* Timeline Line */}
-            <div className="absolute left-[11px] sm:left-[15px] top-2 bottom-2 w-px bg-slate-200 dark:bg-white/10 hidden sm:block" aria-hidden="true" />
+            <div className={`absolute top-2 bottom-2 w-px bg-slate-200 dark:bg-white/10 hidden sm:block ${locale === "ar" ? "right-[11px] sm:right-[15px]" : "left-[11px] sm:left-[15px]"}`} aria-hidden="true" />
 
             <div className="flex flex-col gap-10 sm:gap-12">
                 {entries.map((entry, index) => (
@@ -110,18 +116,18 @@ const ChangelogList = async () => {
                                         {entry.version}
                                     </span>
                                     {index === 0 && (
-                                        <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30">
+                                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30">
                                             <span className="relative flex h-1.5 w-1.5">
                                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                                                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                                             </span>
-                                            Latest
+                                            {t("latest")}
                                         </span>
                                     )}
                                 </div>
                                 <div className="flex items-center gap-1.5 text-slate-400 dark:text-white/30 text-xs sm:text-sm font-medium shrink-0">
                                     <Clock className="size-3.5" />
-                                    <span>{formatDate(entry.publishedAt)}</span>
+                                    <span>{formatDate(entry.publishedAt, locale)}</span>
                                 </div>
                             </div>
 
@@ -164,7 +170,9 @@ const ChangelogList = async () => {
 
 // ─── Main Page Component ──────────────────────────────────────────────────
 
-const ChangelogPage = () => {
+const ChangelogPage = async () => {
+    const t = await getTranslations("changelog");
+
     return (
         <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0f] font-work-sans pb-24 relative selection:bg-primary/30 transition-colors duration-300">
 
@@ -182,15 +190,15 @@ const ChangelogPage = () => {
                 <div className="flex flex-col items-center text-center mb-12 sm:mb-16">
                     <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 text-xs sm:text-sm font-semibold mb-4 sm:mb-6 backdrop-blur-sm shadow-sm">
                         <Sparkles className="size-3 sm:size-4" />
-                        <span>What&apos;s New</span>
+                        <span>{t("badge")}</span>
                     </div>
 
                     <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold text-black dark:text-white tracking-tight leading-tight mb-4 sm:mb-6">
-                        Change<span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-500">log</span>
+                        {t("heading1")}<span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-500">{t("heading2")}</span>
                     </h1>
 
                     <p className="text-sm sm:text-lg md:text-xl text-slate-600 dark:text-white/50 max-w-xl leading-relaxed px-2">
-                        Every update, improvement, and fix — tracked and shipped with care.
+                        {t("subtitle")}
                     </p>
                 </div>
 

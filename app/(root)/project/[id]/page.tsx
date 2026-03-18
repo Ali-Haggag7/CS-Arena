@@ -14,6 +14,7 @@ import GithubStats from "@/components/shared/GithubStats";
 import JoinTeamButton from "@/components/shared/JoinTeamButton";
 import ProjectCard, { ProjectTypeCard } from "@/components/project/ProjectCard";
 import { Calendar, Layers, Sparkles, Activity } from "lucide-react";
+import { getTranslations, getLocale } from "next-intl/server";
 
 const md = markdownit({ html: false, linkify: true, typographer: true });
 
@@ -54,10 +55,14 @@ const ProjectDetails = async ({
 
   const parsedContent = md.render(post.pitch || "");
 
+  // Fetch translations and locale
+  const t = await getTranslations("project_details");
+  const locale = await getLocale();
+
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-[#0d0d0f] font-work-sans pb-24 transition-colors duration-300">
 
-      {/* ─── Hero Section (Now fully supports Light/Dark mode) ─── */}
+      {/* ─── Hero Section ─── */}
       <section className="relative overflow-hidden pt-32 pb-48 px-4 sm:px-6 bg-white dark:bg-[#0a0a0c] border-b border-slate-200 dark:border-white/5 transition-colors duration-300">
         <div className="absolute inset-0 grid-bg opacity-20 dark:opacity-30" aria-hidden="true" />
         <div
@@ -70,7 +75,7 @@ const ProjectDetails = async ({
           {/* Date Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 text-xs font-semibold mb-6 shadow-sm dark:shadow-none backdrop-blur-sm">
             <Calendar className="size-3.5 text-primary" />
-            <span>Published {formatDate(post._createdAt)}</span>
+            <span>{t("published", { date: formatDate(post._createdAt, locale) })}</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-black dark:text-white leading-tight tracking-tight mb-6">
@@ -83,7 +88,7 @@ const ProjectDetails = async ({
         </div>
       </section>
 
-      {/* ─── Main Content Container (Negative Margin to overlap Hero) ─── */}
+      {/* ─── Main Content Container ─── */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 sm:-mt-32 relative z-20">
 
         {/* Project Image */}
@@ -97,7 +102,6 @@ const ProjectDetails = async ({
               priority
               sizes="(max-width: 768px) 100vw, 1200px"
             />
-            {/* Subtle inner gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 dark:from-black/60 to-transparent pointer-events-none" />
           </div>
         )}
@@ -105,7 +109,6 @@ const ProjectDetails = async ({
         {/* ─── Fixed Author & Actions Bar ─── */}
         <div className="bg-white dark:bg-[#111115] rounded-[1.5rem] p-5 sm:p-6 border border-slate-200 dark:border-white/10 shadow-sm mb-10">
 
-          {/* Top Row: Author & Join Team Button */}
           <div className="flex justify-between items-center gap-4 flex-wrap">
             <Link
               href={`/user/${post.author?._id}`}
@@ -136,10 +139,9 @@ const ProjectDetails = async ({
             )}
           </div>
 
-          {/* Bottom Row: Github Stats (Fixed double border issue) */}
           {post.githubLink && (
             <Suspense fallback={<Skeleton className="h-20 w-full mt-5 rounded-xl bg-slate-100 dark:bg-white/5" />}>
-              <div className="w-full mt-3"> {/* Removed border-t classes from here */}
+              <div className="w-full mt-3">
                 <GithubStats githubLink={post.githubLink} />
               </div>
             </Suspense>
@@ -151,7 +153,7 @@ const ProjectDetails = async ({
           <div className="mb-12">
             <h3 className="flex items-center gap-2 text-lg font-bold text-black dark:text-white mb-4">
               <Layers className="size-5 text-primary" />
-              Technologies Used
+              {t("tech_stack")}
             </h3>
             <div className="flex gap-2.5 flex-wrap">
               {post.techStack.map((tech: string) => (
@@ -171,7 +173,7 @@ const ProjectDetails = async ({
         <div className="bg-white dark:bg-[#111115] rounded-[2rem] p-6 sm:p-10 border border-slate-200 dark:border-white/10 shadow-sm mb-8">
           <h3 className="flex items-center gap-2 text-xl font-bold text-black dark:text-white mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
             <Sparkles className="size-5 text-primary" />
-            Project Architecture
+            {t("architecture")}
           </h3>
 
           {parsedContent ? (
@@ -182,7 +184,7 @@ const ProjectDetails = async ({
           ) : (
             <div className="text-center py-10">
               <p className="text-slate-500 dark:text-white/40 text-sm">
-                No detailed architecture or pitch provided for this project.
+                {t("no_architecture")}
               </p>
             </div>
           )}
@@ -193,7 +195,7 @@ const ProjectDetails = async ({
           <div className="flex items-center gap-3">
             <Activity className="size-5 text-slate-400 dark:text-white/30 hidden sm:block" />
             <span className="text-sm font-semibold text-slate-500 dark:text-white/50">
-              Project Engagement
+              {t("engagement")}
             </span>
           </div>
           <div className="flex items-center gap-6">
@@ -211,7 +213,7 @@ const ProjectDetails = async ({
       {relatedProjects?.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 mb-10">
           <h3 className="text-2xl font-bold text-black dark:text-white mb-8">
-            Explore Similar Projects
+            {t("similar_projects")}
           </h3>
           <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {relatedProjects.map((project: ProjectTypeCard) => (

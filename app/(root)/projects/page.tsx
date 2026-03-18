@@ -5,12 +5,16 @@ import ProjectCard, { ProjectTypeCard } from "@/components/project/ProjectCard";
 import ProjectFilters from "@/components/project/ProjectFilters";
 import { Skeleton } from "@/components/shadcn/skeleton";
 import { Sparkles } from "lucide-react";
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-    title: "Explore Projects | CS-Arena",
-    description: "Discover top computer science graduation projects and startup ideas.",
-};
+// ─── Dynamic Metadata for i18n ────────────────────────────────────────────
+export async function generateMetadata() {
+    const t = await getTranslations("explore");
+    return {
+        title: t("title"),
+        description: t("description"),
+    };
+}
 
 // ─── Data Fetching Component ──────────────────────────────────────────────
 
@@ -22,6 +26,8 @@ const AllProjects = async ({
     const search = searchParams.search || null;
     const tech = searchParams.tech || null;
     const sort = searchParams.sort || "newest";
+
+    const t = await getTranslations("explore");
 
     let projects: ProjectTypeCard[] = await client.fetch(PROJECTS_QUERY, {
         search,
@@ -42,9 +48,9 @@ const AllProjects = async ({
                 <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-50 dark:bg-white/5 rounded-full flex items-center justify-center mb-4 md:mb-5">
                     <Sparkles className="size-8 md:size-10 text-primary/50" />
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold text-black dark:text-white mb-2">No projects found</h3>
+                <h3 className="text-xl md:text-2xl font-bold text-black dark:text-white mb-2">{t("no_projects")}</h3>
                 <p className="text-sm md:text-base text-slate-500 dark:text-white/40 max-w-sm">
-                    No projects match your current filters. Try adjusting your search!
+                    {t("no_projects_sub")}
                 </p>
             </div>
         );
@@ -67,6 +73,7 @@ const ExploreProjectsPage = async ({
     searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
     const resolvedParams = await searchParams;
+    const t = await getTranslations("explore");
 
     return (
         <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0f] font-work-sans pb-24 relative selection:bg-primary/30 transition-colors duration-300">
@@ -85,18 +92,18 @@ const ExploreProjectsPage = async ({
                 <div className="flex flex-col items-center text-center mb-8 sm:mb-12">
                     <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 dark:bg-white/5 border border-primary/20 dark:border-white/10 text-primary text-xs sm:text-sm font-medium mb-4 sm:mb-6 backdrop-blur-sm">
                         <Sparkles className="size-3 sm:size-4" />
-                        <span>Discover the Future</span>
+                        <span>{t("badge")}</span>
                     </div>
 
                     <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold text-black dark:text-white tracking-tight leading-tight max-w-4xl">
-                        Explore{" "}
+                        {t("heading1")}{" "}
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">
-                            Projects
+                            {t("heading2")}
                         </span>
                     </h1>
 
                     <p className="text-sm sm:text-lg md:text-xl text-slate-600 dark:text-white/50 mt-3 sm:mt-6 max-w-2xl leading-relaxed px-2">
-                        Browse through the most innovative computer science projects submitted by developers worldwide. Find your next inspiration.
+                        {t("subtitle")}
                     </p>
                 </div>
 

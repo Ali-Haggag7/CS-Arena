@@ -39,8 +39,9 @@ const config: Config = {
 				},
 			},
 			fontFamily: {
-				"work-sans": ["var(--font-work-sans)"],
-				cairo: ["var(--font-cairo)"],
+				sans: ["var(--font-work-sans)", "var(--font-cairo)", "sans-serif"],
+				"work-sans": ["var(--font-work-sans)", "sans-serif"],
+				cairo: ["var(--font-cairo)", "sans-serif"],
 			},
 			borderRadius: {
 				lg: "var(--radius)",

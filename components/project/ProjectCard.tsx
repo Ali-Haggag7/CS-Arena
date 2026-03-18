@@ -7,6 +7,7 @@ import { Eye, ThumbsUp, Github, Users } from "lucide-react";
 import { Button } from "@/components/shadcn/button";
 import { formatDate } from "@/lib/utils";
 import { Author, Project } from "@/sanity/types";
+import { useTranslations, useLocale } from "next-intl";
 
 export type ProjectTypeCard = Omit<Project, "author"> & { author?: Author };
 
@@ -16,6 +17,9 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
     title, description, image, techStack,
     githubLink, isLookingForContributors, _id,
   } = post;
+
+  const t = useTranslations("project_card");
+  const locale = useLocale();
 
   return (
     <li className="startup-card group relative">
@@ -27,8 +31,8 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
       />
 
       {/* Header */}
-      <div className="flex-between">
-        <p className="startup_card_date">{formatDate(_createdAt)}</p>
+      <div className="flex justify-between items-center">
+        <p className="startup_card_date">{formatDate(_createdAt, locale)}</p>
         <div className="flex gap-3">
           <div className="flex gap-1 items-center text-black/30 dark:text-white/40">
             <Eye className="size-3.5" />
@@ -42,7 +46,7 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
       </div>
 
       {/* Author + Title */}
-      <div className="flex-between mt-4 gap-4">
+      <div className="flex justify-between mt-4 gap-4">
         <div className="flex-1 min-w-0">
           <Link
             href={`/user/${author?._id}`}
@@ -88,7 +92,7 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
       </Link>
 
       {/* Tech Stack + Badges */}
-      <div className="flex-between gap-3 mt-4 flex-wrap">
+      <div className="flex justify-between items-center gap-3 mt-4 flex-wrap">
         <div className="flex gap-1.5 flex-wrap">
           {(techStack?.length ?? 0) > 0 ? (
             techStack?.slice(0, 3).map((tech) => (
@@ -101,7 +105,7 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
               </Link>
             ))
           ) : (
-            <span className="text-[11px] text-black/30 dark:text-white/20">No stack</span>
+            <span className="text-[11px] text-black/30 dark:text-white/20">{t("no_stack")}</span>
           )}
           {(techStack?.length ?? 0) > 3 && (
             <span className="text-[11px] text-black/30 dark:text-white/30 px-1">
@@ -114,7 +118,7 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
           {isLookingForContributors && (
             <span className="flex items-center gap-1 text-[11px] font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/20">
               <Users className="size-3" />
-              Hiring
+              {t("hiring")}
             </span>
           )}
           {githubLink && (
@@ -132,7 +136,7 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
       </div>
 
       {/* Footer */}
-      <div className="flex-between mt-4 pt-4 border-t border-black/5 dark:border-white/5">
+      <div className="flex justify-between items-center mt-4 pt-4 border-t border-black/5 dark:border-white/5">
         {techStack?.[0] ? (
           <Link
             href={`/?tech=${techStack[0].toLowerCase()}`}
@@ -141,10 +145,10 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
             {techStack[0]}
           </Link>
         ) : (
-          <span className="text-[13px] text-black/30 dark:text-white/20">Project</span>
+          <span className="text-[13px] text-black/30 dark:text-white/20">{t("project")}</span>
         )}
         <Button className="startup-card_btn" asChild>
-          <Link href={`/project/${_id}`}>Details</Link>
+          <Link href={`/project/${_id}`}>{t("details")}</Link>
         </Button>
       </div>
     </li>

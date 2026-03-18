@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Users, CheckCircle, Loader2, AlertCircle } from "lucide-react";
 import { sendJoinTeamEmail } from "@/lib/actions";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 
 const JoinTeamButton = ({
     projectName,
@@ -17,10 +18,11 @@ const JoinTeamButton = ({
     const [error, setError] = useState("");
 
     const { data: session } = useSession();
+    const t = useTranslations("project_components");
 
     const handleJoinTeam = async () => {
         if (!session?.user?.name) {
-            setError("You must be logged in to join a team.");
+            setError(t("join_error_login"));
             return;
         }
 
@@ -38,15 +40,15 @@ const JoinTeamButton = ({
         if (result.success) {
             setIsSent(true);
         } else {
-            setError("Something went wrong. Please try again.");
+            setError(t("join_error_general"));
         }
     };
 
     if (isSent) {
         return (
-            <div className="flex items-center gap-2 text-14-medium bg-green-500 text-white px-5 py-2.5 rounded-full shadow-sm">
+            <div className="flex items-center gap-2 text-14-medium bg-emerald-500 text-white px-5 py-2.5 rounded-full shadow-sm">
                 <CheckCircle className="size-5" aria-hidden="true" />
-                <span>Request Sent!</span>
+                <span>{t("join_sent")}</span>
             </div>
         );
     }
@@ -65,10 +67,9 @@ const JoinTeamButton = ({
                 ) : (
                     <Users className="size-5" aria-hidden="true" />
                 )}
-                <span>{isSending ? "Sending..." : "Join Team"}</span>
+                <span>{isSending ? t("join_sending") : t("join_btn")}</span>
             </button>
 
-            {/* Error message */}
             {error && (
                 <p className="flex items-center gap-1 text-12-medium text-red-500">
                     <AlertCircle className="size-3.5" aria-hidden="true" />
@@ -76,10 +77,9 @@ const JoinTeamButton = ({
                 </p>
             )}
 
-            {/* Hint for logged out users */}
             {!session && (
                 <p className="text-12-medium text-black/40 dark:text-white/40">
-                    Login to request joining
+                    {t("join_hint")}
                 </p>
             )}
         </div>

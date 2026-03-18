@@ -4,8 +4,11 @@ import { motion } from "framer-motion";
 import ProjectCard, { ProjectTypeCard } from "@/components/project/ProjectCard";
 import { Layers } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 const ProjectsGrid = ({ posts }: { posts: ProjectTypeCard[] }) => {
+    const t = useTranslations("project_components");
+
     if (!posts?.length) {
         return (
             <div className="col-span-full flex flex-col items-center justify-center py-24 px-6 text-center">
@@ -13,16 +16,16 @@ const ProjectsGrid = ({ posts }: { posts: ProjectTypeCard[] }) => {
                     <Layers className="size-8 text-primary/50" />
                 </div>
                 <p className="text-[18px] font-bold text-black dark:text-white mb-2">
-                    No projects here yet
+                    {t("no_projects_title")}
                 </p>
                 <p className="text-[14px] text-black/40 dark:text-white/30 max-w-xs leading-relaxed mb-8">
-                    Be the first to showcase your CS project to the world.
+                    {t("no_projects_desc")}
                 </p>
                 <Link
                     href="/project/create"
                     className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-full text-[14px] font-semibold hover:bg-primary-600 hover:shadow-glow transition-all duration-300"
                 >
-                    Submit Your Project
+                    {t("btn_submit_project")}
                 </Link>
             </div>
         );

@@ -1,0 +1,51 @@
+---
+title: الإرشادات
+description: إرشادات المساهمة ومعايير كتابة الكود لمنصة CS-Arena.
+---
+
+# إرشادات المساهمة
+
+نحن نرحب بجميع المساهمات — من إصلاح الأخطاء إلى الميزات الجديدة. يرجى اتباع هذه الإرشادات للحفاظ على نظافة واتساق الكود.
+
+## أسلوب كتابة الكود (Code Style)
+
+- استخدم **TypeScript** في جميع الملفات الجديدة.
+- اتبع أنماط **Tailwind CSS** الموجودة حالياً.
+- استخدم **Server Components** بشكل افتراضي، وأضف `"use client"` فقط عند الضرورة.
+- حافظ على المكونات (Components) صغيرة ومركزة على وظيفة واحدة.
+
+## رسائل الـ Commit
+
+نحن نتبع معيار [Conventional Commits](https://www.conventionalcommits.org/):
+```text
+feat: add leaderboard page
+fix: resolve dark mode flicker on load
+chore: update dependencies
+docs: add contributing guidelines
+refactor: simplify project card component
+```
+
+## خطوات عمل Pull Request
+
+1. اعمل **Fork** للمستودع.
+2. أنشئ **فرع جديد (Branch)** للميزة من الـ `main`.
+3. قم بإجراء تغييراتك و**اختبرها محلياً**.
+4. افتح **Pull Request** بعنوان ووصف واضحين.
+5. اربط أي **Issues** ذات صلة.
+6. انتظر **المراجعة (Review)** — نحاول الرد خلال 48 ساعة.
+
+## ما نقبله
+
+- ✅ إصلاح الأخطاء (Bug fixes)
+- ✅ تحسينات الأداء
+- ✅ الميزات الجديدة التي تم مناقشتها في الـ Issues أولاً
+- ✅ تحسينات التوثيق (Documentation)
+- ✅ تحسينات إمكانية الوصول (Accessibility)
+
+## ما لا نقبله
+
+- ❌ التغييرات الجذرية التي تكسر الكود (Breaking changes) بدون نقاش مسبق
+- ❌ الـ PRs بدون وصف واضح
+- ❌ التغييرات غير المترابطة المجمعة في PR واحد
+
+> **هل هذه أول مساهمة لك؟** ابحث عن الـ Issues التي تحمل علامة `good first issue` في مستودع GitHub الخاص بنا — إنها مثالية للبدء!
