@@ -185,7 +185,7 @@ export default async function UserProfile({
   const { id } = await params;
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0f] font-work-sans pt-24 pb-24 transition-colors duration-300 relative selection:bg-primary/30">
+    <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0f] font-work-sans pt-24 pb-24 transition-colors duration-300 relative selection:bg-primary/30 overflow-x-hidden max-w-full">
       <div className="absolute inset-0 grid-bg opacity-30 dark:opacity-40 pointer-events-none" aria-hidden="true" />
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-20 dark:opacity-10 blur-[100px] pointer-events-none"
