@@ -50,7 +50,13 @@
         "empty_title": "The arena is quiet...",
         "empty_sub": "No projects upvoted yet. Be the first to claim the throne!",
         "votes": "Votes",
-        "views": "Views"
+        "views": "Views",
+        "filter_global": "Global",
+        "filter_uni": "My University",
+        "login_required": "Please login to view your university's leaderboard.",
+        "no_uni_set": "You haven't set your university yet.",
+        "set_uni_btn": "Update Profile",
+        "no_uni_projects": "No projects found from your university yet. Be the first!"
     },
     "find_developers": {
         "title": "Find Developers | CS-Arena",
