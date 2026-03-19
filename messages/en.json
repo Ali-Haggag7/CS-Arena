@@ -66,7 +66,12 @@
         "heading2": "Developers",
         "subtitle": "These projects are actively looking for contributors. Find a tech stack you love and join the team!",
         "empty_title": "No open roles right now",
-        "empty_sub": "No projects matching your filters are looking for a team. Try adjusting your search!"
+        "empty_sub": "No projects matching your filters are looking for a team. Try adjusting your search!",
+        "actively_hiring": "Actively Hiring",
+        "roles_needed": "Open Roles",
+        "collab_mode": "Work Mode",
+        "view_details": "View Details & Apply",
+        "project_lead": "Project Lead"
     },
     "filters": {
         "all": "All",
