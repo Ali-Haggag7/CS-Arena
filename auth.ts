@@ -4,6 +4,13 @@ import { AUTHOR_BY_GITHUB_ID_QUERY } from "@/sanity/lib/queries";
 import { client } from "@/sanity/lib/client";
 import { writeClient } from "@/sanity/lib/write-client";
 
+declare module "next-auth" {
+  interface Session {
+    id: string;
+    isOnboarded: boolean;
+  }
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [GitHub],
   callbacks: {
@@ -41,7 +48,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
     },
 
-    async jwt({ token, account, profile }) {
+    async jwt({ token, account, profile, trigger, session }) {
       if (account && profile) {
         try {
           const user = await client
@@ -49,16 +56,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             .fetch(AUTHOR_BY_GITHUB_ID_QUERY, { id: profile.id });
 
           token.id = user?._id;
+
+          token.isOnboarded = !!(user?.university && user?.specialization);
         } catch (error) {
           console.error("[auth] jwt error:", error);
         }
+      }
+
+      if (trigger === "update" && session?.isOnboarded !== undefined) {
+        token.isOnboarded = session.isOnboarded;
       }
 
       return token;
     },
 
     async session({ session, token }) {
-      Object.assign(session, { id: token.id });
+      Object.assign(session, {
+        id: token.id,
+        isOnboarded: token.isOnboarded
+      });
       return session;
     },
   },

@@ -7,13 +7,19 @@ const PROJECT_FIELDS = `
   slug,
   _createdAt,
   author -> {
-    _id, name, image, bio
+    _id, name, image, bio, 
+    university -> { _id, name, region },
+    specialization -> { _id, name }
   },
+  domain -> { _id, name, slug },
+  projectType,
   views,
   upvotes,
   description,
   techStack,
   isLookingForContributors,
+  rolesNeeded,
+  collaborationType,
   image,
   githubLink
 `;
@@ -30,7 +36,9 @@ const AUTHOR_FIELDS = `
   username,
   email,
   image,
-  bio
+  bio,
+  university -> { _id, name, slug, region, location },
+  specialization -> { _id, name, slug }
 `;
 
 // Supports both search and tech stack filtering
@@ -49,7 +57,9 @@ export const PROJECT_BY_ID_QUERY = defineQuery(`
   *[_type == "project" && _id == $id][0]{
     ${PROJECT_FIELDS_FULL},
     author -> {
-      _id, name, username, image, bio
+      _id, name, username, image, bio,
+      university -> { _id, name, region },
+      specialization -> { _id, name }
     }
   }
 `);
@@ -99,8 +109,11 @@ export const LEADERBOARD_QUERY = defineQuery(`
     slug,
     _createdAt,
     author -> {
-      _id, name, image, username
+      _id, name, image, username,
+      university -> { name },
+      specialization -> { name }
     },
+    domain -> { name },
     views,
     upvotes,
     description,
@@ -142,4 +155,13 @@ export const CHANGELOG_QUERY = defineQuery(`
       description
     }
   }
+`);
+
+// Onboarding Queries
+export const UNIVERSITIES_QUERY = defineQuery(`
+  *[_type == "university"] | order(name asc) { _id, name }
+`);
+
+export const DOMAINS_QUERY = defineQuery(`
+  *[_type == "domain"] | order(name asc) { _id, name }
 `);

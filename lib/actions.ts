@@ -198,3 +198,35 @@ export const createProject = async (
     return { success: false, error: "An unexpected error occurred." };
   }
 };
+
+// ─── Complete Onboarding ───────────────────────────────────────────────────────
+
+export async function completeOnboarding(formData: FormData) {
+  const session = await auth();
+
+  if (!session?.id) {
+    return { success: false, error: "Not authenticated" };
+  }
+
+  const universityId = formData.get("universityId") as string;
+  const domainId = formData.get("domainId") as string;
+
+  if (!universityId || !domainId) {
+    return { success: false, error: "Please select both University and Domain" };
+  }
+
+  try {
+    await writeClient
+      .patch(session.id)
+      .set({
+        university: { _type: "reference", _ref: universityId },
+        specialization: { _type: "reference", _ref: domainId },
+      })
+      .commit();
+
+    return { success: true };
+  } catch (error) {
+    console.error("Onboarding error:", error);
+    return { success: false, error: "Failed to update profile. Try again." };
+  }
+}

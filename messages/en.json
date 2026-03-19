@@ -309,5 +309,18 @@
         "subtitle": "Page Not Found",
         "description": "Sorry, the page you are looking for doesn't exist or has been moved.",
         "back_home": "Back to Home"
+    },
+    "onboarding": {
+        "title": "Complete Your Profile",
+        "subtitle": "Connect with peers by telling us where and what you study.",
+        "uni_label": "University",
+        "uni_placeholder": "Select your university...",
+        "domain_label": "Main Specialization",
+        "domain_placeholder": "Select your tech domain...",
+        "btn_submit": "Join the Arena",
+        "btn_submitting": "Setting up...",
+        "toast_success_title": "Welcome to CS-Arena! 🎉",
+        "toast_success_desc": "Your profile is now fully set up.",
+        "error_generic": "Something went wrong."
     }
 }

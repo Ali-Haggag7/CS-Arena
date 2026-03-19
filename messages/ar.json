@@ -309,5 +309,18 @@
         "subtitle": "الصفحة غير موجودة",
         "description": "عذراً، الصفحة التي تبحث عنها غير موجودة أو تم نقلها إلى رابط آخر.",
         "back_home": "العودة للرئيسية"
+    },
+    "onboarding": {
+        "title": "أكمل ملفك الشخصي",
+        "subtitle": "تواصل مع زملائك من خلال تحديد جامعتك وتخصصك.",
+        "uni_label": "الجامعة",
+        "uni_placeholder": "اختر جامعتك...",
+        "domain_label": "التخصص الأساسي",
+        "domain_placeholder": "اختر تخصصك التقني...",
+        "btn_submit": "انضم للساحة",
+        "btn_submitting": "جاري الإعداد...",
+        "toast_success_title": "مرحباً بك في CS-Arena! 🎉",
+        "toast_success_desc": "تم إعداد ملفك الشخصي بنجاح.",
+        "error_generic": "حدث خطأ ما."
     }
 }
