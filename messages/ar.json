@@ -270,6 +270,17 @@
         "collab_offline": "نفس الجامعة/المدينة (Offline)",
         "collab_hybrid": "مدمج (Hybrid)"
     },
+    "edit_project": {
+        "form_header": "تعديل المشروع",
+        "form_sub": "قم بتحديث تفاصيل مشروعك ليعكس أحدث التطورات.",
+        "btn_submit": "تحديث المشروع",
+        "btn_submitting": "جاري التحديث...",
+        "toast_success_title": "تم التحديث",
+        "toast_success_desc": "تم تحديث مشروعك بنجاح.",
+        "error_general": "يرجى إصلاح الأخطاء الموضحة أعلاه.",
+        "error_unexpected": "حدث خطأ غير متوقع.",
+        "error_fallback": "فشل في تحديث المشروع."
+    },
     "profile": {
         "seo_desc_fallback": "استكشف مشاريع علوم الحاسب الخاصة بـ {name} على منصة CS-Arena.",
         "default_bio": "مهندس برمجيات شغوف يصنع تجارب رقمية رائعة.",

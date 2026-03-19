@@ -1,0 +1,308 @@
+"use client";
+
+import React, { useState, useCallback, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+import { Send, AlertCircle, Loader2, FileCode2, Users, Briefcase, MapPin, ChevronDown, Check, Link as LinkIcon } from "lucide-react";
+import { updateProject } from "@/lib/actions";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslations, useLocale } from "next-intl";
+
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+import * as commands from "@uiw/react-md-editor/commands";
+
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
+
+type DropdownItem = { value: string; label: string };
+
+const inputClass = (hasError: boolean) =>
+    `w-full p-4 rounded-xl border text-[15px] font-medium
+   bg-white dark:bg-[#111115]
+   text-black dark:text-white
+   placeholder:text-slate-400 dark:placeholder:text-white/30
+   focus:outline-none focus:ring-2 focus:ring-primary/50 
+   shadow-sm dark:shadow-none
+   transition-all duration-300
+   ${hasError
+        ? "border-red-500 ring-1 ring-red-500 bg-red-50 dark:bg-red-500/5"
+        : "border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20"
+    }`;
+
+const labelClass = "text-xs font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest block mb-2";
+
+const CustomDropdown = ({
+    name,
+    label,
+    options,
+    placeholder,
+    defaultValue,
+    required = true,
+}: {
+    name: string;
+    label: string | React.ReactNode;
+    options: DropdownItem[];
+    placeholder: string;
+    defaultValue?: string;
+    required?: boolean;
+}) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selected, setSelected] = useState<DropdownItem | null>(
+        defaultValue ? options.find(o => o.value === defaultValue) || null : null
+    );
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    return (
+        <div className="relative" ref={dropdownRef}>
+            <label className={labelClass}>
+                {label} {required && <span className="text-red-500">*</span>}
+            </label>
+            <input type="hidden" name={name} value={selected?.value || ""} required={required} />
+            <button
+                type="button"
+                onClick={() => setIsOpen(!isOpen)}
+                className={`w-full p-4 rounded-xl border flex items-center justify-between text-[15px] font-medium transition-all duration-300
+          ${isOpen ? "border-primary ring-1 ring-primary bg-white dark:bg-[#111115]" : "border-slate-200 dark:border-white/10 bg-white dark:bg-[#111115] hover:border-slate-300 dark:hover:border-white/20"}
+          ${selected ? "text-black dark:text-white" : "text-slate-400 dark:text-white/30"}`}
+            >
+                <span>{selected ? selected.label : placeholder}</span>
+                <ChevronDown className={`size-4 transition-transform duration-300 ${isOpen ? "rotate-180 text-primary" : "text-slate-400"}`} />
+            </button>
+            {isOpen && (
+                <div className="absolute z-50 w-full mt-2 bg-white dark:bg-[#111115] border border-slate-200 dark:border-white/10 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2">
+                    <ul className="max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-white/10">
+                        {options.map((option) => (
+                            <li
+                                key={option.value}
+                                onClick={() => {
+                                    setSelected(option);
+                                    setIsOpen(false);
+                                }}
+                                className={`px-4 py-3 text-sm font-medium cursor-pointer transition-colors flex items-center justify-between
+                  ${selected?.value === option.value ? "bg-primary/10 text-primary" : "text-slate-600 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/5"}`}
+                            >
+                                {option.label}
+                                {selected?.value === option.value && <Check className="size-4" />}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+};
+
+const editorCommands = [commands.bold, commands.italic, commands.strikethrough, commands.divider, commands.link, commands.quote, commands.code, commands.codeBlock, commands.divider, commands.unorderedListCommand, commands.orderedListCommand];
+const editorExtraCommands = [commands.codeEdit, commands.codeLive, commands.codePreview];
+
+export default function EditProjectForm({
+    project,
+    domains
+}: {
+    project: any,
+    domains: { _id: string, name: string }[]
+}) {
+    const [pitch, setPitch] = useState(project.pitch || "");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [generalError, setGeneralError] = useState("");
+    const [isLookingForTeam, setIsLookingForTeam] = useState(project.isLookingForContributors || false);
+
+    const router = useRouter();
+    const { toast } = useToast();
+    const tCreate = useTranslations("create_project");
+    const tEdit = useTranslations("edit_project");
+    const locale = useLocale();
+    const isRtl = locale === "ar";
+
+    const domainOptions = domains.map(d => ({ value: d._id, label: d.name }));
+
+    const projectTypeOptions = [
+        { value: "Graduation Project", label: tCreate("type_grad") },
+        { value: "Hackathon/Competition", label: tCreate("type_hack") },
+        { value: "Open Source", label: tCreate("type_open") },
+        { value: "Personal/Learning", label: tCreate("type_personal") },
+    ];
+
+    const collabOptions = [
+        { value: "Online", label: tCreate("collab_online") },
+        { value: "Offline (Same University/City)", label: tCreate("collab_offline") },
+        { value: "Hybrid", label: tCreate("collab_hybrid") },
+    ];
+
+    const initialTechStack = project.techStack?.join(", ") || "";
+    const initialRoles = project.rolesNeeded?.join(", ") || "";
+
+    const handleSubmit = useCallback(
+        async (e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            setIsSubmitting(true);
+            setGeneralError("");
+
+            const formData = new FormData(e.currentTarget);
+            formData.append("isLookingForContributors", isLookingForTeam.toString());
+
+            try {
+                const result = await updateProject(project._id, formData, pitch);
+
+                if (result.success) {
+                    toast({
+                        title: tEdit("toast_success_title"),
+                        description: tEdit("toast_success_desc"),
+                        className: "bg-emerald-500 text-white border-none",
+                    });
+                    setTimeout(() => {
+                        router.push(`/project/${project._id}`);
+                    }, 1500);
+                } else {
+                    setGeneralError(result.error ?? tEdit("error_fallback"));
+                }
+            } catch {
+                setGeneralError(tEdit("error_unexpected"));
+            } finally {
+                setIsSubmitting(false);
+            }
+        },
+        [pitch, isLookingForTeam, router, toast, project._id, tEdit]
+    );
+
+    return (
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-[#161618] p-6 sm:p-10 rounded-3xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl space-y-8 font-work-sans" noValidate>
+            <div className="flex items-center gap-4 border-b border-slate-100 dark:border-white/5 pb-6">
+                <div className="size-12 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                    <FileCode2 className="size-6 text-blue-500" />
+                </div>
+                <div>
+                    <h2 className="text-xl sm:text-2xl font-bold text-black dark:text-white">{tEdit("form_header")}</h2>
+                    <p className="text-sm text-slate-500 dark:text-white/40 mt-1">{tEdit("form_sub")}</p>
+                </div>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
+                <div>
+                    <label htmlFor="title" className={labelClass}>{tCreate("label_title")} <span className="text-red-500">*</span></label>
+                    <input id="title" name="title" defaultValue={project.title} required placeholder={tCreate("placeholder_title")} className={inputClass(false)} />
+                </div>
+                <div>
+                    <CustomDropdown
+                        name="projectType"
+                        label={tCreate("label_project_type")}
+                        options={projectTypeOptions}
+                        defaultValue={project.projectType}
+                        placeholder={tCreate("placeholder_project_type")}
+                    />
+                </div>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
+                <div>
+                    <CustomDropdown
+                        name="domainId"
+                        label={tCreate("label_domain")}
+                        options={domainOptions}
+                        defaultValue={project.domain?._ref}
+                        placeholder={tCreate("placeholder_domain")}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="techStack" className={labelClass}>{tCreate("label_tech")} <span className="text-red-500">*</span></label>
+                    <input id="techStack" name="techStack" defaultValue={initialTechStack} required placeholder={tCreate("placeholder_tech")} className={inputClass(false)} />
+                    <p className="text-xs text-slate-400 dark:text-white/30 mt-2 font-medium">{tCreate("hint_tech")}</p>
+                </div>
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
+                <div>
+                    <label htmlFor="projectLink" className={`${labelClass} flex items-center gap-2`}>
+                        {tCreate("label_github")} <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                        <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-400 rtl:right-4 rtl:left-auto" />
+                        <input id="projectLink" name="projectLink" type="url" defaultValue={project.githubLink} required className={`${inputClass(false)} ltr:pl-10 rtl:pr-10`} />
+                    </div>
+                </div>
+                <div>
+                    <label htmlFor="image" className={labelClass}>{tCreate("label_image")} <span className="text-red-500">*</span></label>
+                    <input id="image" name="image" type="url" defaultValue={project.image} required placeholder={tCreate("placeholder_image")} className={inputClass(false)} />
+                </div>
+            </div>
+
+            <div>
+                <label htmlFor="description" className={labelClass}>{tCreate("label_desc")} <span className="text-red-500">*</span></label>
+                <textarea id="description" name="description" defaultValue={project.description} required rows={3} placeholder={tCreate("placeholder_desc")} className={`${inputClass(false)} resize-none`} />
+            </div>
+
+            <div className="p-6 rounded-2xl border border-primary/20 bg-primary/5 dark:bg-primary/10 transition-all duration-300">
+                <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary/20 rounded-lg"><Users className="size-5 text-primary" /></div>
+                        <div>
+                            <h3 className="text-base font-bold text-black dark:text-white">{tCreate("team_title")}</h3>
+                            <p className="text-xs text-slate-500 dark:text-white/50 mt-0.5">{tCreate("team_subtitle")}</p>
+                        </div>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" aria-label="Toggle team recruitment" className="sr-only peer" checked={isLookingForTeam} onChange={(e) => setIsLookingForTeam(e.target.checked)} />
+                        <div className="w-11 h-6 bg-slate-300 dark:bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+
+                {isLookingForTeam && (
+                    <div className="grid sm:grid-cols-2 gap-6 mt-6 pt-6 border-t border-primary/20 animate-in fade-in slide-in-from-top-2">
+                        <div>
+                            <label htmlFor="rolesNeeded" className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-white/60 uppercase tracking-widest mb-2">
+                                <Briefcase className="size-4" /> {tCreate("label_roles")} <span className="text-red-500">*</span>
+                            </label>
+                            <input id="rolesNeeded" name="rolesNeeded" defaultValue={initialRoles} placeholder={tCreate("placeholder_roles")} required={isLookingForTeam} className={inputClass(false)} />
+                        </div>
+                        <div>
+                            <CustomDropdown
+                                name="collaborationType"
+                                label={<span className="inline-flex items-center gap-2"><MapPin className="size-4" /> {tCreate("label_collab")}</span>}
+                                options={collabOptions}
+                                defaultValue={project.collaborationType}
+                                placeholder={tCreate("placeholder_collab")}
+                                required={isLookingForTeam}
+                            />
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <div data-color-mode="dark" dir={isRtl ? "rtl" : "ltr"}>
+                <label className={labelClass}>{tCreate("label_pitch")} <span className="text-red-500">*</span></label>
+                <div className={`rounded-xl overflow-hidden transition-all duration-300 border border-slate-200 dark:border-white/10 focus-within:border-primary`}>
+                    <MDEditor
+                        value={pitch}
+                        onChange={(value) => setPitch(value ?? "")}
+                        preview="live"
+                        height={400}
+                        commands={editorCommands}
+                        extraCommands={editorExtraCommands}
+                        style={{ borderRadius: 0, border: "none", direction: isRtl ? "rtl" : "ltr" }}
+                    />
+                </div>
+            </div>
+
+            {generalError && (
+                <div className="flex items-center gap-3 text-red-600 bg-red-50 p-4 rounded-xl border border-red-200 animate-in fade-in">
+                    <AlertCircle className="size-5 shrink-0" />
+                    <span className="text-sm font-semibold">{generalError}</span>
+                </div>
+            )}
+
+            <button type="submit" disabled={isSubmitting} className="w-full flex justify-center items-center gap-2 bg-blue-600 text-white py-4 rounded-xl text-base font-bold transition-all hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed group mt-4">
+                {isSubmitting ? <><Loader2 className="size-5 animate-spin" /><span>{tEdit("btn_submitting")}</span></> : <><Send className="size-5 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" /><span>{tEdit("btn_submit")}</span></>}
+            </button>
+        </form>
+    );
+}

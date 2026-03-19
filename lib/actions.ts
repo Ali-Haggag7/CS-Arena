@@ -310,3 +310,57 @@ export const updateUserProfile = async (formData: FormData) => {
     return { success: false, error: "Failed to update profile" };
   }
 };
+
+// ─── Update Project ───────────────────────────────────────────────────────────
+
+export const updateProject = async (projectId: string, formData: FormData, pitch: string) => {
+  const session = await auth();
+  if (!session) return { success: false, error: "Not authenticated" };
+
+  try {
+    const existing = await client.withConfig({ useCdn: false }).fetch(
+      `*[_type == "project" && _id == $id][0]{author}`,
+      { id: projectId }
+    );
+
+    if (existing?.author?._ref !== session.id) {
+      return { success: false, error: "Not authorized" };
+    }
+
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const projectType = formData.get("projectType") as string;
+    const domainId = formData.get("domainId") as string;
+    const techStack = formData.get("techStack") as string;
+    const projectLink = formData.get("projectLink") as string;
+    const image = formData.get("image") as string;
+    const isLookingForContributors = formData.get("isLookingForContributors") === "true";
+    const rolesNeeded = formData.get("rolesNeeded") as string;
+    const collaborationType = formData.get("collaborationType") as string;
+
+    const techStackArray = techStack ? techStack.split(",").map(t => t.trim()).filter(Boolean) : [];
+    const rolesArray = isLookingForContributors && rolesNeeded ? rolesNeeded.split(",").map(r => r.trim()).filter(Boolean) : [];
+
+    await writeClient
+      .patch(projectId)
+      .set({
+        title,
+        description,
+        projectType,
+        domain: { _type: "reference", _ref: domainId },
+        techStack: techStackArray,
+        githubLink: projectLink,
+        image,
+        isLookingForContributors,
+        rolesNeeded: rolesArray,
+        collaborationType: isLookingForContributors ? collaborationType : null,
+        pitch
+      })
+      .commit();
+
+    return { success: true };
+  } catch (error) {
+    console.error("Update error:", error);
+    return { success: false, error: "Failed to update project" };
+  }
+};

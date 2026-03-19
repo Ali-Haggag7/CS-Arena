@@ -270,6 +270,17 @@
         "collab_offline": "Offline (Same University/City)",
         "collab_hybrid": "Hybrid"
     },
+    "edit_project": {
+        "form_header": "Edit Project",
+        "form_sub": "Update your project details to keep it fresh.",
+        "btn_submit": "Update Project",
+        "btn_submitting": "Updating...",
+        "toast_success_title": "Project Updated",
+        "toast_success_desc": "Your project has been successfully updated.",
+        "error_general": "Please fix the errors above.",
+        "error_unexpected": "An unexpected error occurred.",
+        "error_fallback": "Failed to update project."
+    },
     "profile": {
         "seo_desc_fallback": "Explore {name}'s computer science projects on CS Arena.",
         "default_bio": "Passionate software engineer crafting awesome digital experiences.",
