@@ -28,6 +28,23 @@ export const project = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "domain",
+      title: "Project Domain",
+      type: "reference",
+      to: [{ type: "domain" }],
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "projectType",
+      title: "Project Type",
+      type: "string",
+      options: {
+        list: ["Graduation Project", "Hackathon/Competition", "Open Source", "Personal/Learning"],
+      },
+      initialValue: "Personal/Learning",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: "description",
       type: "text",
       validation: (Rule) => Rule.required().min(20).max(500),
@@ -72,8 +89,25 @@ export const project = defineType({
     }),
     defineField({
       name: "isLookingForContributors",
+      title: "Looking for Team/Contributors?",
       type: "boolean",
       initialValue: false,
+    }),
+    defineField({
+      name: "rolesNeeded",
+      title: "Roles Needed",
+      type: "array",
+      of: [{ type: "string" }],
+      hidden: ({ document }) => !document?.isLookingForContributors,
+    }),
+    defineField({
+      name: "collaborationType",
+      title: "Collaboration Type",
+      type: "string",
+      options: {
+        list: ["Online", "Offline (Same University/City)", "Hybrid"],
+      },
+      hidden: ({ document }) => !document?.isLookingForContributors,
     }),
   ],
   preview: {

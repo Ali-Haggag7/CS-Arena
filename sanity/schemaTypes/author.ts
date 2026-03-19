@@ -33,6 +33,18 @@ export const author = defineType({
       name: "bio",
       type: "text",
     }),
+    defineField({
+      name: "university",
+      title: "University",
+      type: "reference",
+      to: [{ type: "university" }],
+    }),
+    defineField({
+      name: "specialization",
+      title: "Main Specialization",
+      type: "reference",
+      to: [{ type: "domain" }],
+    }),
   ],
   preview: {
     select: {
