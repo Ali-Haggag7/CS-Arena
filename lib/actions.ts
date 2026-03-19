@@ -6,6 +6,7 @@ import { Resend } from "resend";
 import slugify from "slugify";
 import { z } from "zod";
 import { auth } from "@/auth";
+import { client } from "@/sanity/lib/client";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -252,3 +253,60 @@ export async function completeOnboarding(formData: FormData) {
     return { success: false, error: "Failed to update profile. Try again." };
   }
 }
+
+// ─── Delete Project ───────────────────────────────────────────────────────────
+
+export const deleteProject = async (projectId: string) => {
+  const session = await auth();
+  if (!session) return { success: false, error: "Not authenticated" };
+
+  try {
+    const project = await client.withConfig({ useCdn: false }).fetch(
+      `*[_type == "project" && _id == $id][0]{author}`,
+      { id: projectId }
+    );
+
+    if (project?.author?._ref !== session.id) {
+      return { success: false, error: "Not authorized to delete this project." };
+    }
+
+    await writeClient.delete(projectId);
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    return { success: false, error: "Failed to delete project" };
+  }
+};
+
+// ─── Update User Profile ───────────────────────────────────────────────────────
+
+export const updateUserProfile = async (formData: FormData) => {
+  const session = await auth();
+  if (!session) return { success: false, error: "Not authenticated" };
+
+  const bio = formData.get("bio") as string;
+  const universityId = formData.get("universityId") as string;
+  const specializationId = formData.get("specializationId") as string;
+
+  try {
+    const updateData: any = { bio };
+
+    if (universityId) {
+      updateData.university = { _type: "reference", _ref: universityId };
+    }
+
+    if (specializationId) {
+      updateData.specialization = { _type: "reference", _ref: specializationId };
+    }
+
+    await writeClient
+      .patch(session.id)
+      .set(updateData)
+      .commit();
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return { success: false, error: "Failed to update profile" };
+  }
+};

@@ -7,7 +7,10 @@
         "link_leaderboard": "Leaderboard",
         "link_developers": "Find Developers",
         "link_opensource": "Open Source",
-        "link_about": "About"
+        "link_about": "About",
+        "dashboard": "Dashboard",
+        "profile": "Profile",
+        "preferences": "Preferences"
     },
     "hero": {
         "badge": "CS Arena — Open for submissions",
@@ -344,5 +347,38 @@
         "toast_success_title": "Welcome to CS-Arena! 🎉",
         "toast_success_desc": "Your profile is now fully set up.",
         "error_generic": "Something went wrong."
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "overview": "Overview",
+        "projects": "My Projects",
+        "settings": "Settings",
+        "total_projects": "Total Projects",
+        "total_views": "Total Views",
+        "total_upvotes": "Total Upvotes",
+        "recent_activity": "Recent Activity",
+        "no_projects_yet": "You haven't published any projects yet.",
+        "create_first_project": "Create your first project →"
+    },
+    "manage_projects": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "view": "View",
+        "confirm_delete": "Are you sure you want to delete this project? This action cannot be undone.",
+        "delete_success": "Project deleted successfully!",
+        "delete_error": "Failed to delete project. Please try again.",
+        "cancel": "Cancel",
+        "confirm_delete_title": "Delete Project"
+    },
+    "manage_profile": {
+        "title": "Profile Settings",
+        "bio_label": "Bio",
+        "bio_placeholder": "Tell us about your skills, goals, and passions...",
+        "uni_label": "University",
+        "domain_label": "Specialization",
+        "save_btn": "Save Changes",
+        "saving": "Saving...",
+        "success": "Profile updated successfully!",
+        "error": "Failed to update profile."
     }
 }

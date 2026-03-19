@@ -7,7 +7,10 @@
         "link_leaderboard": "قائمة الصدارة",
         "link_developers": "البحث عن مطورين",
         "link_opensource": "مفتوح المصدر",
-        "link_about": "من نحن"
+        "link_about": "من نحن",
+        "dashboard": "لوحة التحكم",
+        "profile": "الملف الشخصي",
+        "preferences": "الإعدادات"
     },
     "hero": {
         "badge": "CS Arena — مفتوح للمشاركة",
@@ -344,5 +347,38 @@
         "toast_success_title": "مرحباً بك في CS-Arena! 🎉",
         "toast_success_desc": "تم إعداد ملفك الشخصي بنجاح.",
         "error_generic": "حدث خطأ ما."
+    },
+    "dashboard": {
+        "title": "لوحة التحكم",
+        "overview": "نظرة عامة",
+        "projects": "مشاريعي",
+        "settings": "الإعدادات",
+        "total_projects": "إجمالي المشاريع",
+        "total_views": "إجمالي المشاهدات",
+        "total_upvotes": "إجمالي الإعجابات",
+        "recent_activity": "أحدث النشاطات",
+        "no_projects_yet": "لم تقم بنشر أي مشاريع بعد.",
+        "create_first_project": "أنشئ مشروعك الأول ←"
+    },
+    "manage_projects": {
+        "edit": "تعديل",
+        "delete": "حذف",
+        "view": "عرض",
+        "confirm_delete": "هل أنت متأكد من حذف هذا المشروع؟ لا يمكن التراجع عن هذا الإجراء.",
+        "delete_success": "تم حذف المشروع بنجاح!",
+        "delete_error": "حدث خطأ أثناء الحذف. يرجى المحاولة مرة أخرى.",
+        "cancel": "إلغاء",
+        "confirm_delete_title": "حذف المشروع"
+    },
+    "manage_profile": {
+        "title": "إعدادات الحساب",
+        "bio_label": "النبذة التعريفية (Bio)",
+        "bio_placeholder": "تحدث عن مهاراتك، أهدافك، وشغفك التقني...",
+        "uni_label": "الجامعة",
+        "domain_label": "التخصص الأساسي",
+        "save_btn": "حفظ التعديلات",
+        "saving": "جاري الحفظ...",
+        "success": "تم تحديث بياناتك بنجاح!",
+        "error": "حدث خطأ أثناء التحديث. حاول مرة أخرى."
     }
 }
