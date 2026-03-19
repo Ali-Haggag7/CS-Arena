@@ -36,6 +36,21 @@ const formSchema = z.object({
   pitch: z
     .string()
     .min(10, "Project details must be at least 10 characters"),
+  domainId: z
+    .string()
+    .min(1, "Please select a tech domain"),
+  projectType: z
+    .string()
+    .min(1, "Please select a project type"),
+  isLookingForContributors: z
+    .boolean()
+    .optional(),
+  rolesNeeded: z
+    .string()
+    .optional(),
+  collaborationType: z
+    .string()
+    .optional(),
 });
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -145,12 +160,19 @@ export const createProject = async (
       return { success: false, error: "You must be logged in to submit a project." };
     }
 
+    const isLookingForContributors = formData.get("isLookingForContributors") === "true";
+
     const raw = {
       title: formData.get("title") as string,
       description: formData.get("description") as string,
       techStack: formData.get("techStack") as string,
       image: formData.get("image") as string,
       githubLink: formData.get("githubLink") as string,
+      domainId: formData.get("domainId") as string,
+      projectType: formData.get("projectType") as string,
+      isLookingForContributors,
+      rolesNeeded: formData.get("rolesNeeded") as string,
+      collaborationType: formData.get("collaborationType") as string,
       pitch,
     };
 
@@ -164,13 +186,16 @@ export const createProject = async (
       };
     }
 
-    const { title, description, techStack, image, githubLink } = parsed.data;
+    const { title, description, techStack, image, githubLink, domainId, projectType, rolesNeeded, collaborationType } = parsed.data;
 
     const slug = slugify(title, { lower: true, strict: true });
-    const techStackArray = techStack
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean);
+
+    const techStackArray = techStack.split(",").map((t) => t.trim()).filter(Boolean);
+
+    // Only set rolesNeeded if the project is looking for contributors
+    const rolesArray = isLookingForContributors && rolesNeeded
+      ? rolesNeeded.split(",").map((r) => r.trim()).filter(Boolean)
+      : [];
 
     const result = await writeClient.create({
       _type: "project",
@@ -183,14 +208,15 @@ export const createProject = async (
       pitch,
       views: 0,
       upvotes: 0,
-      isLookingForContributors: false,
-      author: {
-        _type: "reference",
-        _ref: session.id,
-      },
+      domain: { _type: "reference", _ref: domainId },
+      projectType,
+      isLookingForContributors,
+      rolesNeeded: rolesArray,
+      collaborationType: isLookingForContributors ? collaborationType : undefined,
+      author: { _type: "reference", _ref: session.id },
     });
 
-    revalidatePath("/");
+    // revalidatePath("/");
 
     return { success: true, data: { projectId: result._id } };
   } catch (error) {

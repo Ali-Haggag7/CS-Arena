@@ -324,3 +324,22 @@ html[dir="rtl"],
 html[dir="rtl"] .font-work-sans {
   font-family: var(--font-cairo), sans-serif !important;
 }
+
+/* --- MD Editor RTL Fix --- */
+.w-md-editor-preview {
+  direction: rtl;
+  text-align: right;
+}
+
+.w-md-editor-preview .wmde-markdown ul,
+.w-md-editor-preview .wmde-markdown ol {
+  padding-right: 2rem;
+  padding-left: initial;
+}
+
+.w-md-editor-preview .wmde-markdown p,
+.w-md-editor-preview .wmde-markdown h1,
+.w-md-editor-preview .wmde-markdown h2,
+.w-md-editor-preview .wmde-markdown h3 {
+  text-align: right;
+}

@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { client } from "@/sanity/lib/client";
 import ProjectForm from "@/components/project/ProjectForm";
 import { Sparkles } from "lucide-react";
 import type { Metadata } from "next";
@@ -19,7 +20,9 @@ async function AuthenticatedForm() {
   const session = await auth();
   if (!session?.id) redirect("/");
 
-  return <ProjectForm />;
+  const domains = await client.fetch(`*[_type == "domain"] | order(name asc) { _id, name }`);
+
+  return <ProjectForm domains={domains} />;
 }
 
 export default async function CreateProjectPage() {
