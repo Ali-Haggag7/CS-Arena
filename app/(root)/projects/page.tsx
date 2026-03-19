@@ -21,26 +21,28 @@ export async function generateMetadata() {
 const AllProjects = async ({
     searchParams
 }: {
-    searchParams: { search?: string; tech?: string; sort?: string; page?: string }
+    searchParams: { search?: string; tech?: string; sort?: string; page?: string; domain?: string; university?: string }
 }) => {
     const search = searchParams.search || null;
     const tech = searchParams.tech || null;
     const sort = searchParams.sort || "newest";
+    const domain = searchParams.domain || null;
+    const university = searchParams.university || null;
 
     const t = await getTranslations("explore");
 
     let projects: ProjectTypeCard[] = await client.fetch(PROJECTS_QUERY, {
         search,
         tech,
+        universityId: university,
+        domainId: domain
     });
 
-    // Sort after fetch — GROQ doesn't support conditional ordering
     if (sort === "popular") {
         projects = projects.sort((a, b) => (b.upvotes ?? 0) - (a.upvotes ?? 0));
     } else if (sort === "views") {
         projects = projects.sort((a, b) => (b.views ?? 0) - (a.views ?? 0));
     }
-    // "newest" already sorted by _createdAt desc from query
 
     if (!projects?.length) {
         return (
@@ -75,6 +77,9 @@ const ExploreProjectsPage = async ({
     const resolvedParams = await searchParams;
     const t = await getTranslations("explore");
 
+    const universities = await client.fetch(`*[_type == "university"] | order(name asc) { _id, name }`);
+    const domains = await client.fetch(`*[_type == "domain"] | order(name asc) { _id, name }`);
+
     return (
         <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0f] font-work-sans pb-24 relative selection:bg-primary/30 transition-colors duration-300">
 
@@ -108,8 +113,8 @@ const ExploreProjectsPage = async ({
                 </div>
 
                 {/* Filters Section (No Suspense needed for Client Components) */}
-                <div className="mb-8 relative z-10">
-                    <ProjectFilters />
+                <div className="mb-8 relative z-40">
+                    <ProjectFilters domains={domains} universities={universities} />
                 </div>
 
                 {/* Content Section */}

@@ -64,7 +64,9 @@
         "sort_by": "Sort by:",
         "newest": "Newest First",
         "popular": "Most Upvoted",
-        "views": "Most Viewed"
+        "views": "Most Viewed",
+        "all_universities": "All Universities",
+        "all_domains": "All Domains"
     },
     "footer": {
         "description": "The ultimate platform for Computer Science students to showcase their code, find open-source contributors, and get headhunted by top tech recruiters.",
@@ -83,7 +85,8 @@
         "link_cookies": "Cookie Policy",
         "copyright": "© {year} CS-Arena. All rights reserved.",
         "built_with": "Built with passion in",
-        "egypt": "Egypt"
+        "egypt": "Egypt",
+        "domains_title": "Top Domains"
     },
     "changelog": {
         "title": "Changelog | CS-Arena",

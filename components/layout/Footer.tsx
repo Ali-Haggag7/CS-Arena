@@ -1,10 +1,15 @@
 import Link from "next/link";
-import { Github, Linkedin, Twitter, ArrowRight, Heart } from "lucide-react";
+import { Github, Linkedin, Twitter, ArrowRight, Heart, Layers } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { client } from "@/sanity/lib/client";
+
+const FOOTER_DOMAINS_QUERY = `*[_type == "domain"] | order(name asc)[0...5] { _id, name }`;
 
 const Footer = async () => {
     const currentYear = new Date().getFullYear();
     const t = await getTranslations("footer");
+
+    const domains: { _id: string; name: string }[] = await client.fetch(FOOTER_DOMAINS_QUERY);
 
     const platformLinks = [
         { href: "/projects", label: t("link_explore") },
@@ -25,6 +30,11 @@ const Footer = async () => {
         { href: "/cookies", prefetch: true, label: t("link_cookies") },
     ];
 
+    const domainLinks = domains.map((domain) => ({
+        href: `/projects?domain=${domain._id}`,
+        label: domain.name,
+    }));
+
     const socialLinks = [
         { href: "https://github.com/Ali-Haggag7", label: "GitHub", icon: Github },
         { href: "https://linkedin.com/in/ali-haggag", label: "LinkedIn", icon: Linkedin },
@@ -38,7 +48,7 @@ const Footer = async () => {
 
             <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 lg:gap-8 mb-16">
 
                     <div className="lg:col-span-2">
                         <Link href="/" className="flex items-center gap-2 mb-6 w-fit group" aria-label="CS Arena Home">
@@ -70,6 +80,15 @@ const Footer = async () => {
                     </div>
 
                     <FooterColumn title={t("platform_title")} links={platformLinks} />
+
+                    {domainLinks.length > 0 && (
+                        <FooterColumn
+                            title={t("domains_title") || "Top Domains"}
+                            links={domainLinks}
+                            icon={Layers}
+                        />
+                    )}
+
                     <FooterColumn title={t("resources_title")} links={resourceLinks} />
                     <FooterColumn title={t("legal_title")} links={legalLinks} />
                 </div>
@@ -93,14 +112,17 @@ const Footer = async () => {
 const FooterColumn = ({
     title,
     links,
+    icon: Icon,
 }: {
     title: string;
     links: { href: string; label: string; prefetch?: boolean }[];
+    icon?: React.ElementType;
 }) => (
     <div>
         <div className="flex items-center gap-2 mb-6">
             <div className="w-1 h-4 bg-primary rounded-full" />
-            <h3 className="text-[13px] font-bold text-black dark:text-white uppercase tracking-widest">
+            <h3 className="text-[13px] font-bold text-black dark:text-white uppercase tracking-widest flex items-center gap-2">
+                {Icon && <Icon className="size-4 text-primary/70" />}
                 {title}
             </h3>
         </div>
@@ -113,7 +135,7 @@ const FooterColumn = ({
                         className="text-[14px] text-slate-500 dark:text-white/40 hover:text-primary dark:hover:text-primary transition-all duration-300 flex items-center gap-2 group"
                     >
                         <ArrowRight className="size-3 opacity-0 rtl:rotate-180 -ms-5 group-hover:opacity-100 group-hover:ms-0 transition-all duration-300" />
-                        <span>{label}</span>
+                        <span className="truncate max-w-[150px] inline-block">{label}</span>
                     </Link>
                 </li>
             ))}
