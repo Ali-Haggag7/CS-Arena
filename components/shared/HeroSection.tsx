@@ -116,21 +116,6 @@ const HeroSection = ({
                 <TechFilters />
             </motion.div>
 
-            {/* Scroll hint */}
-            <motion.div
-                className="absolute bottom-6 left-1/2 -translate-x-1/2 sm:hidden z-10"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1, duration: 0.5 }}
-            >
-                <div className="flex flex-col items-center gap-1">
-                    <div className="w-px h-8 bg-gradient-to-b from-white/20 to-transparent" />
-                    <span className="text-[10px] text-white/20 uppercase tracking-widest">
-                        {locale === "ar" ? "مرر" : "Scroll"}
-                    </span>
-                </div>
-            </motion.div>
-
         </section>
     );
 };
