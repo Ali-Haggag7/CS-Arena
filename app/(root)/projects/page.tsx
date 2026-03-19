@@ -81,7 +81,7 @@ const ExploreProjectsPage = async ({
     const domains = await client.fetch(`*[_type == "domain"] | order(name asc) { _id, name }`);
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0f] font-work-sans pb-24 relative selection:bg-primary/30 transition-colors duration-300">
+        <main className="min-h-screen bg-gray-50 dark:bg-[#0d0d0f] font-work-sans pb-24 relative selection:bg-primary/30 transition-colors duration-300 overflow-x-hidden">
 
             {/* Background Effects */}
             <div className="absolute inset-0 grid-bg opacity-40 dark:opacity-40 pointer-events-none" aria-hidden="true" />
