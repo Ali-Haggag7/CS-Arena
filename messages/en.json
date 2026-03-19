@@ -103,19 +103,19 @@
         "domains_title": "Top Domains"
     },
     "changelog": {
-        "title": "Changelog | CS-Arena",
-        "description": "Latest updates, improvements, and fixes to CS-Arena.",
-        "badge": "What's New",
-        "heading1": "Change",
-        "heading2": "log",
-        "subtitle": "Every update, improvement, and fix — tracked and shipped with care.",
-        "empty_title": "No updates yet",
-        "empty_sub": "Check back soon — we ship fast!",
-        "latest": "Latest",
-        "type_new": "New",
-        "type_improved": "Improved",
-        "type_fixed": "Fixed",
-        "type_removed": "Removed"
+        "title": "System Changelog | CS-Arena",
+        "description": "Track the evolution of the CS-Arena ecosystem and our latest deployments.",
+        "hero_badge": "Continuous Evolution",
+        "heading1": "The Arena ",
+        "heading2": "Evolution",
+        "subtitle": "Witness the relentless progress of our platform. Every commit, every fix, and every feature is a step toward the ultimate developer ecosystem.",
+        "latest": "Live Now",
+        "type_new": "Deploy",
+        "type_improved": "Optimization",
+        "type_fixed": "Patch",
+        "type_removed": "Deprecated",
+        "empty_title": "Quiet in the Arena",
+        "empty_sub": "No updates logged yet. Our engineers are likely building something massive right now."
     },
     "docs_sidebar": {
         "label": "Documentation",

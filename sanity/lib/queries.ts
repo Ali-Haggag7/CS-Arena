@@ -145,19 +145,20 @@ export const PROJECTS_STATS_QUERY = defineQuery(`
 `);
 
 // Changelog query
-export const CHANGELOG_QUERY = defineQuery(`
-  *[_type == "changelog"] | order(publishedAt desc) {
-    _id,
-    version,
-    title,
-    summary,
-    publishedAt,
-    changes[] {
-      type,
-      description
-    }
+export const CHANGELOG_QUERY = `*[_type == "changelog"] | order(publishedAt desc) {
+  _id,
+  version,
+  title,
+  titleAr,
+  summary,
+  summaryAr,
+  publishedAt,
+  changes[] {
+    type,
+    description,
+    descriptionAr
   }
-`);
+}`;
 
 // Onboarding Queries
 export const UNIVERSITIES_QUERY = defineQuery(`

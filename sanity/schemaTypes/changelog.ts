@@ -1,4 +1,3 @@
-// sanity/schemas/changelog.ts
 import { defineField, defineType } from "sanity";
 import { BellIcon } from "@sanity/icons";
 
@@ -7,19 +6,16 @@ export const changelog = defineType({
     title: "Changelog",
     type: "document",
     icon: BellIcon,
+    groups: [
+        { name: "en", title: "English Content" },
+        { name: "ar", title: "المحتوى العربي" },
+    ],
     fields: [
         defineField({
             name: "version",
             title: "Version",
             type: "string",
-            description: 'e.g. v1.2.0',
-            validation: (Rule) => Rule.required(),
-        }),
-        defineField({
-            name: "title",
-            title: "Title",
-            type: "string",
-            description: 'e.g. "Leaderboard & Dark Mode"',
+            description: "e.g. v1.2.0",
             validation: (Rule) => Rule.required(),
         }),
         defineField({
@@ -28,13 +24,36 @@ export const changelog = defineType({
             type: "datetime",
             validation: (Rule) => Rule.required(),
         }),
+
+        defineField({
+            name: "title",
+            title: "Title (EN)",
+            type: "string",
+            group: "en",
+            validation: (Rule) => Rule.required(),
+        }),
         defineField({
             name: "summary",
-            title: "Summary",
+            title: "Summary (EN)",
             type: "text",
             rows: 3,
-            description: "Brief description of this release",
+            group: "en",
         }),
+
+        defineField({
+            name: "titleAr",
+            title: "Title (AR)",
+            type: "string",
+            group: "ar",
+        }),
+        defineField({
+            name: "summaryAr",
+            title: "Summary (AR)",
+            type: "text",
+            rows: 3,
+            group: "ar",
+        }),
+
         defineField({
             name: "changes",
             title: "Changes",
@@ -60,9 +79,14 @@ export const changelog = defineType({
                         }),
                         defineField({
                             name: "description",
-                            title: "Description",
+                            title: "Description (EN)",
                             type: "string",
                             validation: (Rule) => Rule.required(),
+                        }),
+                        defineField({
+                            name: "descriptionAr",
+                            title: "Description (AR)",
+                            type: "string",
                         }),
                     ],
                     preview: {
