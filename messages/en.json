@@ -289,7 +289,8 @@
         "architecture": "Project Architecture",
         "no_architecture": "No detailed architecture or pitch provided for this project.",
         "engagement": "Project Engagement",
-        "similar_projects": "Explore Similar Projects"
+        "similar_projects": "Explore Similar Projects",
+        "hiring": "Hiring"
     },
     "project_components": {
         "join_error_login": "You must be logged in to join a team.",

@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import UserProjects from "@/components/project/UserProjects";
 import { Skeleton } from "@/components/shadcn/skeleton";
-import { Github } from "lucide-react";
+import { Github, GraduationCap, Layers } from "lucide-react";
 import Link from "next/link";
 import ShareProfileButton from "@/components/shared/ShareProfileButton";
 import { getTranslations } from "next-intl/server";
@@ -66,13 +66,40 @@ async function ProfileContent({ id }: { id: string }) {
               />
             </div>
 
-            <h2 className="text-2xl font-extrabold text-black dark:text-white text-center mb-3 z-10">
+            <h2 className="text-2xl font-extrabold text-black dark:text-white text-center mb-3 z-10 line-clamp-1">
               @{user.username}
             </h2>
 
-            <p className="text-center text-sm text-slate-500 dark:text-white/50 leading-relaxed max-w-[240px] mb-8 z-10">
+            <p className="text-center text-sm text-slate-500 dark:text-white/50 leading-relaxed max-w-[240px] mb-6 z-10">
               {user.bio || t("default_bio")}
             </p>
+
+            {(user.university || user.specialization) && (
+              <div className="flex flex-wrap justify-center gap-2 w-full mb-8 z-10">
+                {user.university?.name && (
+                  <div
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full shadow-sm transition-all hover:border-primary/30"
+                    title={user.university.name}
+                  >
+                    <GraduationCap className="size-3.5 text-primary shrink-0" />
+                    <span className="text-xs font-medium text-slate-700 dark:text-white/80 line-clamp-1 max-w-[140px]">
+                      {user.university.name}
+                    </span>
+                  </div>
+                )}
+                {user.specialization?.name && (
+                  <div
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full shadow-sm transition-all hover:border-primary/30"
+                    title={user.specialization.name}
+                  >
+                    <Layers className="size-3.5 text-primary shrink-0" />
+                    <span className="text-xs font-medium text-slate-700 dark:text-white/80 line-clamp-1 max-w-[120px]">
+                      {user.specialization.name}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="w-full flex flex-col items-center gap-4 z-10 border-t border-slate-100 dark:border-white/5 pt-6 mt-auto">
               <ShareProfileButton />
@@ -125,7 +152,13 @@ const ProfileSkeleton = () => (
           <Skeleton className="w-full h-12 rounded-xl mb-8" />
           <Skeleton className="size-[140px] rounded-full mb-6" />
           <Skeleton className="h-8 w-3/4 mb-3 rounded-lg" />
-          <Skeleton className="h-16 w-full mb-8 rounded-lg" />
+          <Skeleton className="h-16 w-full mb-6 rounded-lg" />
+
+          <div className="flex justify-center gap-2 w-full mb-8">
+            <Skeleton className="h-8 w-24 rounded-full" />
+            <Skeleton className="h-8 w-20 rounded-full" />
+          </div>
+
           <div className="w-full border-t border-slate-100 dark:border-white/5 pt-6 mt-auto flex flex-col items-center gap-4">
             <Skeleton className="h-10 w-full rounded-lg" />
             <Skeleton className="h-6 w-24 rounded-lg" />

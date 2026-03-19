@@ -13,7 +13,7 @@ import UpvoteButton from "@/components/project/UpvoteButton";
 import GithubStats from "@/components/shared/GithubStats";
 import JoinTeamButton from "@/components/shared/JoinTeamButton";
 import ProjectCard, { ProjectTypeCard } from "@/components/project/ProjectCard";
-import { Calendar, Layers, Sparkles, Activity } from "lucide-react";
+import { Calendar, Layers, Sparkles, Activity, Briefcase, MapPin, ExternalLink, Github } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 
 const md = markdownit({ html: false, linkify: true, typographer: true });
@@ -24,9 +24,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const post = await client
-    .withConfig({ useCdn: false })
-    .fetch(PROJECT_BY_ID_QUERY, { id });
+  const post = await client.withConfig({ useCdn: false }).fetch(PROJECT_BY_ID_QUERY, { id });
   if (!post) return {};
   return {
     title: `${post.title} | CS-Arena`,
@@ -39,6 +37,21 @@ export async function generateMetadata({
   };
 }
 
+const getDynamicHeading = (domainName: string, isRtl: boolean, t: any) => {
+  const lower = (domainName || "").toLowerCase();
+
+  if (lower.includes("ai") || lower.includes("machine") || lower.includes("ذكاء") || lower.includes("data")) {
+    return isRtl ? "تفاصيل النموذج والبيانات" : "Model & Dataset Details";
+  }
+  if (lower.includes("cyber") || lower.includes("security") || lower.includes("أمن")) {
+    return isRtl ? "تفاصيل الثغرة والحماية" : "Vulnerability & Mitigation Details";
+  }
+  if (lower.includes("design") || lower.includes("ui") || lower.includes("ux") || lower.includes("تصميم")) {
+    return isRtl ? "رحلة المستخدم والتصميم" : "User Journey & Design Details";
+  }
+  return t("architecture") || (isRtl ? "معمارية وتفاصيل المشروع" : "Project Architecture & Details");
+};
+
 async function ProjectContent({ id }: { id: string }) {
   const [post, relatedProjects] = await Promise.all([
     client.withConfig({ useCdn: false }).fetch(PROJECT_BY_ID_QUERY, { id }),
@@ -50,6 +63,10 @@ async function ProjectContent({ id }: { id: string }) {
   const parsedContent = md.render(post.pitch || "");
   const t = await getTranslations("project_details");
   const locale = await getLocale();
+  const isRtl = locale === "ar";
+
+  const isGithubLink = post.githubLink?.toLowerCase().includes("github.com");
+  const dynamicHeading = getDynamicHeading(post.domain?.name, isRtl, t);
 
   return (
     <>
@@ -62,9 +79,26 @@ async function ProjectContent({ id }: { id: string }) {
         />
 
         <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 text-xs font-semibold mb-6 shadow-sm dark:shadow-none backdrop-blur-sm">
-            <Calendar className="size-3.5 text-primary" />
-            <span>{t("published", { date: formatDate(post._createdAt, locale) })}</span>
+
+          <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 text-xs font-semibold shadow-sm backdrop-blur-sm">
+              <Calendar className="size-3.5 text-primary" />
+              <span>{t("published", { date: formatDate(post._createdAt, locale) })}</span>
+            </div>
+
+            {post.domain?.name && (
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold shadow-sm backdrop-blur-sm">
+                <Layers className="size-3.5" />
+                <span>{post.domain.name}</span>
+              </div>
+            )}
+
+            {post.projectType && (
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-semibold shadow-sm backdrop-blur-sm">
+                <Sparkles className="size-3.5" />
+                <span>{post.projectType}</span>
+              </div>
+            )}
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-black dark:text-white leading-tight tracking-tight mb-6">
@@ -92,8 +126,9 @@ async function ProjectContent({ id }: { id: string }) {
           </div>
         )}
 
-        <div className="bg-white dark:bg-[#111115] rounded-[1.5rem] p-5 sm:p-6 border border-slate-200 dark:border-white/10 shadow-sm mb-10">
-          <div className="flex justify-between items-center gap-4 flex-wrap">
+        <div className="bg-white dark:bg-[#111115] rounded-[1.5rem] p-5 sm:p-6 border border-slate-200 dark:border-white/10 shadow-sm mb-10 overflow-hidden relative">
+
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
             <Link
               href={`/user/${post.author?._id}`}
               className="flex gap-3 sm:gap-4 items-center group"
@@ -102,11 +137,11 @@ async function ProjectContent({ id }: { id: string }) {
               <Image
                 src={post.author?.image || "https://placehold.co/48x48"}
                 alt={post.author?.name ?? "Author"}
-                width={48} height={48}
+                width={56} height={56}
                 className="rounded-full ring-2 ring-slate-100 dark:ring-white/5 group-hover:ring-primary/40 transition-all duration-300 shrink-0 object-cover"
               />
               <div>
-                <p className="text-base font-bold text-black dark:text-white group-hover:text-primary transition-colors duration-200">
+                <p className="text-lg font-bold text-black dark:text-white group-hover:text-primary transition-colors duration-200">
                   {post.author?.name}
                 </p>
                 <p className="text-sm text-slate-500 dark:text-white/40 font-medium mt-0.5">
@@ -116,19 +151,73 @@ async function ProjectContent({ id }: { id: string }) {
             </Link>
 
             {post.isLookingForContributors && (
-              <JoinTeamButton
-                projectName={post.title}
-                ownerEmail={post.author?.email ?? ""}
-              />
+              <div className="flex flex-col items-start md:items-end gap-3 w-full md:w-auto bg-emerald-50 dark:bg-emerald-500/5 p-4 rounded-xl border border-emerald-100 dark:border-emerald-500/10">
+                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm">
+                  <span className="relative flex h-2.5 w-2.5 shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                  </span>
+                  {t("hiring") || "Actively Recruiting Team"}
+                </div>
+
+                {(post.rolesNeeded?.length > 0 || post.collaborationType) && (
+                  <div className="flex flex-col gap-1.5 w-full">
+                    {post.rolesNeeded?.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                        <Briefcase className="size-3 text-slate-400 dark:text-white/30" />
+                        <span className="text-slate-500 dark:text-white/40">{isRtl ? "الأدوار:" : "Roles:"}</span>
+                        {post.rolesNeeded.map((role: string, idx: number) => (
+                          <span key={idx} className="bg-white dark:bg-white/10 text-slate-700 dark:text-white/80 px-2 py-0.5 rounded-md border border-slate-200 dark:border-white/5">
+                            {role}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {post.collaborationType && (
+                      <div className="flex items-center gap-1.5 text-xs">
+                        <MapPin className="size-3 text-slate-400 dark:text-white/30" />
+                        <span className="text-slate-500 dark:text-white/40">{isRtl ? "التعاون:" : "Mode:"}</span>
+                        <span className="text-slate-700 dark:text-white/80 font-medium">{post.collaborationType}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="mt-1 w-full md:w-auto">
+                  <JoinTeamButton projectName={post.title} ownerEmail={post.author?.email ?? ""} />
+                </div>
+              </div>
             )}
           </div>
 
           {post.githubLink && (
-            <Suspense fallback={<Skeleton className="h-20 w-full mt-5 rounded-xl bg-slate-100 dark:bg-white/5" />}>
-              <div className="w-full mt-3">
-                <GithubStats githubLink={post.githubLink} />
-              </div>
-            </Suspense>
+            <div className="mt-6 pt-6 border-t border-slate-100 dark:border-white/5">
+              {isGithubLink ? (
+                <Suspense fallback={<Skeleton className="h-20 w-full rounded-xl bg-slate-100 dark:bg-white/5" />}>
+                  <GithubStats githubLink={post.githubLink} />
+                </Suspense>
+              ) : (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-primary/10 rounded-lg">
+                      <ExternalLink className="size-5 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-black dark:text-white">{isRtl ? "رابط المشروع الخارجي" : "External Project Link"}</h4>
+                      <p className="text-xs text-slate-500 dark:text-white/50 mt-0.5">{isRtl ? "استكشف المصدر أو التصميم الأصلي" : "Explore the source or design files"}</p>
+                    </div>
+                  </div>
+                  <Link
+                    href={post.githubLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto px-6 py-2.5 bg-black dark:bg-white text-white dark:text-black text-sm font-bold rounded-lg hover:bg-primary dark:hover:bg-primary dark:hover:text-white transition-colors text-center"
+                  >
+                    {isRtl ? "زيارة الرابط" : "Visit Link"}
+                  </Link>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
@@ -155,7 +244,7 @@ async function ProjectContent({ id }: { id: string }) {
         <div className="bg-white dark:bg-[#111115] rounded-[2rem] p-6 sm:p-10 border border-slate-200 dark:border-white/10 shadow-sm mb-8">
           <h3 className="flex items-center gap-2 text-xl font-bold text-black dark:text-white mb-6 border-b border-slate-100 dark:border-white/5 pb-4">
             <Sparkles className="size-5 text-primary" />
-            {t("architecture")}
+            {dynamicHeading}
           </h3>
 
           {parsedContent ? (
@@ -218,7 +307,7 @@ const ProjectDetailsSkeleton = () => (
 
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 sm:-mt-32 relative z-20">
       <Skeleton className="w-full h-[250px] sm:h-[400px] md:h-[500px] rounded-[2rem] mb-8" />
-      <Skeleton className="h-28 w-full rounded-[1.5rem] mb-10" />
+      <Skeleton className="h-40 w-full rounded-[1.5rem] mb-10" />
       <Skeleton className="h-10 w-48 mb-4 rounded-lg" />
       <div className="flex gap-2.5 flex-wrap mb-12">
         <Skeleton className="h-10 w-24 rounded-lg" />
