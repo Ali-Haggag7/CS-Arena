@@ -117,6 +117,31 @@
         "empty_title": "Quiet in the Arena",
         "empty_sub": "No updates logged yet. Our engineers are likely building something massive right now."
     },
+    "open_source": {
+        "title": "Open Source | CS-Arena",
+        "hero_badge": "Open Source Ecosystem",
+        "hero_title1": "Engineering for the",
+        "hero_title2": "Community",
+        "hero_subtitle": "CS-Arena is more than code; it's a living ecosystem. We believe in radical transparency and community-driven innovation. Every line of code here belongs to the builders.",
+        "stat_stars": "Stars",
+        "stat_forks": "Forks",
+        "stat_contributors": "Engineers",
+        "stat_issues": "Requests",
+        "card1_title": "Fork & Innovate",
+        "card1_desc": "Take a copy of the Arena, experiment with its architecture, and build your own vision or help us improve ours.",
+        "card2_title": "Pull Request Protocol",
+        "card2_desc": "Got a fix or a new feature? Our CI/CD pipeline is ready for your PR. We review everything within 24 hours.",
+        "card3_title": "Bug Hunting",
+        "card3_desc": "Help us keep the Arena clean. Report issues, suggest optimizations, and ensure stability for thousands of students.",
+        "card4_title": "Star the Vision",
+        "card4_desc": "Boost our visibility in the global tech community. A star is a vote for the future of student-led platforms.",
+        "path_title": "The Path to Contribution",
+        "hall_title": "Hall of Contributors",
+        "hall_subtitle": "The visionary developers who helped architect the Arena.",
+        "cta_ready": "Ready to Architect?",
+        "cta_desc": "Dive into the source code, explore our stack, and leave your mark on the next generation of CS tools.",
+        "cta_button": "View Repository"
+    },
     "docs_sidebar": {
         "label": "Documentation",
         "sections": {

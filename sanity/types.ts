@@ -125,12 +125,15 @@ export type Changelog = {
   _updatedAt: string;
   _rev: string;
   version?: string;
-  title?: string;
   publishedAt?: string;
+  title?: string;
   summary?: string;
+  titleAr?: string;
+  summaryAr?: string;
   changes?: Array<{
     type?: "new" | "improved" | "fixed" | "removed";
     description?: string;
+    descriptionAr?: string;
     _key: string;
   }>;
 };

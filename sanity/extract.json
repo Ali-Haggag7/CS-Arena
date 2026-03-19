@@ -667,13 +667,6 @@
         },
         "optional": true
       },
-      "title": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "string"
-        },
-        "optional": true
-      },
       "publishedAt": {
         "type": "objectAttribute",
         "value": {
@@ -681,7 +674,28 @@
         },
         "optional": true
       },
+      "title": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "summary": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "titleAr": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "summaryAr": {
         "type": "objectAttribute",
         "value": {
           "type": "string"
@@ -721,6 +735,13 @@
                 "optional": true
               },
               "description": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
+              "descriptionAr": {
                 "type": "objectAttribute",
                 "value": {
                   "type": "string"
