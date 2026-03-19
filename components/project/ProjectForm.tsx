@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Send, AlertCircle, Loader2, FileCode2, Users, Briefcase, MapPin, ChevronDown, Check } from "lucide-react";
+import { Send, AlertCircle, Loader2, FileCode2, Users, Briefcase, MapPin, ChevronDown, Check, Link as LinkIcon } from "lucide-react";
 import { createProject } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslations, useLocale } from "next-intl";
@@ -114,7 +114,51 @@ const CustomDropdown = ({
 const editorCommands = [commands.bold, commands.italic, commands.strikethrough, commands.divider, commands.link, commands.quote, commands.code, commands.codeBlock, commands.divider, commands.unorderedListCommand, commands.orderedListCommand];
 const editorExtraCommands = [commands.codeEdit, commands.codeLive, commands.codePreview];
 
-export default function ProjectForm({ domains }: { domains: { _id: string, name: string }[] }) {
+const getDynamicPlaceholders = (domainName: string, isRtl: boolean) => {
+  const lower = domainName.toLowerCase();
+
+  if (lower.includes("ai") || lower.includes("artificial") || lower.includes("machine") || lower.includes("data") || lower.includes("ذكاء") || lower.includes("بيانات")) {
+    return {
+      title: isRtl ? "e.g., Sentiment Analysis Model, Smart Recommender..." : "e.g., Sentiment Analysis Model, Smart Recommender...",
+      tech: isRtl ? "e.g., Python, TensorFlow, Pandas..." : "e.g., Python, TensorFlow, Pandas...",
+      linkLabel: isRtl ? "Project Link (GitHub, Kaggle, Hugging Face)" : "Project Link (GitHub, Kaggle, Hugging Face)",
+      linkPlaceholder: "https://kaggle.com/...",
+      pitchHint: isRtl ? "Describe your Dataset, Model Architecture, Accuracy, and Training results." : "Describe your Dataset, Model Architecture, Accuracy, and Training results.",
+    };
+  } else if (lower.includes("cyber") || lower.includes("security") || lower.includes("أمن") || lower.includes("سيبراني")) {
+    return {
+      title: isRtl ? "e.g., Vulnerability Scanner, Custom Encryption Algo..." : "e.g., Vulnerability Scanner, Custom Encryption Algo...",
+      tech: isRtl ? "e.g., Python, Bash, Wireshark, C++..." : "e.g., Python, Bash, Wireshark, C++...",
+      linkLabel: isRtl ? "Script / Research Paper Link" : "Script / Research Paper Link",
+      linkPlaceholder: "https://github.com/... or Google Drive link",
+      pitchHint: isRtl ? "Describe the vulnerability, exploitation method, and mitigation steps." : "Describe the vulnerability, exploitation method, and mitigation steps.",
+    };
+  } else if (lower.includes("design") || lower.includes("ui") || lower.includes("ux") || lower.includes("تصميم")) {
+    return {
+      title: isRtl ? "e.g., Banking App Redesign, Full Brand Identity..." : "e.g., Banking App Redesign, Full Brand Identity...",
+      tech: isRtl ? "e.g., Figma, Adobe XD, Illustrator..." : "e.g., Figma, Adobe XD, Illustrator...",
+      linkLabel: isRtl ? "Design Link (Figma, Behance, Dribbble)" : "Design Link (Figma, Behance, Dribbble)",
+      linkPlaceholder: "https://www.figma.com/file/...",
+      pitchHint: isRtl ? "Describe the User Journey, color psychology, and the problem you solved." : "Describe the User Journey, color psychology, and the problem you solved.",
+    };
+  }
+
+  return {
+    title: isRtl ? "e.g., Social Media App, Task Manager..." : "e.g., Social Media App, Task Manager...",
+    tech: isRtl ? "e.g., Next.js, React, Node.js, MongoDB..." : "e.g., Next.js, React, Node.js, MongoDB...",
+    linkLabel: isRtl ? "Source Code (GitHub, GitLab) or Live URL" : "Source Code (GitHub, GitLab) or Live URL",
+    linkPlaceholder: "https://github.com/...",
+    pitchHint: isRtl ? "Use Markdown to describe your project architecture, core features, and setup instructions." : "Use Markdown to describe your project architecture, core features, and setup instructions.",
+  };
+};
+
+export default function ProjectForm({
+  domains,
+  userDomainName = ""
+}: {
+  domains: { _id: string, name: string }[],
+  userDomainName?: string
+}) {
   const [pitch, setPitch] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [generalError, setGeneralError] = useState("");
@@ -126,6 +170,8 @@ export default function ProjectForm({ domains }: { domains: { _id: string, name:
   const t = useTranslations("create_project");
   const locale = useLocale();
   const isRtl = locale === "ar";
+
+  const dynamicTexts = getDynamicPlaceholders(userDomainName, isRtl);
 
   const domainOptions = domains.map(d => ({ value: d._id, label: d.name }));
 
@@ -197,7 +243,7 @@ export default function ProjectForm({ domains }: { domains: { _id: string, name:
       <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
         <div>
           <label htmlFor="title" className={labelClass}>{t("label_title")} <span className="text-red-500">*</span></label>
-          <input id="title" name="title" required placeholder={t("placeholder_title")} className={inputClass(!!fieldErrors.title)} />
+          <input id="title" name="title" required placeholder={dynamicTexts.title} className={inputClass(!!fieldErrors.title)} />
           <FieldError errors={fieldErrors.title} />
         </div>
         <div>
@@ -225,7 +271,7 @@ export default function ProjectForm({ domains }: { domains: { _id: string, name:
         </div>
         <div>
           <label htmlFor="techStack" className={labelClass}>{t("label_tech")} <span className="text-red-500">*</span></label>
-          <input id="techStack" name="techStack" required placeholder={t("placeholder_tech")} className={inputClass(!!fieldErrors.techStack)} />
+          <input id="techStack" name="techStack" required placeholder={dynamicTexts.tech} className={inputClass(!!fieldErrors.techStack)} />
           <p className="text-xs text-slate-400 dark:text-white/30 mt-2 font-medium">{t("hint_tech")}</p>
           <FieldError errors={fieldErrors.techStack} />
         </div>
@@ -233,9 +279,14 @@ export default function ProjectForm({ domains }: { domains: { _id: string, name:
 
       <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
         <div>
-          <label htmlFor="githubLink" className={labelClass}>{t("label_github")} <span className="text-red-500">*</span></label>
-          <input id="githubLink" name="githubLink" type="url" required placeholder={t("placeholder_github")} className={inputClass(!!fieldErrors.githubLink)} />
-          <FieldError errors={fieldErrors.githubLink} />
+          <label htmlFor="projectLink" className={`${labelClass} flex items-center gap-2`}>
+            {dynamicTexts.linkLabel} <span className="text-red-500">*</span>
+          </label>
+          <div className="relative">
+            <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-400 rtl:right-4 rtl:left-auto" />
+            <input id="projectLink" name="projectLink" type="url" required placeholder={dynamicTexts.linkPlaceholder} className={`${inputClass(!!fieldErrors.projectLink)} ltr:pl-10 rtl:pr-10`} />
+          </div>
+          <FieldError errors={fieldErrors.projectLink} />
         </div>
         <div>
           <label htmlFor="image" className={labelClass}>{t("label_image")} <span className="text-red-500">*</span></label>
@@ -289,7 +340,7 @@ export default function ProjectForm({ domains }: { domains: { _id: string, name:
 
       <div data-color-mode="dark" dir={isRtl ? "rtl" : "ltr"}>
         <label className={labelClass}>{t("label_pitch")} <span className="text-red-500">*</span></label>
-        <p className="text-sm text-slate-500 dark:text-white/40 mb-3">{t("hint_pitch")}</p>
+        <p className="text-sm text-slate-500 dark:text-white/40 mb-3">{dynamicTexts.pitchHint}</p>
 
         <div className={`rounded-xl overflow-hidden transition-all duration-300 ${fieldErrors.pitch ? "border-2 border-red-500" : "border border-slate-200 dark:border-white/10 focus-within:border-primary"}`}>
           <MDEditor

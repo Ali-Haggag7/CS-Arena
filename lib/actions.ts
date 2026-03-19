@@ -26,13 +26,9 @@ const formSchema = z.object({
   image: z
     .string()
     .url("Please provide a valid image URL"),
-  githubLink: z
+  projectLink: z
     .string()
-    .url("Please provide a valid URL")
-    .regex(
-      /^https:\/\/(www\.)?github\.com\/.+/,
-      "Must be a valid GitHub repository URL"
-    ),
+    .url("Please provide a valid URL"),
   pitch: z
     .string()
     .min(10, "Project details must be at least 10 characters"),
@@ -186,7 +182,7 @@ export const createProject = async (
       };
     }
 
-    const { title, description, techStack, image, githubLink, domainId, projectType, rolesNeeded, collaborationType } = parsed.data;
+    const { title, description, techStack, image, projectLink, domainId, projectType, rolesNeeded, collaborationType } = parsed.data;
 
     const slug = slugify(title, { lower: true, strict: true });
 
@@ -204,7 +200,7 @@ export const createProject = async (
       description,
       techStack: techStackArray,
       image,
-      githubLink,
+      githubLink: projectLink,
       pitch,
       views: 0,
       upvotes: 0,
