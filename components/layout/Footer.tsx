@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, Linkedin, Twitter, ArrowRight, Heart, Layers } from "lucide-react";
+import { Github, Linkedin, ArrowRight, Heart, Layers, Globe } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { client } from "@/sanity/lib/client";
 
@@ -37,8 +37,8 @@ const Footer = async () => {
 
     const socialLinks = [
         { href: "https://github.com/Ali-Haggag7", label: "GitHub", icon: Github },
-        { href: "https://linkedin.com/in/ali-haggag", label: "LinkedIn", icon: Linkedin },
-        { href: "https://twitter.com", label: "Twitter", icon: Twitter },
+        { href: "https://linkedin.com/in/ali-haggag7", label: "LinkedIn", icon: Linkedin },
+        { href: "https://alihaggag.me", label: "Portfolio", icon: Globe },
     ];
 
     return (
