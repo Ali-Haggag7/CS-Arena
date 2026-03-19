@@ -41,13 +41,15 @@ const AUTHOR_FIELDS = `
   specialization -> { _id, name, slug }
 `;
 
-// Supports both search and tech stack filtering
+// Supports search, tech stack filtering, university filtering, and domain filtering
 export const PROJECTS_QUERY = defineQuery(`
   *[
     _type == "project" &&
     defined(slug.current) &&
     (!defined($search) || title match $search + "*" || author->name match $search + "*" || $search in techStack) &&
-    (!defined($tech) || $tech in techStack)
+    (!defined($tech) || $tech in techStack) &&
+    (!defined($universityId) || author->university._ref == $universityId) &&
+    (!defined($domainId) || domain._ref == $domainId)
   ] | order(_createdAt desc) {
     ${PROJECT_FIELDS}
   }

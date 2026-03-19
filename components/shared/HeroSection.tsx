@@ -9,7 +9,17 @@ import { useTranslations } from "next-intl";
 const TYPEWRITER_WORDS_EN = ["Code", "Projects", "Ideas", "Skills"];
 const TYPEWRITER_WORDS_AR = ["كودك", "مشاريعك", "أفكارك", "مهاراتك"];
 
-const HeroSection = ({ query, locale }: { query?: string; locale: string }) => {
+const HeroSection = ({
+    query,
+    locale,
+    universities,
+    domains
+}: {
+    query?: string;
+    locale: string;
+    universities: any[];
+    domains: any[];
+}) => {
     const t = useTranslations("hero");
     const words = locale === "ar" ? TYPEWRITER_WORDS_AR : TYPEWRITER_WORDS_EN;
 
@@ -36,14 +46,16 @@ const HeroSection = ({ query, locale }: { query?: string; locale: string }) => {
     }, [displayed, deleting, wordIndex, words]);
 
     return (
-        <section className="relative overflow-hidden min-h-[100svh] sm:min-h-[580px] flex flex-col items-center justify-center py-12 sm:py-16 px-4 sm:px-6 bg-gray-950 dark:bg-[#0d0d0f]">
+        <section className="relative z-20 min-h-[100svh] sm:min-h-[580px] flex flex-col items-center justify-center py-12 sm:py-16 px-4 sm:px-6 bg-gray-950 dark:bg-[#0d0d0f]">
 
-            <div className="absolute inset-0 grid-bg" aria-hidden="true" />
-            <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[200px] sm:w-[600px] sm:h-[300px] rounded-full opacity-15 sm:opacity-20 blur-[80px] sm:blur-[100px] pointer-events-none"
-                style={{ background: "radial-gradient(ellipse, #3b82f6 0%, transparent 70%)" }}
-                aria-hidden="true"
-            />
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                <div className="absolute inset-0 grid-bg" aria-hidden="true" />
+                <div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[200px] sm:w-[600px] sm:h-[300px] rounded-full opacity-15 sm:opacity-20 blur-[80px] sm:blur-[100px]"
+                    style={{ background: "radial-gradient(ellipse, #3b82f6 0%, transparent 70%)" }}
+                    aria-hidden="true"
+                />
+            </div>
 
             {/* Badge */}
             <motion.div
@@ -86,12 +98,12 @@ const HeroSection = ({ query, locale }: { query?: string; locale: string }) => {
 
             {/* Search */}
             <motion.div
-                className="w-full relative z-10 max-w-2xl mt-2"
+                className="w-full relative z-30 max-w-2xl mt-2 flex flex-col items-center"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.25, ease: "easeOut" }}
             >
-                <SearchForm query={query} />
+                <SearchForm query={query} universities={universities} domains={domains} />
             </motion.div>
 
             {/* Filters */}

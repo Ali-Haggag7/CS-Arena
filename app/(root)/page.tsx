@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { PROJECTS_QUERY } from "@/sanity/lib/queries";
 import { sanityFetch, SanityLive } from "@/sanity/lib/live";
+import { client } from "@/sanity/lib/client";
 import HeroSection from "@/components/shared/HeroSection";
 import ProjectsGrid from "@/components/shared/ProjectsGrid";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -32,17 +33,26 @@ async function ProjectsFetcher({ params, query, tech, t }: any) {
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ query?: string; tech?: string }>;
+  searchParams: Promise<{ query?: string; tech?: string; university?: string; domain?: string }>;
 }) {
-  const { query, tech } = await searchParams;
-  const params = { search: query || null, tech: tech || null };
+  const { query, tech, university, domain } = await searchParams;
+
+  const params = {
+    search: query || null,
+    tech: tech || null,
+    universityId: university || null,
+    domainId: domain || null
+  };
 
   const locale = await getLocale();
   const t = await getTranslations("home");
 
+  const universities = await client.fetch(`*[_type == "university"] | order(name asc) { _id, name }`);
+  const domains = await client.fetch(`*[_type == "domain"] | order(name asc) { _id, name }`);
+
   return (
     <>
-      <HeroSection query={query} locale={locale} />
+      <HeroSection query={query} locale={locale} universities={universities} domains={domains} />
 
       <section className="section_container">
         <Suspense fallback={<ProjectsGridSkeleton />}>
