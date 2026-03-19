@@ -161,7 +161,15 @@
     "docs_page": {
         "docs_breadcrumb": "التوثيق",
         "previous": "السابق",
-        "next": "التالي"
+        "next": "التالي",
+        "search_docs": "ابحث في الوثائق...",
+        "search_cmd": "Ctrl+K",
+        "version": "الإصدار",
+        "edit_github": "عدّل هذه الصفحة على GitHub",
+        "feedback_title": "هل كانت هذه الصفحة مفيدة؟",
+        "feedback_yes": "نعم",
+        "feedback_no": "لا",
+        "last_updated": "آخر تحديث منذ قليل"
     },
     "about": {
         "title": "عن CS-Arena",
