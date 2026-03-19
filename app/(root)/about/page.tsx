@@ -85,14 +85,18 @@ const AboutPage = async () => {
                                 <Zap className="size-5" />
                                 <span className="uppercase tracking-wider text-sm">{t("tech_badge")}</span>
                             </div>
-                            <h2
-                                className="text-2xl md:text-3xl font-bold text-white mb-4 leading-tight"
-                                dangerouslySetInnerHTML={{ __html: t("tech_title") }}
-                            />
-                            <p
-                                className="text-slate-400 leading-relaxed text-base"
-                                dangerouslySetInnerHTML={{ __html: t("tech_desc") }}
-                            />
+
+                            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 leading-tight">
+                                {t.rich("tech_title", {
+                                    bold: (chunks) => <strong className="text-white">{chunks}</strong>
+                                })}
+                            </h2>
+
+                            <p className="text-slate-400 leading-relaxed text-base">
+                                {t.rich("tech_desc", {
+                                    bold: (chunks) => <strong className="text-white">{chunks}</strong>
+                                })}
+                            </p>
                         </div>
 
                         <div className="shrink-0 grid grid-cols-2 gap-3 w-full md:w-auto">

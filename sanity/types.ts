@@ -111,13 +111,6 @@ export type SanityImageMetadata = {
   isOpaque?: boolean;
 };
 
-export type Geopoint = {
-  _type: "geopoint";
-  lat?: number;
-  lng?: number;
-  alt?: number;
-};
-
 export type SanityAssetSourceData = {
   _type: "sanity.assetSourceData";
   name?: string;
@@ -156,6 +149,13 @@ export type Project = {
     _weak?: boolean;
     [internalGroqTypeReferenceTo]?: "author";
   };
+  domain?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "domain";
+  };
+  projectType?: "Graduation Project" | "Hackathon/Competition" | "Open Source" | "Personal/Learning";
   description?: string;
   githubLink?: string;
   techStack?: Array<string>;
@@ -164,12 +164,8 @@ export type Project = {
   upvotes?: number;
   views?: number;
   isLookingForContributors?: boolean;
-};
-
-export type Slug = {
-  _type: "slug";
-  current?: string;
-  source?: string;
+  rolesNeeded?: Array<string>;
+  collaborationType?: "Online" | "Offline (Same University/City)" | "Hybrid";
 };
 
 export type Author = {
@@ -184,9 +180,57 @@ export type Author = {
   email?: string;
   image?: string;
   bio?: string;
+  university?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "university";
+  };
+  specialization?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "domain";
+  };
+};
+
+export type Domain = {
+  _id: string;
+  _type: "domain";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+};
+
+export type University = {
+  _id: string;
+  _type: "university";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  governorate?: "Cairo" | "Giza" | "Alexandria" | "Dakahlia" | "Red Sea" | "Beheira" | "Fayoum" | "Gharbia" | "Ismailia" | "Menofia" | "Minya" | "Qalyubia" | "New Valley" | "Suez" | "Aswan" | "Assiut" | "Beni Suef" | "Port Said" | "Damietta" | "Sharkia" | "South Sinai" | "Kafr El Sheikh" | "Matrouh" | "Luxor" | "Qena" | "North Sinai" | "Sohag";
+  region?: "Greater Cairo" | "Alexandria & Matrouh" | "Delta" | "Suez Canal" | "North Upper Egypt" | "South Upper Egypt";
+  location?: Geopoint;
+};
+
+export type Geopoint = {
+  _type: "geopoint";
+  lat?: number;
+  lng?: number;
+  alt?: number;
+};
+
+export type Slug = {
+  _type: "slug";
+  current?: string;
+  source?: string;
 };
 
 export type Markdown = string;
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | SanityAssetSourceData | Changelog | Project | Slug | Author | Markdown;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | SanityAssetSourceData | Changelog | Project | Author | Domain | University | Geopoint | Slug | Markdown;
 export declare const internalGroqTypeReferenceTo: unique symbol;

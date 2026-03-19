@@ -114,7 +114,6 @@ export const project = defineType({
     select: {
       title: "title",
       subtitle: "author.name",
-      media: "image",
     },
   },
   orderings: [

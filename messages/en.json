@@ -139,7 +139,7 @@
         "feature3_desc": "Connect with developers who want to contribute to meaningful open-source projects.",
         "tech_badge": "Engineering",
         "tech_title": "Built for Developers, <br /> By Developers",
-        "tech_desc": "We understand the modern tech landscape. CS-Arena is a highly optimized Full-Stack application powered by <strong class=\"text-white\">Next.js 15 (App Router)</strong>, leveraging <strong class=\"text-white\">React 19</strong> features. We utilize <strong class=\"text-white\">Sanity CMS</strong> for robust content management and integrate directly with live GitHub APIs. Whether you are a MERN stack wizard or a systems programmer, this is your arena.",
+        "tech_desc": "We understand the modern tech landscape. CS-Arena is a highly optimized Full-Stack application powered by <bold>Next.js 15 (App Router)</bold>, leveraging <bold>React 19</bold> features. We utilize <bold>Sanity CMS</bold> for robust content management and integrate directly with live GitHub APIs. Whether you are a MERN stack wizard or a systems programmer, this is your arena.",
         "cta_title": "Ready to enter the arena?",
         "cta_desc": "Don't let your hard work collect virtual dust. Submit your project today and let the world see what you've built.",
         "cta_button": "Submit Your Project"

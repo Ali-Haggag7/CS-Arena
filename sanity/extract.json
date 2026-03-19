@@ -589,43 +589,6 @@
     }
   },
   {
-    "name": "geopoint",
-    "type": "type",
-    "value": {
-      "type": "object",
-      "attributes": {
-        "_type": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string",
-            "value": "geopoint"
-          }
-        },
-        "lat": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "number"
-          },
-          "optional": true
-        },
-        "lng": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "number"
-          },
-          "optional": true
-        },
-        "alt": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "number"
-          },
-          "optional": true
-        }
-      }
-    }
-  },
-  {
     "name": "sanity.assetSourceData",
     "type": "type",
     "value": {
@@ -862,6 +825,61 @@
         },
         "optional": true
       },
+      "domain": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "object",
+          "attributes": {
+            "_ref": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              }
+            },
+            "_type": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string",
+                "value": "reference"
+              }
+            },
+            "_weak": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "boolean"
+              },
+              "optional": true
+            }
+          },
+          "dereferencesTo": "domain"
+        },
+        "optional": true
+      },
+      "projectType": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "Graduation Project"
+            },
+            {
+              "type": "string",
+              "value": "Hackathon/Competition"
+            },
+            {
+              "type": "string",
+              "value": "Open Source"
+            },
+            {
+              "type": "string",
+              "value": "Personal/Learning"
+            }
+          ]
+        },
+        "optional": true
+      },
       "description": {
         "type": "objectAttribute",
         "value": {
@@ -920,36 +938,37 @@
           "type": "boolean"
         },
         "optional": true
-      }
-    }
-  },
-  {
-    "name": "slug",
-    "type": "type",
-    "value": {
-      "type": "object",
-      "attributes": {
-        "_type": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string",
-            "value": "slug"
+      },
+      "rolesNeeded": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "array",
+          "of": {
+            "type": "string"
           }
         },
-        "current": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
+        "optional": true
+      },
+      "collaborationType": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "Online"
+            },
+            {
+              "type": "string",
+              "value": "Offline (Same University/City)"
+            },
+            {
+              "type": "string",
+              "value": "Hybrid"
+            }
+          ]
         },
-        "source": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "string"
-          },
-          "optional": true
-        }
+        "optional": true
       }
     }
   },
@@ -1029,6 +1048,395 @@
           "type": "string"
         },
         "optional": true
+      },
+      "university": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "object",
+          "attributes": {
+            "_ref": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              }
+            },
+            "_type": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string",
+                "value": "reference"
+              }
+            },
+            "_weak": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "boolean"
+              },
+              "optional": true
+            }
+          },
+          "dereferencesTo": "university"
+        },
+        "optional": true
+      },
+      "specialization": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "object",
+          "attributes": {
+            "_ref": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string"
+              }
+            },
+            "_type": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string",
+                "value": "reference"
+              }
+            },
+            "_weak": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "boolean"
+              },
+              "optional": true
+            }
+          },
+          "dereferencesTo": "domain"
+        },
+        "optional": true
+      }
+    }
+  },
+  {
+    "name": "domain",
+    "type": "document",
+    "attributes": {
+      "_id": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        }
+      },
+      "_type": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string",
+          "value": "domain"
+        }
+      },
+      "_createdAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        }
+      },
+      "_updatedAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        }
+      },
+      "_rev": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        }
+      },
+      "name": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "slug": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "slug"
+        },
+        "optional": true
+      }
+    }
+  },
+  {
+    "name": "university",
+    "type": "document",
+    "attributes": {
+      "_id": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        }
+      },
+      "_type": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string",
+          "value": "university"
+        }
+      },
+      "_createdAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        }
+      },
+      "_updatedAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        }
+      },
+      "_rev": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        }
+      },
+      "name": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
+      "slug": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "slug"
+        },
+        "optional": true
+      },
+      "governorate": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "Cairo"
+            },
+            {
+              "type": "string",
+              "value": "Giza"
+            },
+            {
+              "type": "string",
+              "value": "Alexandria"
+            },
+            {
+              "type": "string",
+              "value": "Dakahlia"
+            },
+            {
+              "type": "string",
+              "value": "Red Sea"
+            },
+            {
+              "type": "string",
+              "value": "Beheira"
+            },
+            {
+              "type": "string",
+              "value": "Fayoum"
+            },
+            {
+              "type": "string",
+              "value": "Gharbia"
+            },
+            {
+              "type": "string",
+              "value": "Ismailia"
+            },
+            {
+              "type": "string",
+              "value": "Menofia"
+            },
+            {
+              "type": "string",
+              "value": "Minya"
+            },
+            {
+              "type": "string",
+              "value": "Qalyubia"
+            },
+            {
+              "type": "string",
+              "value": "New Valley"
+            },
+            {
+              "type": "string",
+              "value": "Suez"
+            },
+            {
+              "type": "string",
+              "value": "Aswan"
+            },
+            {
+              "type": "string",
+              "value": "Assiut"
+            },
+            {
+              "type": "string",
+              "value": "Beni Suef"
+            },
+            {
+              "type": "string",
+              "value": "Port Said"
+            },
+            {
+              "type": "string",
+              "value": "Damietta"
+            },
+            {
+              "type": "string",
+              "value": "Sharkia"
+            },
+            {
+              "type": "string",
+              "value": "South Sinai"
+            },
+            {
+              "type": "string",
+              "value": "Kafr El Sheikh"
+            },
+            {
+              "type": "string",
+              "value": "Matrouh"
+            },
+            {
+              "type": "string",
+              "value": "Luxor"
+            },
+            {
+              "type": "string",
+              "value": "Qena"
+            },
+            {
+              "type": "string",
+              "value": "North Sinai"
+            },
+            {
+              "type": "string",
+              "value": "Sohag"
+            }
+          ]
+        },
+        "optional": true
+      },
+      "region": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "Greater Cairo"
+            },
+            {
+              "type": "string",
+              "value": "Alexandria & Matrouh"
+            },
+            {
+              "type": "string",
+              "value": "Delta"
+            },
+            {
+              "type": "string",
+              "value": "Suez Canal"
+            },
+            {
+              "type": "string",
+              "value": "North Upper Egypt"
+            },
+            {
+              "type": "string",
+              "value": "South Upper Egypt"
+            }
+          ]
+        },
+        "optional": true
+      },
+      "location": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "inline",
+          "name": "geopoint"
+        },
+        "optional": true
+      }
+    }
+  },
+  {
+    "name": "geopoint",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "geopoint"
+          }
+        },
+        "lat": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "number"
+          },
+          "optional": true
+        },
+        "lng": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "number"
+          },
+          "optional": true
+        },
+        "alt": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "number"
+          },
+          "optional": true
+        }
+      }
+    }
+  },
+  {
+    "name": "slug",
+    "type": "type",
+    "value": {
+      "type": "object",
+      "attributes": {
+        "_type": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string",
+            "value": "slug"
+          }
+        },
+        "current": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        },
+        "source": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
+        }
       }
     }
   },
