@@ -1,0 +1,24 @@
+{
+    "name": "CS Arena",
+    "short_name": "CS Arena",
+    "description": "A platform for computer science and AI students to showcase projects and find collaborators.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0d1b2e",
+    "theme_color": "#0d1b2e",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/cs-arena-logo-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/cs-arena-logo-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
+}

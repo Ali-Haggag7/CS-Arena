@@ -37,6 +37,16 @@ export async function generateMetadata(): Promise<Metadata> {
     description: t("description"),
     keywords: t("keywords").split(", "),
     authors: [{ name: "Ali Haggag" }],
+    manifest: "/manifest.json",
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "black-translucent",
+      title: "CS Arena",
+    },
+    icons: {
+      icon: "/cs-arena-logo-512.png",
+      apple: "/cs-arena-logo-192.png",
+    },
     openGraph: {
       title: t("title"),
       description: t("description"),
