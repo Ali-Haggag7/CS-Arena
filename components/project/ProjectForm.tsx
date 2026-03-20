@@ -132,7 +132,7 @@ const CustomDropdown = ({
 };
 
 const editorCommands = [commands.bold, commands.italic, commands.strikethrough, commands.divider, commands.link, commands.quote, commands.code, commands.codeBlock, commands.divider, commands.unorderedListCommand, commands.orderedListCommand];
-const editorExtraCommands = [commands.codeEdit, commands.codeLive, commands.codePreview];
+const editorExtraCommands = [commands.codeEdit, commands.codePreview];
 
 const getDynamicPlaceholders = (domainName: string, isRtl: boolean) => {
   const lower = domainName.toLowerCase();
@@ -428,7 +428,7 @@ export default function ProjectForm({
         )}
       </div>
 
-      <div data-color-mode="dark" dir={isRtl ? "rtl" : "ltr"}>
+      <div data-color-mode="dark" dir={isRtl ? "rtl" : "ltr"} className={isRtl ? "md-editor-rtl" : ""}>
         <label className={labelClass}>{t("label_pitch")} <span className="text-red-500">*</span></label>
         <p className="text-sm text-slate-500 dark:text-white/40 mb-3">{dynamicTexts.pitchHint}</p>
 
@@ -436,7 +436,7 @@ export default function ProjectForm({
           <MDEditor
             value={pitch}
             onChange={(value) => setPitch(value ?? "")}
-            preview="live"
+            preview={isRtl ? "edit" : "live"}
             height={400}
             commands={editorCommands}
             extraCommands={editorExtraCommands}

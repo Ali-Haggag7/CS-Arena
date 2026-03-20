@@ -326,20 +326,15 @@ html[dir="rtl"] .font-work-sans {
 }
 
 /* --- MD Editor RTL Fix --- */
-.w-md-editor-preview {
-  direction: rtl;
-  text-align: right;
+.md-editor-rtl .w-md-editor-text-input,
+.md-editor-rtl .w-md-editor-text pre,
+.md-editor-rtl .w-md-editor-text {
+  direction: rtl !important;
+  text-align: right !important;
+  unicode-bidi: plaintext;
 }
 
-.w-md-editor-preview .wmde-markdown ul,
-.w-md-editor-preview .wmde-markdown ol {
-  padding-right: 2rem;
-  padding-left: initial;
-}
-
-.w-md-editor-preview .wmde-markdown p,
-.w-md-editor-preview .wmde-markdown h1,
-.w-md-editor-preview .wmde-markdown h2,
-.w-md-editor-preview .wmde-markdown h3 {
-  text-align: right;
+.md-editor-rtl .w-md-editor-preview {
+  direction: rtl !important;
+  text-align: right !important;
 }
