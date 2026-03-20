@@ -323,33 +323,45 @@ export const deleteProject = async (projectId: string) => {
 };
 
 export const updateUserProfile = async (formData: FormData) => {
-  const session = await auth();
-  if (!session) return { success: false, error: "Not authenticated" };
-
-  const bio = formData.get("bio") as string;
-  const universityId = formData.get("universityId") as string;
-  const specializationId = formData.get("specializationId") as string;
-
   try {
-    const updateData: any = { bio };
+    const session = await auth();
+    if (!session?.id) return { success: false, error: "Not authenticated" };
 
-    if (universityId) {
-      updateData.university = { _type: "reference", _ref: universityId };
-    }
-
-    if (specializationId) {
-      updateData.specialization = { _type: "reference", _ref: specializationId };
-    }
+    const bio = formData.get("bio") as string;
+    const universityId = formData.get("universityId") as string;
+    const specializationId = formData.get("specializationId") as string;
+    const name = formData.get("name") as string;
+    const image = formData.get("image") as string;
 
     await writeClient
       .patch(session.id)
-      .set(updateData)
+      .set({
+        bio,
+        name,
+        image,
+        university: universityId ? { _type: "reference", _ref: universityId } : undefined,
+        specialization: specializationId ? { _type: "reference", _ref: specializationId } : undefined,
+      })
       .commit();
 
     return { success: true };
   } catch (error) {
-    console.error("Error updating profile:", error);
-    return { success: false, error: "Failed to update profile" };
+    console.error("[updateUserProfile]", error);
+    return { success: false, error: "Failed to update profile." };
+  }
+};
+
+export const deleteAccount = async () => {
+  try {
+    const session = await auth();
+    if (!session?.id) return { success: false, error: "Not authenticated" };
+
+    await writeClient.delete(session.id);
+
+    return { success: true };
+  } catch (error) {
+    console.error("[deleteAccount]", error);
+    return { success: false, error: "Failed to delete account." };
   }
 };
 

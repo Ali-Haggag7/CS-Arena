@@ -59,7 +59,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
     async jwt({ token, account, profile, trigger, session }) {
       if (account && profile) {
-        const id = account.provider === 'github' ? profile.id : token.sub;
+        const id = account.provider === "github" ? profile.id : token.sub;
 
         try {
           const user = await client
@@ -73,8 +73,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
       }
 
-      if (trigger === "update" && session?.isOnboarded !== undefined) {
-        token.isOnboarded = session.isOnboarded;
+      if (trigger === "update" && session) {
+        if (session.isOnboarded !== undefined) {
+          token.isOnboarded = session.isOnboarded;
+        }
+        if (session.name) {
+          token.name = session.name;
+        }
+        if (session.image) {
+          token.picture = session.image;
+        }
       }
 
       return token;
@@ -83,8 +91,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       Object.assign(session, {
         id: token.id,
-        isOnboarded: token.isOnboarded
+        isOnboarded: token.isOnboarded,
       });
+
+      if (token.name && session.user) {
+        session.user.name = token.name;
+      }
+      if (token.picture && session.user) {
+        session.user.image = token.picture;
+      }
+
       return session;
     },
   },

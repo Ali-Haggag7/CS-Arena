@@ -483,7 +483,19 @@
         "save_btn": "Save Changes",
         "saving": "Saving...",
         "success": "Profile updated successfully!",
-        "error": "Failed to update profile."
+        "error": "Failed to update profile.",
+        "name_label": "Full Name",
+        "name_placeholder": "Enter your full name",
+        "image_label": "Profile Image URL",
+        "image_placeholder": "https://example.com/your-image.jpg",
+        "danger_zone": "Danger Zone",
+        "danger_zone_desc": "Once you delete your account, there is no going back. Please be certain.",
+        "delete_account": "Delete Account",
+        "delete_confirm_title": "Are you absolutely sure?",
+        "delete_confirm_desc": "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
+        "cancel": "Cancel",
+        "confirm_delete": "Yes, delete my account",
+        "account_deleted": "Account deleted successfully"
     },
     "join_team": {
         "button_text": "Request to Join Team",

@@ -483,7 +483,19 @@
         "save_btn": "حفظ التعديلات",
         "saving": "جاري الحفظ...",
         "success": "تم تحديث بياناتك بنجاح!",
-        "error": "حدث خطأ أثناء التحديث. حاول مرة أخرى."
+        "error": "حدث خطأ أثناء التحديث. حاول مرة أخرى.",
+        "name_label": "الاسم الكامل",
+        "name_placeholder": "أدخل اسمك بالكامل",
+        "image_label": "رابط الصورة الشخصية",
+        "image_placeholder": "https://example.com/your-image.jpg",
+        "danger_zone": "منطقة الخطر",
+        "danger_zone_desc": "بمجرد حذف حسابك، لا يمكنك التراجع عن هذا الإجراء. يرجى التأكد.",
+        "delete_account": "حذف الحساب",
+        "delete_confirm_title": "هل أنت متأكد تماماً؟",
+        "delete_confirm_desc": "لا يمكن التراجع عن هذا الإجراء. سيؤدي هذا إلى حذف حسابك نهائياً وإزالة بياناتك من خوادمنا.",
+        "cancel": "إلغاء",
+        "confirm_delete": "نعم، احذف حسابي",
+        "account_deleted": "تم حذف الحساب بنجاح"
     },
     "join_team": {
         "button_text": "طلب انضمام للفريق",
