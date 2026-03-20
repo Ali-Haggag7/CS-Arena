@@ -1,8 +1,10 @@
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 import { AUTHOR_BY_GITHUB_ID_QUERY } from "@/sanity/lib/queries";
 import { client } from "@/sanity/lib/client";
 import { writeClient } from "@/sanity/lib/write-client";
+import slugify from "slugify";
 
 declare module "next-auth" {
   interface Session {
@@ -12,17 +14,24 @@ declare module "next-auth" {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  providers: [GitHub],
+  providers: [
+    GitHub,
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+    })
+  ],
   callbacks: {
-    async signIn({ user, profile }) {
-      if (!profile) return false;
+    async signIn({ user, account, profile }) {
+      if (!account || !user) return false;
 
       const { name, email, image } = user;
-      const { id, login, bio } = profile as {
-        id: string;
-        login: string;
-        bio?: string;
-      };
+
+      const id = account.provider === 'github' ? (profile?.id as string) : user.id;
+
+      const username = account.provider === 'github'
+        ? (profile as any).login
+        : slugify(name || "user", { lower: true, strict: true }) + Math.floor(Math.random() * 1000);
 
       try {
         const existingUser = await client
@@ -33,11 +42,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           await writeClient.create({
             _type: "author",
             id,
-            name: name ?? login,
-            username: login,
+            name: name ?? username,
+            username: username,
             email: email ?? "",
             image: image ?? "",
-            bio: bio ?? "",
+            bio: (profile as any)?.bio ?? "",
           });
         }
 
@@ -50,13 +59,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
     async jwt({ token, account, profile, trigger, session }) {
       if (account && profile) {
+        const id = account.provider === 'github' ? profile.id : token.sub;
+
         try {
           const user = await client
             .withConfig({ useCdn: false })
-            .fetch(AUTHOR_BY_GITHUB_ID_QUERY, { id: profile.id });
+            .fetch(AUTHOR_BY_GITHUB_ID_QUERY, { id });
 
           token.id = user?._id;
-
           token.isOnboarded = !!(user?.university && user?.specialization);
         } catch (error) {
           console.error("[auth] jwt error:", error);

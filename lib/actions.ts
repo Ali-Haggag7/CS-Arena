@@ -92,7 +92,7 @@ export const sendJoinTeamEmail = async (
 
   try {
     const { error } = await resend.emails.send({
-      from: "CS-Arena <noreply@cs-arena.dev>",
+      from: "onboarding@resend.dev",
       to: ownerEmail,
       subject: `New Contributor Request — ${projectName}`,
       html: `
@@ -353,8 +353,6 @@ export const updateUserProfile = async (formData: FormData) => {
   }
 };
 
-// ─── Create Join Request ───────────────────────────────────────────────────────
-
 export const createJoinRequest = async (
   projectId: string,
   role: string,
@@ -373,7 +371,7 @@ export const createJoinRequest = async (
     );
 
     if (existingRequest) {
-      return { success: false, error: "لقد قمت بتقديم طلب لهذا المشروع بالفعل." };
+      return { success: false, error: "You have already applied to this project." };
     }
 
     const projectData = await client.withConfig({ useCdn: false }).fetch(
@@ -395,7 +393,7 @@ export const createJoinRequest = async (
 
     if (projectData?.author?.email) {
       await resend.emails.send({
-        from: "CS-Arena <noreply@cs-arena.dev>",
+        from: "onboarding@resend.dev",
         to: projectData.author.email,
         subject: `New Join Request for "${projectData.title}" 🚀`,
         html: `
@@ -423,6 +421,6 @@ export const createJoinRequest = async (
     return { success: true };
   } catch (error) {
     console.error("[createJoinRequest]", error);
-    return { success: false, error: "حدث خطأ غير متوقع أثناء إرسال الطلب." };
+    return { success: false, error: "An unexpected error occurred while submitting the request." };
   }
 };

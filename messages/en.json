@@ -482,6 +482,7 @@
         "pitch_placeholder": "Tell the project owner why you are the right fit for this role...",
         "sending": "Sending...",
         "send_request": "Send Request",
-        "error_length": "Message must be at least 10 characters."
+        "error_length": "Message must be at least 10 characters.",
+        "applied": "Applied Successfully!"
     }
 }

@@ -118,6 +118,29 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
+export type JoinRequest = {
+  _id: string;
+  _type: "joinRequest";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  project?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "project";
+  };
+  applicant?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "author";
+  };
+  role?: string;
+  message?: string;
+  status?: "pending" | "accepted" | "rejected";
+};
+
 export type Changelog = {
   _id: string;
   _type: "changelog";
@@ -152,12 +175,20 @@ export type Project = {
     _weak?: boolean;
     [internalGroqTypeReferenceTo]?: "author";
   };
+  contributors?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "author";
+  }>;
   domain?: {
     _ref: string;
     _type: "reference";
     _weak?: boolean;
     [internalGroqTypeReferenceTo]?: "domain";
   };
+  subDomain?: string;
   projectType?: "Graduation Project" | "Hackathon/Competition" | "Open Source" | "Personal/Learning";
   description?: string;
   githubLink?: string;
@@ -235,5 +266,5 @@ export type Slug = {
 
 export type Markdown = string;
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | SanityAssetSourceData | Changelog | Project | Author | Domain | University | Geopoint | Slug | Markdown;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | SanityAssetSourceData | JoinRequest | Changelog | Project | Author | Domain | University | Geopoint | Slug | Markdown;
 export declare const internalGroqTypeReferenceTo: unique symbol;

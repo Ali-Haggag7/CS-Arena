@@ -35,7 +35,7 @@ const JoinTeamButton = ({ projectId, projectName, rolesNeeded, hasApplied = fals
                 className="w-full px-6 py-2.5 bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-white/40 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-bold flex items-center justify-center gap-2 cursor-not-allowed select-none"
             >
                 <ShieldAlert className="size-4" />
-                <span>أنت صاحب المشروع</span>
+                <span>{t("owner")}</span>
             </button>
         );
     }
@@ -48,7 +48,7 @@ const JoinTeamButton = ({ projectId, projectName, rolesNeeded, hasApplied = fals
                 className="w-full px-6 py-2.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 rounded-xl text-sm font-bold flex items-center justify-center gap-2 cursor-not-allowed select-none"
             >
                 <CheckCircle2 className="size-4" />
-                <span>تم التقديم مسبقاً</span>
+                <span>{t("applied")}</span>
             </button>
         );
     }
