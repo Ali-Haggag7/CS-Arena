@@ -35,6 +35,11 @@ export const project = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "subDomain",
+      title: "Specialization (Sub-domain)",
+      type: "string",
+    }),
+    defineField({
       name: "projectType",
       title: "Project Type",
       type: "string",

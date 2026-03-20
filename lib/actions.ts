@@ -10,8 +10,6 @@ import { client } from "@/sanity/lib/client";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// ─── Zod Schema ───────────────────────────────────────────────────────────────
-
 const formSchema = z.object({
   title: z
     .string()
@@ -36,6 +34,9 @@ const formSchema = z.object({
   domainId: z
     .string()
     .min(1, "Please select a tech domain"),
+  subDomain: z
+    .string()
+    .optional(),
   projectType: z
     .string()
     .min(1, "Please select a project type"),
@@ -50,13 +51,9 @@ const formSchema = z.object({
     .optional(),
 });
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 type ActionResult<T = void> =
   | { success: true; data?: T }
   | { success: false; error: string; validationErrors?: Record<string, string[]> };
-
-// ─── Upvote ───────────────────────────────────────────────────────────────────
 
 export const toggleUpvoteProject = async (
   projectId: string,
@@ -82,8 +79,6 @@ export const toggleUpvoteProject = async (
     return { success: false, error: "Failed to toggle upvote." };
   }
 };
-
-// ─── Join Team Email ──────────────────────────────────────────────────────────
 
 export const sendJoinTeamEmail = async (
   ownerEmail: string,
@@ -117,7 +112,7 @@ export const sendJoinTeamEmail = async (
               <p style="color: #555; line-height: 1.6;">
                 Log in to CS-Arena to connect with them and start building together.
               </p>
-              
+              <a
                 href="https://cs-arena.vercel.app"
                 style="display: inline-block; margin-top: 24px; background: #EE2B69; color: #fff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600;"
               >
@@ -144,8 +139,6 @@ export const sendJoinTeamEmail = async (
   }
 };
 
-// ─── Create Project ───────────────────────────────────────────────────────────
-
 export const createProject = async (
   formData: FormData,
   pitch: string
@@ -164,8 +157,9 @@ export const createProject = async (
       description: formData.get("description") as string,
       techStack: formData.get("techStack") as string,
       image: formData.get("image") as string,
-      githubLink: formData.get("githubLink") as string,
+      githubLink: formData.get("projectLink") as string,
       domainId: formData.get("domainId") as string,
+      subDomain: formData.get("subDomain") as string,
       projectType: formData.get("projectType") as string,
       isLookingForContributors,
       rolesNeeded: formData.get("rolesNeeded") as string,
@@ -183,13 +177,12 @@ export const createProject = async (
       };
     }
 
-    const { title, description, techStack, image, projectLink, domainId, projectType, rolesNeeded, collaborationType } = parsed.data;
+    const { title, description, techStack, image, projectLink, domainId, subDomain, projectType, rolesNeeded, collaborationType } = parsed.data;
 
     const slug = slugify(title, { lower: true, strict: true });
 
     const techStackArray = techStack.split(",").map((t) => t.trim()).filter(Boolean);
 
-    // Only set rolesNeeded if the project is looking for contributors
     const rolesArray = isLookingForContributors && rolesNeeded
       ? rolesNeeded.split(",").map((r) => r.trim()).filter(Boolean)
       : [];
@@ -206,6 +199,7 @@ export const createProject = async (
       views: 0,
       upvotes: 0,
       domain: { _type: "reference", _ref: domainId },
+      subDomain,
       projectType,
       isLookingForContributors,
       rolesNeeded: rolesArray,
@@ -213,16 +207,12 @@ export const createProject = async (
       author: { _type: "reference", _ref: session.id },
     });
 
-    // revalidatePath("/");
-
     return { success: true, data: { projectId: result._id } };
   } catch (error) {
     console.error("[createProject]", error);
     return { success: false, error: "An unexpected error occurred." };
   }
 };
-
-// ─── Complete Onboarding ───────────────────────────────────────────────────────
 
 export async function completeOnboarding(formData: FormData) {
   const session = await auth();
@@ -254,8 +244,6 @@ export async function completeOnboarding(formData: FormData) {
   }
 }
 
-// ─── Delete Project ───────────────────────────────────────────────────────────
-
 export const deleteProject = async (projectId: string) => {
   const session = await auth();
   if (!session) return { success: false, error: "Not authenticated" };
@@ -277,8 +265,6 @@ export const deleteProject = async (projectId: string) => {
     return { success: false, error: "Failed to delete project" };
   }
 };
-
-// ─── Update User Profile ───────────────────────────────────────────────────────
 
 export const updateUserProfile = async (formData: FormData) => {
   const session = await auth();
@@ -311,8 +297,6 @@ export const updateUserProfile = async (formData: FormData) => {
   }
 };
 
-// ─── Update Project ───────────────────────────────────────────────────────────
-
 export const updateProject = async (projectId: string, formData: FormData, pitch: string) => {
   const session = await auth();
   if (!session) return { success: false, error: "Not authenticated" };
@@ -331,6 +315,7 @@ export const updateProject = async (projectId: string, formData: FormData, pitch
     const description = formData.get("description") as string;
     const projectType = formData.get("projectType") as string;
     const domainId = formData.get("domainId") as string;
+    const subDomain = formData.get("subDomain") as string;
     const techStack = formData.get("techStack") as string;
     const projectLink = formData.get("projectLink") as string;
     const image = formData.get("image") as string;
@@ -348,6 +333,7 @@ export const updateProject = async (projectId: string, formData: FormData, pitch
         description,
         projectType,
         domain: { _type: "reference", _ref: domainId },
+        subDomain,
         techStack: techStackArray,
         githubLink: projectLink,
         image,
