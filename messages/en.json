@@ -438,6 +438,7 @@
     },
     "dashboard": {
         "title": "Dashboard",
+        "welcome_back": "Welcome back",
         "overview": "Overview",
         "projects": "My Projects",
         "settings": "Settings",
@@ -446,7 +447,21 @@
         "total_upvotes": "Total Upvotes",
         "recent_activity": "Recent Activity",
         "no_projects_yet": "You haven't published any projects yet.",
-        "create_first_project": "Create your first project →"
+        "create_first_project": "Create your first project →",
+        "requests": "Requests",
+        "no_requests_yet": "No team requests yet.",
+        "accept": "Accept",
+        "reject": "Reject",
+        "applied_to": "Applied to:",
+        "success": "Action successful!",
+        "accepted": "Accepted",
+        "rejected": "Rejected",
+        "reject_reason_label": "Reason for Rejection (Optional)",
+        "reject_reason_placeholder": "E.g., The team is currently full...",
+        "cancel": "Cancel",
+        "confirm_reject": "Confirm Rejection",
+        "pending_count": "Pending",
+        "delete_request": "Delete Request"
     },
     "manage_projects": {
         "edit": "Edit",
@@ -472,6 +487,7 @@
     "join_team": {
         "button_text": "Request to Join Team",
         "modal_title": "Join Request",
+        "owner": "Project Owner",
         "project": "Project:",
         "success_title": "Submitted Successfully!",
         "success_desc": "Your request has been recorded. The project owner will review it soon.",

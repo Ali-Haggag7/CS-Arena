@@ -438,6 +438,7 @@
     },
     "dashboard": {
         "title": "لوحة التحكم",
+        "welcome_back": "مرحباً بك مرة اخرى",
         "overview": "نظرة عامة",
         "projects": "مشاريعي",
         "settings": "الإعدادات",
@@ -446,7 +447,21 @@
         "total_upvotes": "إجمالي الإعجابات",
         "recent_activity": "أحدث النشاطات",
         "no_projects_yet": "لم تقم بنشر أي مشاريع بعد.",
-        "create_first_project": "أنشئ مشروعك الأول ←"
+        "create_first_project": "أنشئ مشروعك الأول ←",
+        "requests": "طلبات الفريق",
+        "no_requests_yet": "لا توجد طلبات فريق بعد.",
+        "accept": "قبول",
+        "reject": "رفض",
+        "applied_to": "تم التقديم ل:",
+        "success": "تم تنفيذ الإجراء بنجاح!",
+        "accepted": "مقبول",
+        "rejected": "مرفوض",
+        "reject_reason_label": "سبب الرفض (اختياري)",
+        "reject_reason_placeholder": "مثال: الفريق ممتلئ حاليًا...",
+        "cancel": "إلغاء",
+        "confirm_reject": "تأكيد الرفض",
+        "pending_count": "طلب معلق",
+        "delete_request": "إلغاء الطلب"
     },
     "manage_projects": {
         "edit": "تعديل",
@@ -472,6 +487,7 @@
     "join_team": {
         "button_text": "طلب انضمام للفريق",
         "modal_title": "طلب انضمام",
+        "owner": "صاحب المشروع",
         "project": "مشروع:",
         "success_title": "تم الإرسال بنجاح!",
         "success_desc": "تم تسجيل طلبك. سيقوم صاحب المشروع بمراجعته قريباً.",

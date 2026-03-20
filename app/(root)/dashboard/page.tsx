@@ -1,11 +1,15 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { client } from "@/sanity/lib/client";
-import { LayoutDashboard, FolderKanban, Settings, Eye, ChevronUp, FolderCode, Activity } from "lucide-react";
+import { LayoutDashboard, FolderKanban, Settings, Eye, ChevronUp, FolderCode, Activity, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import ManageProjects from "@/components/dashboard/ManageProjects";
 import ProfileSettings from "@/components/dashboard/ProfileSettings";
+import ProjectRequests from "@/components/dashboard/ProjectRequests";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata = {
     title: "Dashboard | CS-Arena",
@@ -13,12 +17,22 @@ export const metadata = {
 };
 
 const USER_DASHBOARD_QUERY = `*[_type == "project" && author._ref == $id] | order(_createdAt desc) {
-  _id,
-  title,
-  views,
-  upvotes,
-  _createdAt,
-  "domain": domain->name
+    _id,
+    title,
+    views,
+    upvotes,
+    _createdAt,
+    "domain": domain->name
+}`;
+
+const USER_REQUESTS_QUERY = `*[_type == "joinRequest" && project->author._ref == $id] | order(_createdAt desc) {
+    _id,
+    role,
+    message,
+    status,
+    _createdAt,
+    applicant->{_id, name, email, image, username},
+    project->{_id, title}
 }`;
 
 export default async function DashboardPage({
@@ -33,7 +47,15 @@ export default async function DashboardPage({
     const currentTab = resolvedParams.tab || "overview";
     const t = await getTranslations("dashboard");
 
-    const projects = await client.fetch(USER_DASHBOARD_QUERY, { id: session.id });
+    const projects = await client
+        .withConfig({ useCdn: false })
+        .fetch(USER_DASHBOARD_QUERY, { id: session.id }, { cache: 'no-store' });
+    const requests = await client
+        .withConfig({ useCdn: false })
+        .fetch(USER_REQUESTS_QUERY, { id: session.id }, { cache: 'no-store' });
+    console.log("=== DEBUG ===");
+    console.log("session.id:", session.id);
+    console.log("requests found:", requests);
     const userProfile = await client.fetch(`*[_type == "author" && _id == $id][0]`, { id: session.id });
     const universities = await client.fetch(`*[_type == "university"] | order(name asc) { _id, name }`);
     const domains = await client.fetch(`*[_type == "domain"] | order(name asc) { _id, name }`);
@@ -41,10 +63,12 @@ export default async function DashboardPage({
     const totalProjects = projects.length;
     const totalViews = projects.reduce((acc: number, proj: any) => acc + (proj.views || 0), 0);
     const totalUpvotes = projects.reduce((acc: number, proj: any) => acc + (proj.upvotes || 0), 0);
+    const pendingRequestsCount = requests.filter((r: any) => r.status === "pending").length;
 
     const TABS = [
         { id: "overview", label: t("overview"), icon: LayoutDashboard },
         { id: "projects", label: t("projects"), icon: FolderKanban },
+        { id: "requests", label: t("requests"), icon: UserPlus, badge: pendingRequestsCount },
         { id: "settings", label: t("settings"), icon: Settings },
     ];
 
@@ -61,7 +85,7 @@ export default async function DashboardPage({
                             {t("title")}
                         </h1>
                         <p className="text-sm text-slate-500 dark:text-white/40 mt-1 font-medium">
-                            Welcome back, {session.user?.name}
+                            {t("welcome_back")}, {session.user?.name}
                         </p>
                     </div>
                 </div>
@@ -77,7 +101,7 @@ export default async function DashboardPage({
                                     <Link
                                         key={tab.id}
                                         href={`/dashboard?tab=${tab.id}`}
-                                        className={`flex-1 md:flex-none flex flex-col md:flex-row items-center justify-center md:justify-start gap-1.5 md:gap-3 py-2.5 px-1 md:px-4 md:py-3 rounded-xl font-bold transition-all duration-300 ${isActive
+                                        className={`flex-1 md:flex-none flex flex-col md:flex-row items-center justify-center md:justify-start gap-1.5 md:gap-3 py-2.5 px-1 md:px-4 md:py-3 rounded-xl font-bold transition-all duration-300 relative ${isActive
                                             ? "bg-primary text-white shadow-md shadow-primary/20"
                                             : "text-slate-500 dark:text-white/50 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-black dark:hover:text-white"
                                             }`}
@@ -86,6 +110,11 @@ export default async function DashboardPage({
                                         <span className="text-[10px] sm:text-xs md:text-sm text-center md:text-start leading-tight">
                                             {tab.label}
                                         </span>
+                                        {tab.badge !== undefined && tab.badge > 0 && (
+                                            <span className={`absolute top-1 right-1 md:top-auto md:right-3 flex items-center justify-center size-5 bg-red-500 text-white text-[10px] rounded-full shadow-sm ${!isActive ? 'animate-pulse' : ''}`}>
+                                                {tab.badge}
+                                            </span>
+                                        )}
                                     </Link>
                                 );
                             })}
@@ -194,6 +223,22 @@ export default async function DashboardPage({
                                         </Link>
                                     </div>
                                 )}
+                            </div>
+                        )}
+
+                        {currentTab === "requests" && (
+                            <div className="bg-white dark:bg-[#111115] p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-white/10 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500 relative z-10">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <h2 className="text-xl font-bold text-black dark:text-white">
+                                        {t("requests")}
+                                    </h2>
+                                    {pendingRequestsCount > 0 && (
+                                        <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">
+                                            {pendingRequestsCount} {t("pending_count")}
+                                        </span>
+                                    )}
+                                </div>
+                                <ProjectRequests requests={requests} />
                             </div>
                         )}
 

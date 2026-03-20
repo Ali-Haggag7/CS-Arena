@@ -424,3 +424,83 @@ export const createJoinRequest = async (
     return { success: false, error: "An unexpected error occurred while submitting the request." };
   }
 };
+
+export const handleRequestAction = async (
+  requestId: string,
+  status: "accepted" | "rejected",
+  applicantEmail: string,
+  applicantName: string,
+  projectName: string,
+  rejectReason?: string
+) => {
+  try {
+    const session = await auth();
+    if (!session?.id) return { success: false, error: "Not authenticated" };
+
+    await writeClient
+      .patch(requestId)
+      .set({ status })
+      .commit();
+
+    let emailSubject = "";
+    let emailHtml = "";
+
+    if (status === "accepted") {
+      emailSubject = `🎉 You're in! Welcome to ${projectName}`;
+      emailHtml = `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #10b981;">Application Accepted! 🚀</h2>
+          <p>Hello <strong>${applicantName}</strong>,</p>
+          <p>Great news! The owner of <strong>"${projectName}"</strong> has accepted your request to join the team.</p>
+          <p>Login to CS-Arena to connect with the team and start building.</p>
+          <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/dashboard" 
+              style="display: inline-block; padding: 12px 24px; background-color: #10b981; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 10px;">
+            Go to Dashboard
+          </a>
+        </div>
+      `;
+    } else {
+      emailSubject = `Update regarding your application for ${projectName}`;
+      emailHtml = `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #64748b;">Application Update</h2>
+          <p>Hello <strong>${applicantName}</strong>,</p>
+          <p>Thank you for your interest in joining <strong>"${projectName}"</strong>.</p>
+          <p>Unfortunately, the project owner has decided not to proceed with your application at this time.</p>
+          ${rejectReason ? `
+            <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 0;"><strong>Message from the owner:</strong></p>
+              <blockquote style="margin: 10px 0 0 0; font-style: italic; color: #475569;">"${rejectReason}"</blockquote>
+            </div>
+          ` : ''}
+          <p>Keep exploring and applying to other amazing projects on CS-Arena!</p>
+        </div>
+      `;
+    }
+
+    await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: applicantEmail,
+      subject: emailSubject,
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("[handleRequestAction]", error);
+    return { success: false, error: "Failed to process request" };
+  }
+};
+
+export const deleteJoinRequest = async (requestId: string) => {
+  try {
+    const session = await auth();
+    if (!session?.id) return { success: false, error: "Not authenticated" };
+
+    await writeClient.delete(requestId);
+    return { success: true };
+  } catch (error) {
+    console.error("[deleteJoinRequest]", error);
+    return { success: false, error: "Failed to delete request" };
+  }
+};
