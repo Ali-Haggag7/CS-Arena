@@ -13,8 +13,9 @@ import UpvoteButton from "@/components/project/UpvoteButton";
 import GithubStats from "@/components/shared/GithubStats";
 import JoinTeamButton from "@/components/shared/JoinTeamButton";
 import ProjectCard, { ProjectTypeCard } from "@/components/project/ProjectCard";
-import { Calendar, Layers, Sparkles, Activity, Briefcase, MapPin, ExternalLink, Github } from "lucide-react";
+import { Calendar, Layers, Sparkles, Activity, Briefcase, MapPin, ExternalLink, Github, ChevronUp } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
+import { auth } from "@/auth";
 
 const md = markdownit({ html: false, linkify: true, typographer: true });
 
@@ -53,13 +54,15 @@ const getDynamicHeading = (domainName: string, isRtl: boolean, t: any) => {
 };
 
 async function ProjectContent({ id }: { id: string }) {
-  const [post, relatedProjects] = await Promise.all([
+  const [post, relatedProjects, session] = await Promise.all([
     client.withConfig({ useCdn: false }).fetch(PROJECT_BY_ID_QUERY, { id }),
     client.fetch(RELATED_PROJECTS_QUERY, { id, techStack: [] }),
+    auth(),
   ]);
 
   if (!post) return notFound();
 
+  const isLoggedIn = !!session?.id;
   const parsedContent = md.render(post.pitch || "");
   const t = await getTranslations("project_details");
   const locale = await getLocale();
@@ -184,7 +187,22 @@ async function ProjectContent({ id }: { id: string }) {
                 )}
 
                 <div className="mt-1 w-full md:w-auto">
-                  <JoinTeamButton projectName={post.title} ownerEmail={post.author?.email ?? ""} />
+                  {isLoggedIn ? (
+                    <JoinTeamButton projectName={post.title} ownerEmail={post.author?.email ?? ""} />
+                  ) : (
+                    <div className="flex flex-col items-center gap-1.5 w-full md:w-auto">
+                      <button
+                        type="button"
+                        disabled
+                        className="w-full px-6 py-2 bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-white/30 rounded-lg text-sm font-bold cursor-not-allowed border border-slate-200 dark:border-white/10 select-none pointer-events-none"
+                      >
+                        {isRtl ? "انضم للفريق" : "Join Team"}
+                      </button>
+                      <p className="text-[11px] text-slate-500 dark:text-white/40 font-medium select-none">
+                        {isRtl ? "سجل دخول لتقديم طلب انضمام" : "Sign in to request to join"}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -272,8 +290,21 @@ async function ProjectContent({ id }: { id: string }) {
             <Suspense fallback={<Skeleton className="h-8 w-16 rounded-lg bg-slate-100 dark:bg-white/5" />}>
               <View id={id} />
             </Suspense>
+
             <div className="w-px h-6 bg-slate-200 dark:bg-white/10" />
-            <UpvoteButton projectId={post._id} initialUpvotes={post.upvotes ?? 0} />
+
+            {isLoggedIn ? (
+              <UpvoteButton projectId={post._id} initialUpvotes={post.upvotes ?? 0} />
+            ) : (
+              <div
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 opacity-60 cursor-not-allowed select-none"
+                title={isRtl ? "سجل دخول للتصويت" : "Sign in to upvote"}
+              >
+                <ChevronUp className="size-5 text-slate-400 dark:text-white/40" />
+                <span className="text-sm font-bold text-slate-500 dark:text-white/50">{post.upvotes ?? 0}</span>
+              </div>
+            )}
+
           </div>
         </div>
       </div>
