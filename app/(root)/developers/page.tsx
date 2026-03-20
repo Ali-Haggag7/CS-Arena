@@ -1,13 +1,11 @@
 import React, { Suspense } from "react";
 import { client } from "@/sanity/lib/client";
-import { PROJECTS_LOOKING_FOR_TEAM_QUERY } from "@/sanity/lib/queries";
-import ProjectFilters from "@/components/project/ProjectFilters";
+import TeamFilters from "@/components/project/TeamFilters";
 import { Skeleton } from "@/components/shadcn/skeleton";
 import { Users, Briefcase, MapPin, ChevronRight, Sparkles, Code2 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import Image from "next/image";
-import { formatDate } from "@/lib/utils";
 
 export async function generateMetadata() {
     const t = await getTranslations("find_developers");
@@ -106,24 +104,31 @@ const RecruitmentCard = ({ post, t }: { post: any; t: any }) => {
 };
 
 const TEAM_QUERY = `*[_type == "project" && isLookingForContributors == true 
-  && (!defined($search) || title match $search + "*" || author->name match $search + "*" || author->username match $search + "*")
-  && (!defined($domain) || domain._ref == $domain)
-  && (!defined($university) || author->university._ref == $university)
-] | order(_createdAt desc) {
-  _id, title, description, views, upvotes, rolesNeeded, collaborationType, techStack,
-  author->{_id, name, username, image},
-  domain->{name}
+    && (!defined($search) || title match $search + "*" || author->name match $search + "*" || author->username match $search + "*")
+    && (!defined($domain) || domain._ref == $domain)
+    && (!defined($university) || author->university._ref == $university)
+    && (!defined($collaborationType) || collaborationType == $collaborationType)
+    && (!defined($subdomain) || subDomain == $subdomain)
+    && (!defined($tech) || $tech in techStack)
+    ] | order(_createdAt desc) {
+    _id, title, description, views, upvotes, rolesNeeded, collaborationType, techStack,
+    author->{_id, name, username, image},
+    domain->{name}
 }`;
 
 const TeamProjects = async ({
     searchParams
 }: {
-    searchParams: { query?: string; domain?: string; university?: string; sort?: string; page?: string }
+    searchParams: { query?: string; domain?: string; university?: string; sort?: string; page?: string; collaborationType?: string; subdomain?: string; tech?: string }
 }) => {
     const search = searchParams.query || null;
     const domain = searchParams.domain || null;
     const university = searchParams.university || null;
+    const collaborationType = searchParams.collaborationType || null;
     const sort = searchParams.sort || "newest";
+
+    const subdomain = searchParams.subdomain || null;
+    const tech = searchParams.tech || null;
 
     const t = await getTranslations("find_developers");
 
@@ -131,6 +136,9 @@ const TeamProjects = async ({
         search,
         domain,
         university,
+        collaborationType,
+        subdomain,
+        tech,
     });
 
     if (sort === "popular") {
@@ -243,7 +251,7 @@ const FindDevelopersPage = async ({
                 </div>
 
                 <div className="mb-10 relative z-20">
-                    <ProjectFilters domains={domains} universities={universities} />
+                    <TeamFilters domains={domains} universities={universities} />
                 </div>
 
                 <Suspense fallback={<DevelopersSkeleton />}>

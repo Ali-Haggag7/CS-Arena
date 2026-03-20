@@ -80,7 +80,11 @@
         "popular": "Most Upvoted",
         "views": "Most Viewed",
         "all_universities": "All Universities",
-        "all_domains": "All Domains"
+        "all_domains": "All Domains",
+        "collab_online": "Online",
+        "collab_offline": "Offline (Same City)",
+        "collab_hybrid": "Hybrid",
+        "all_collab": "Any Workspace"
     },
     "footer": {
         "description": "The ultimate platform for Computer Science students to showcase their code, find open-source contributors, and get headhunted by top tech recruiters.",

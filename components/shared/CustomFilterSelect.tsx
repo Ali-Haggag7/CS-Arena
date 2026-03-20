@@ -36,7 +36,7 @@ export const CustomFilterSelect = ({
     const selectedOption = options.find((opt) => opt._id === currentValue);
 
     return (
-        <div className="relative w-full sm:w-auto sm:min-w-[180px] z-50" ref={dropdownRef}>
+        <div className={`relative w-full sm:w-auto sm:min-w-[180px] ${isOpen ? "z-[100]" : "z-40"}`} ref={dropdownRef}>
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
@@ -52,7 +52,7 @@ export const CustomFilterSelect = ({
             </button>
 
             {isOpen && (
-                <div className="absolute z-[100] w-[200px] sm:w-full sm:min-w-full mt-2 py-2 bg-[#111115] border border-white/10 rounded-xl shadow-xl animate-in fade-in slide-in-from-top-2 ltr:left-0 rtl:right-0 sm:ltr:left-auto sm:rtl:right-auto">
+                <div className="absolute top-full left-0 right-0 z-[100] w-full mt-2 py-2 bg-[#111115] border border-white/10 rounded-xl shadow-2xl animate-in fade-in slide-in-from-top-2">
                     <ul className="max-h-60 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-white/20">
 
                         {!hideAllOption && (

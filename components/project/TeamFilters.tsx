@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, Suspense, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { CustomFilterSelect } from "@/components/shared/CustomFilterSelect";
-import { GraduationCap, ArrowDownWideNarrow } from "lucide-react";
+import { GraduationCap, ArrowDownWideNarrow, MapPin } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TECH_ECOSYSTEM, getDomainKey } from "@/constants/ecosystem";
 
@@ -20,6 +20,7 @@ const FilterContent = ({ domains, universities }: { domains: any[], universities
     const currentTech = searchParams.get("tech") || "";
     const currentSort = searchParams.get("sort") || "newest";
     const currentUni = searchParams.get("university") || "";
+    const currentCollab = searchParams.get("collaborationType") || "";
 
     const domainName = currentDomain !== "all"
         ? domains.find(d => d._id === currentDomain)?.name || ""
@@ -66,23 +67,28 @@ const FilterContent = ({ domains, universities }: { domains: any[], universities
     );
 
     const sortOptions = [
-        { _id: "newest", name: t("newest") },
-        { _id: "popular", name: t("popular") },
-        { _id: "views", name: t("views") },
+        { _id: "newest", name: t("newest") || "Newest" },
+        { _id: "popular", name: t("popular") || "Popular" },
+        { _id: "views", name: t("views") || "Views" },
+    ];
+
+    const collabOptions = [
+        { _id: "Online", name: t("collab_online") || "Online" },
+        { _id: "Offline (Same University/City)", name: t("collab_offline") || "Offline (Same City)" },
+        { _id: "Hybrid", name: t("collab_hybrid") || "Hybrid" },
     ];
 
     return (
         <div className={`flex flex-col gap-4 ${isPending ? "opacity-70 pointer-events-none" : "transition-opacity duration-300"}`}>
 
-            {/* 1️⃣ The First Section: The Main Domains */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div className="flex gap-2 overflow-x-auto snap-x scroll-smooth pb-1 scrollbar-hide w-full lg:w-auto">
                     <button
                         type="button"
                         onClick={() => handleFilterChange("domain", "all")}
-                        className={`snap-start shrink-0 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all active:scale-95 border ${currentDomain === "all"
-                            ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
-                            : "bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/10 hover:border-primary/40"
+                        className={`snap-start shrink-0 px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 active:scale-95 border ${currentDomain === "all"
+                            ? "bg-emerald-500 text-white border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                            : "bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-white/50 border-slate-200 dark:border-white/10 hover:border-emerald-500/40 hover:text-emerald-500"
                             }`}
                     >
                         {t("all") || "All Domains"}
@@ -92,9 +98,9 @@ const FilterContent = ({ domains, universities }: { domains: any[], universities
                             type="button"
                             key={domain._id}
                             onClick={() => handleFilterChange("domain", domain._id)}
-                            className={`snap-start shrink-0 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all active:scale-95 border ${currentDomain === domain._id
-                                ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
-                                : "bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/10 hover:border-primary/40"
+                            className={`snap-start shrink-0 px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 active:scale-95 border ${currentDomain === domain._id
+                                ? "bg-emerald-500 text-white border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                                : "bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-white/50 border-slate-200 dark:border-white/10 hover:border-emerald-500/40 hover:text-emerald-500"
                                 }`}
                         >
                             {domain.name}
@@ -104,10 +110,10 @@ const FilterContent = ({ domains, universities }: { domains: any[], universities
 
                 <div className="h-px bg-slate-100 dark:bg-white/5 lg:hidden w-full" />
 
-                <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2 sm:gap-3 w-full lg:w-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 w-full lg:w-auto">
                     <CustomFilterSelect
                         name="university"
-                        label={<GraduationCap className="size-4 shrink-0 text-slate-500 dark:text-white/50" />}
+                        label={<GraduationCap className="size-4 shrink-0 text-emerald-500" />}
                         options={universities}
                         currentValue={currentUni}
                         onChange={(val) => handleFilterChange("university", val)}
@@ -115,8 +121,17 @@ const FilterContent = ({ domains, universities }: { domains: any[], universities
                     />
 
                     <CustomFilterSelect
+                        name="collaborationType"
+                        label={<MapPin className="size-4 shrink-0 text-emerald-500" />}
+                        options={collabOptions}
+                        currentValue={currentCollab}
+                        onChange={(val) => handleFilterChange("collaborationType", val)}
+                        allLabel={t("all_collab") || "Any Workspace"}
+                    />
+
+                    <CustomFilterSelect
                         name="sort"
-                        label={<ArrowDownWideNarrow className="size-4 shrink-0 text-slate-500 dark:text-white/50" />}
+                        label={<ArrowDownWideNarrow className="size-4 shrink-0 text-emerald-500" />}
                         options={sortOptions}
                         currentValue={currentSort}
                         onChange={(val) => handleFilterChange("sort", val)}
@@ -125,14 +140,13 @@ const FilterContent = ({ domains, universities }: { domains: any[], universities
                 </div>
             </div>
 
-            {/* 2️⃣ The Second Section: The Subdomains */}
             <AnimatePresence>
                 {currentDomain !== "all" && subdomainsList.length > 0 && domainKey !== "default" && (
                     <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide snap-x w-full border-t border-slate-100 dark:border-white/5 pt-4"
+                        className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide snap-x w-full border-t border-slate-100 dark:border-white/5 pt-4 mt-2"
                     >
                         {subdomainsList.map((sub) => {
                             const isActive = currentSubDomain === sub.id;
@@ -143,8 +157,8 @@ const FilterContent = ({ domains, universities }: { domains: any[], universities
                                     onClick={() => handleFilterChange("subdomain", isActive ? "" : sub.id)}
                                     className={`px-4 py-1.5 rounded-xl text-[13px] font-bold transition-all duration-300 border whitespace-nowrap shrink-0 snap-start
                                         ${isActive
-                                            ? "bg-primary/10 text-primary border-primary/30 shadow-sm"
-                                            : "bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-white/50 border-slate-200 dark:border-white/10 hover:border-primary/40 hover:text-primary"
+                                            ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/30 shadow-sm"
+                                            : "bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-white/50 border-slate-200 dark:border-white/10 hover:border-emerald-500/40 hover:text-emerald-500"
                                         }`}
                                 >
                                     {sub.title}
@@ -155,7 +169,6 @@ const FilterContent = ({ domains, universities }: { domains: any[], universities
                 )}
             </AnimatePresence>
 
-            {/* 3️⃣ The Third Section: The Techs */}
             <AnimatePresence>
                 {currentDomain !== "all" && displayedTechs.length > 0 && domainKey !== "default" && (
                     <motion.div
@@ -173,8 +186,8 @@ const FilterContent = ({ domains, universities }: { domains: any[], universities
                                     onClick={() => handleFilterChange("tech", isActive ? "" : tech)}
                                     className={`px-3 py-1 rounded-full text-[12px] font-bold transition-all duration-300 border whitespace-nowrap shrink-0 snap-start
                                         ${isActive
-                                            ? "bg-primary text-white border-primary shadow-md scale-105"
-                                            : "bg-transparent text-slate-400 dark:text-white/40 border-slate-200 dark:border-white/10 hover:border-primary/40 hover:text-primary"
+                                            ? "bg-emerald-500 text-white border-emerald-500 shadow-md scale-105"
+                                            : "bg-transparent text-slate-400 dark:text-white/40 border-slate-200 dark:border-white/10 hover:border-emerald-500/40 hover:text-emerald-500"
                                         }`}
                                 >
                                     {tech}
@@ -189,14 +202,14 @@ const FilterContent = ({ domains, universities }: { domains: any[], universities
     );
 };
 
-const ProjectFilters = ({ domains, universities }: { domains: any[], universities: any[] }) => {
+const TeamFilters = ({ domains, universities }: { domains: any[], universities: any[] }) => {
     return (
-        <div className="mb-6 bg-white dark:bg-[#111115] border border-slate-200 dark:border-white/10 p-4 sm:p-5 rounded-2xl shadow-sm relative z-40 transition-colors duration-300">
-            <Suspense fallback={<div className="h-10 w-full animate-pulse bg-slate-100 dark:bg-white/5 rounded-xl" />}>
+        <div className="mb-6 bg-white dark:bg-[#111115] border border-slate-200 dark:border-white/10 p-3 sm:p-4 rounded-2xl shadow-sm dark:shadow-none relative z-40 transition-colors duration-300">
+            <Suspense fallback={<div className="h-12 w-full animate-pulse bg-slate-100 dark:bg-white/5 rounded-xl" />}>
                 <FilterContent domains={domains} universities={universities} />
             </Suspense>
         </div>
     );
 };
 
-export default ProjectFilters;
+export default TeamFilters;
