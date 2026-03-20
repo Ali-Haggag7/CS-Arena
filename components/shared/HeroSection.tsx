@@ -113,7 +113,7 @@ const HeroSection = ({
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.4, delay: 0.35 }}
             >
-                <TechFilters />
+                <TechFilters domains={domains} />
             </motion.div>
 
         </section>

@@ -30,7 +30,12 @@ const SearchForm = ({
         } else {
             params.delete(key);
         }
-        router.push(`/?${params.toString()}`);
+
+        if (key === "domain") {
+            params.delete("tech");
+        }
+
+        router.push(`/?${params.toString()}`, { scroll: false });
     };
 
     return (

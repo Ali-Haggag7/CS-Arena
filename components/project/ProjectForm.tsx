@@ -3,10 +3,11 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Send, AlertCircle, Loader2, FileCode2, Users, Briefcase, MapPin, ChevronDown, Check, Link as LinkIcon } from "lucide-react";
+import { Send, AlertCircle, Loader2, FileCode2, Users, Briefcase, MapPin, ChevronDown, Check, Link as LinkIcon, Plus } from "lucide-react";
 import { createProject } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslations, useLocale } from "next-intl";
+import { TECH_ECOSYSTEM, getDomainKey } from "@/constants/ecosystem";
 
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
@@ -49,6 +50,9 @@ const CustomDropdown = ({
   placeholder,
   required = true,
   hasError = false,
+  value,
+  onChange,
+  disabled = false
 }: {
   name: string;
   label: string | React.ReactNode;
@@ -56,10 +60,16 @@ const CustomDropdown = ({
   placeholder: string;
   required?: boolean;
   hasError?: boolean;
+  value?: string;
+  onChange?: (val: string) => void;
+  disabled?: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<DropdownItem | null>(null);
+  const [internalSelected, setInternalSelected] = useState<DropdownItem | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const currentValue = value !== undefined ? value : internalSelected?.value;
+  const selectedOption = options.find((opt) => opt.value === currentValue);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -71,37 +81,47 @@ const CustomDropdown = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleSelect = (option: DropdownItem) => {
+    setInternalSelected(option);
+    if (onChange) onChange(option.value);
+    setIsOpen(false);
+  };
+
   return (
     <div className="relative" ref={dropdownRef}>
       <label className={labelClass}>
         {label} {required && <span className="text-red-500">*</span>}
       </label>
-      <input type="hidden" name={name} value={selected?.value || ""} required={required} />
+
+      {onChange === undefined && (
+        <input type="hidden" name={name} value={currentValue || ""} required={required} />
+      )}
+
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        disabled={disabled}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
         className={`w-full p-4 rounded-xl border flex items-center justify-between text-[15px] font-medium transition-all duration-300
+          ${disabled ? "opacity-50 cursor-not-allowed bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10" : ""}
           ${isOpen ? "border-primary ring-1 ring-primary bg-white dark:bg-[#111115]" : hasError ? "border-red-500 ring-1 ring-red-500 bg-red-50 dark:bg-red-500/5" : "border-slate-200 dark:border-white/10 bg-white dark:bg-[#111115] hover:border-slate-300 dark:hover:border-white/20"}
-          ${selected ? "text-black dark:text-white" : "text-slate-400 dark:text-white/30"}`}
+          ${selectedOption ? "text-black dark:text-white" : "text-slate-400 dark:text-white/30"}`}
       >
-        <span>{selected ? selected.label : placeholder}</span>
-        <ChevronDown className={`size-4 transition-transform duration-300 ${isOpen ? "rotate-180 text-primary" : "text-slate-400"}`} />
+        <span className="truncate pr-4">{selectedOption ? selectedOption.label : placeholder}</span>
+        <ChevronDown className={`size-4 shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180 text-primary" : "text-slate-400"}`} />
       </button>
-      {isOpen && (
+
+      {isOpen && !disabled && (
         <div className="absolute z-50 w-full mt-2 bg-white dark:bg-[#111115] border border-slate-200 dark:border-white/10 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2">
           <ul className="max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-white/10">
             {options.map((option) => (
               <li
                 key={option.value}
-                onClick={() => {
-                  setSelected(option);
-                  setIsOpen(false);
-                }}
+                onClick={() => handleSelect(option)}
                 className={`px-4 py-3 text-sm font-medium cursor-pointer transition-colors flex items-center justify-between
-                  ${selected?.value === option.value ? "bg-primary/10 text-primary" : "text-slate-600 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/5"}`}
+                  ${currentValue === option.value ? "bg-primary/10 text-primary" : "text-slate-600 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/5"}`}
               >
                 {option.label}
-                {selected?.value === option.value && <Check className="size-4" />}
+                {currentValue === option.value && <Check className="size-4" />}
               </li>
             ))}
           </ul>
@@ -117,38 +137,27 @@ const editorExtraCommands = [commands.codeEdit, commands.codeLive, commands.code
 const getDynamicPlaceholders = (domainName: string, isRtl: boolean) => {
   const lower = domainName.toLowerCase();
 
-  if (lower.includes("ai") || lower.includes("artificial") || lower.includes("machine") || lower.includes("data") || lower.includes("ذكاء") || lower.includes("بيانات")) {
+  if (lower.includes("ai") || lower.includes("data") || lower.includes("ذكاء")) {
     return {
-      title: isRtl ? "e.g., Sentiment Analysis Model, Smart Recommender..." : "e.g., Sentiment Analysis Model, Smart Recommender...",
-      tech: isRtl ? "e.g., Python, TensorFlow, Pandas..." : "e.g., Python, TensorFlow, Pandas...",
-      linkLabel: isRtl ? "Project Link (GitHub, Kaggle, Hugging Face)" : "Project Link (GitHub, Kaggle, Hugging Face)",
+      title: isRtl ? "مثال: نموذج تحليل المشاعر، نظام توصية ذكي..." : "e.g., Sentiment Analysis Model, Smart Recommender...",
+      linkLabel: isRtl ? "رابط المشروع (GitHub, Kaggle, Hugging Face)" : "Project Link (GitHub, Kaggle, Hugging Face)",
       linkPlaceholder: "https://kaggle.com/...",
-      pitchHint: isRtl ? "Describe your Dataset, Model Architecture, Accuracy, and Training results." : "Describe your Dataset, Model Architecture, Accuracy, and Training results.",
+      pitchHint: isRtl ? "صف مجموعة البيانات (Dataset)، هيكل النموذج، الدقة، ونتائج التدريب." : "Describe your Dataset, Model Architecture, Accuracy, and Training results.",
     };
-  } else if (lower.includes("cyber") || lower.includes("security") || lower.includes("أمن") || lower.includes("سيبراني")) {
+  } else if (lower.includes("cyber") || lower.includes("security")) {
     return {
-      title: isRtl ? "e.g., Vulnerability Scanner, Custom Encryption Algo..." : "e.g., Vulnerability Scanner, Custom Encryption Algo...",
-      tech: isRtl ? "e.g., Python, Bash, Wireshark, C++..." : "e.g., Python, Bash, Wireshark, C++...",
-      linkLabel: isRtl ? "Script / Research Paper Link" : "Script / Research Paper Link",
+      title: isRtl ? "مثال: أداة فحص الثغرات، خوارزمية تشفير مخصصة..." : "e.g., Vulnerability Scanner, Custom Encryption Algo...",
+      linkLabel: isRtl ? "رابط السكربت أو الورقة البحثية" : "Script / Research Paper Link",
       linkPlaceholder: "https://github.com/... or Google Drive link",
-      pitchHint: isRtl ? "Describe the vulnerability, exploitation method, and mitigation steps." : "Describe the vulnerability, exploitation method, and mitigation steps.",
-    };
-  } else if (lower.includes("design") || lower.includes("ui") || lower.includes("ux") || lower.includes("تصميم")) {
-    return {
-      title: isRtl ? "e.g., Banking App Redesign, Full Brand Identity..." : "e.g., Banking App Redesign, Full Brand Identity...",
-      tech: isRtl ? "e.g., Figma, Adobe XD, Illustrator..." : "e.g., Figma, Adobe XD, Illustrator...",
-      linkLabel: isRtl ? "Design Link (Figma, Behance, Dribbble)" : "Design Link (Figma, Behance, Dribbble)",
-      linkPlaceholder: "https://www.figma.com/file/...",
-      pitchHint: isRtl ? "Describe the User Journey, color psychology, and the problem you solved." : "Describe the User Journey, color psychology, and the problem you solved.",
+      pitchHint: isRtl ? "اشرح الثغرة، طريقة الاستغلال، وخطوات الحماية (Mitigation)." : "Describe the vulnerability, exploitation method, and mitigation steps.",
     };
   }
 
   return {
-    title: isRtl ? "e.g., Social Media App, Task Manager..." : "e.g., Social Media App, Task Manager...",
-    tech: isRtl ? "e.g., Next.js, React, Node.js, MongoDB..." : "e.g., Next.js, React, Node.js, MongoDB...",
-    linkLabel: isRtl ? "Source Code (GitHub, GitLab) or Live URL" : "Source Code (GitHub, GitLab) or Live URL",
+    title: isRtl ? "مثال: تطبيق تواصل اجتماعي، منصة إدارة مهام..." : "e.g., Social Media App, Task Manager...",
+    linkLabel: isRtl ? "الكود المصدري (GitHub) أو رابط الموقع المباشر" : "Source Code (GitHub, GitLab) or Live URL",
     linkPlaceholder: "https://github.com/...",
-    pitchHint: isRtl ? "Use Markdown to describe your project architecture, core features, and setup instructions." : "Use Markdown to describe your project architecture, core features, and setup instructions.",
+    pitchHint: isRtl ? "استخدم Markdown لوصف معمارية المشروع، الميزات الأساسية، وخطوات التشغيل." : "Use Markdown to describe your project architecture, core features, and setup instructions.",
   };
 };
 
@@ -163,7 +172,12 @@ export default function ProjectForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [generalError, setGeneralError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
   const [isLookingForTeam, setIsLookingForTeam] = useState(false);
+  const [selectedDomainId, setSelectedDomainId] = useState<string>("");
+  const [selectedSubDomain, setSelectedSubDomain] = useState<string>("");
+  const [selectedTech, setSelectedTech] = useState<string>("");
+  const [customTech, setCustomTech] = useState<string>("");
 
   const router = useRouter();
   const { toast } = useToast();
@@ -171,9 +185,22 @@ export default function ProjectForm({
   const locale = useLocale();
   const isRtl = locale === "ar";
 
-  const dynamicTexts = getDynamicPlaceholders(userDomainName, isRtl);
+  const currentDomainName = domains.find(d => d._id === selectedDomainId)?.name || userDomainName;
+  const dynamicTexts = getDynamicPlaceholders(currentDomainName, isRtl);
 
   const domainOptions = domains.map(d => ({ value: d._id, label: d.name }));
+
+  const domainKey = getDomainKey(currentDomainName);
+  const ecosystemData = TECH_ECOSYSTEM[domainKey].subdomains;
+
+  const subDomainOptions = Object.keys(ecosystemData).map(key => ({
+    value: key,
+    label: ecosystemData[key].title
+  }));
+
+  const techOptions = selectedSubDomain
+    ? ecosystemData[selectedSubDomain]?.techs.map((t: string) => ({ value: t, label: t })) || []
+    : [];
 
   const projectTypeOptions = [
     { value: "Graduation Project", label: t("type_grad") },
@@ -188,6 +215,17 @@ export default function ProjectForm({
     { value: "Hybrid", label: t("collab_hybrid") },
   ];
 
+  useEffect(() => {
+    setSelectedSubDomain("");
+    setSelectedTech("");
+    setCustomTech("");
+  }, [selectedDomainId]);
+
+  useEffect(() => {
+    setSelectedTech("");
+    setCustomTech("");
+  }, [selectedSubDomain]);
+
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -197,6 +235,20 @@ export default function ProjectForm({
 
       const formData = new FormData(e.currentTarget);
       formData.append("isLookingForContributors", isLookingForTeam.toString());
+
+      const finalTechValue = selectedTech === "Other" ? customTech : selectedTech;
+      formData.set("techStack", finalTechValue);
+
+      if (selectedSubDomain) {
+        const subDomainLabel = ecosystemData[selectedSubDomain]?.title || selectedSubDomain;
+        formData.set("subDomain", subDomainLabel);
+      }
+
+      if (!finalTechValue.trim()) {
+        setFieldErrors({ techStack: ["Please select or enter a primary technology."] });
+        setIsSubmitting(false);
+        return;
+      }
 
       try {
         const result = await createProject(formData, pitch);
@@ -225,7 +277,7 @@ export default function ProjectForm({
         setIsSubmitting(false);
       }
     },
-    [pitch, isLookingForTeam, router, toast, t]
+    [pitch, isLookingForTeam, selectedTech, customTech, selectedSubDomain, ecosystemData, router, toast, t]
   );
 
   return (
@@ -258,7 +310,7 @@ export default function ProjectForm({
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
+      <div className="grid sm:grid-cols-3 gap-6 sm:gap-4 border p-4 sm:p-6 rounded-2xl border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.02]">
         <div>
           <CustomDropdown
             name="domainId"
@@ -266,13 +318,51 @@ export default function ProjectForm({
             options={domainOptions}
             placeholder={t("placeholder_domain")}
             hasError={!!fieldErrors.domainId}
+            value={selectedDomainId}
+            onChange={(val) => setSelectedDomainId(val)}
           />
+          <input type="hidden" name="domainId" value={selectedDomainId} />
           <FieldError errors={fieldErrors.domainId} />
         </div>
+
         <div>
-          <label htmlFor="techStack" className={labelClass}>{t("label_tech")} <span className="text-red-500">*</span></label>
-          <input id="techStack" name="techStack" required placeholder={dynamicTexts.tech} className={inputClass(!!fieldErrors.techStack)} />
-          <p className="text-xs text-slate-400 dark:text-white/30 mt-2 font-medium">{t("hint_tech")}</p>
+          <CustomDropdown
+            name="subDomainSelector"
+            label={isRtl ? "التخصص الدقيق" : "Specialization"}
+            options={subDomainOptions}
+            placeholder="Select path..."
+            disabled={!selectedDomainId}
+            value={selectedSubDomain}
+            onChange={(val) => setSelectedSubDomain(val)}
+          />
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <CustomDropdown
+            name="techSelector"
+            label={t("label_tech")}
+            options={techOptions}
+            placeholder="Select tech..."
+            disabled={!selectedSubDomain}
+            hasError={!!fieldErrors.techStack}
+            value={selectedTech}
+            onChange={(val) => setSelectedTech(val)}
+          />
+
+          {selectedTech === "Other" && (
+            <div className="animate-in fade-in slide-in-from-top-2">
+              <div className="relative">
+                <Plus className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-400 rtl:right-4 rtl:left-auto" />
+                <input
+                  type="text"
+                  value={customTech}
+                  onChange={(e) => setCustomTech(e.target.value)}
+                  placeholder="Type technology..."
+                  className={`${inputClass(!!fieldErrors.techStack)} ltr:pl-10 rtl:pr-10`}
+                />
+              </div>
+            </div>
+          )}
           <FieldError errors={fieldErrors.techStack} />
         </div>
       </div>
