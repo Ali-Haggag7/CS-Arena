@@ -6,6 +6,7 @@ import { Search, GraduationCap, Layers } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { CustomFilterSelect } from "./CustomFilterSelect";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
 
 const SearchForm = ({
     query,
@@ -23,6 +24,8 @@ const SearchForm = ({
     const currentUni = searchParams.get("university") ?? "";
     const currentDomain = searchParams.get("domain") ?? "";
 
+    const [isPending, startTransition] = useTransition();
+
     const updateFilter = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString());
         if (value) {
@@ -33,9 +36,12 @@ const SearchForm = ({
 
         if (key === "domain") {
             params.delete("tech");
+            params.delete("subdomain");
         }
 
-        router.push(`/?${params.toString()}`, { scroll: false });
+        startTransition(() => {
+            router.push(`/?${params.toString()}`, { scroll: false });
+        });
     };
 
     return (
