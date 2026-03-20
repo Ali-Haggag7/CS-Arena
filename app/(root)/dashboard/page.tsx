@@ -111,7 +111,7 @@ export default async function DashboardPage({
                                             {tab.label}
                                         </span>
                                         {tab.badge !== undefined && tab.badge > 0 && (
-                                            <span className={`absolute top-1 right-1 md:top-auto md:right-3 flex items-center justify-center size-5 bg-red-500 text-white text-[10px] rounded-full shadow-sm ${!isActive ? 'animate-pulse' : ''}`}>
+                                            <span className={`absolute top-1 end-1 md:top-auto md:end-3 flex items-center justify-center size-5 bg-red-500 text-white text-[10px] rounded-full shadow-sm ${!isActive ? 'animate-pulse' : ''}`}>
                                                 {tab.badge}
                                             </span>
                                         )}
