@@ -4,7 +4,8 @@ import * as runtime from "react/jsx-runtime";
 import { getDocBySlug, getAllDocSlugs } from "@/lib/docs";
 import { docsConfig } from "@/config/docs";
 import DocsSidebar from "@/components/docs/DocsSidebar";
-import { ChevronRight, ArrowLeft, ArrowRight, ChevronLeft, Github, ThumbsUp, ThumbsDown, Edit3, Book } from "lucide-react";
+import DocsFeedback from "@/components/docs/DocsFeedback";
+import { ChevronRight, ArrowLeft, ArrowRight, ChevronLeft, Github, Edit3, Book } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import type { ComponentType } from "react";
@@ -93,69 +94,64 @@ export default async function DocsPage({ params }: { params: Promise<{ slug: str
 
                         {/* Extreme MDX Styling */}
                         <div className="prose prose-slate dark:prose-invert max-w-none
-              prose-headings:font-black prose-headings:tracking-tight
-              prose-h1:text-4xl prose-h1:sm:text-5xl prose-h1:mb-6 prose-h1:text-black prose-h1:dark:text-white
-              
-              prose-h2:text-2xl prose-h2:sm:text-3xl prose-h2:mt-16 prose-h2:mb-6
-              prose-h2:text-black prose-h2:dark:text-white prose-h2:border-b prose-h2:border-slate-200 prose-h2:dark:border-white/10 prose-h2:pb-4
-              
-              prose-h3:text-xl prose-h3:mt-10 prose-h3:text-slate-800 prose-h3:dark:text-white/90
-              prose-p:text-slate-600 prose-p:dark:text-white/60 prose-p:leading-loose prose-p:text-[16px] prose-p:font-medium
-              
-              prose-a:text-primary hover:prose-a:text-cyan-400 prose-a:no-underline prose-a:border-b prose-a:border-primary/30 hover:prose-a:border-cyan-400 transition-colors
-              
-              prose-code:text-rose-500 dark:prose-code:text-cyan-400 prose-code:font-bold
-              prose-code:bg-slate-100 dark:prose-code:bg-cyan-400/10
-              prose-code:px-2 prose-code:py-0.5 prose-code:rounded-md prose-code:text-[14px]
-              prose-code:before:content-none prose-code:after:content-none
-              
-              prose-pre:bg-[#0d0d12] prose-pre:border prose-pre:border-white/10 prose-pre:rounded-2xl
-              prose-pre:p-6 prose-pre:overflow-x-auto prose-pre:text-[14px] prose-pre:shadow-2xl prose-pre:shadow-black/50
-              
-              prose-blockquote:not-italic prose-blockquote:border-s-4 prose-blockquote:border-blue-500
-              prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-blue-500/10
-              prose-blockquote:rounded-r-2xl prose-blockquote:py-4 prose-blockquote:px-6
-              prose-blockquote:text-slate-700 dark:prose-blockquote:text-blue-200 prose-blockquote:font-semibold
-              
-              prose-hr:border-slate-200 dark:prose-hr:border-white/10 prose-hr:my-12
-              prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold
-              prose-li:text-slate-600 dark:prose-li:text-white/70 prose-li:text-[16px] prose-li:font-medium
-              prose-ul:my-6 prose-ol:my-6
-              
-              prose-table:border-collapse prose-table:w-full prose-table:rounded-2xl prose-table:overflow-hidden prose-table:border prose-table:border-slate-200 dark:prose-table:border-white/10
-              prose-thead:bg-slate-50 dark:prose-thead:bg-white/5 prose-thead:border-b prose-thead:border-slate-200 dark:prose-thead:border-white/10
-              prose-th:text-start prose-th:text-sm prose-th:font-bold prose-th:text-slate-800 dark:prose-th:text-white prose-th:px-6 prose-th:py-4
-              prose-td:border-t prose-td:border-slate-200 dark:prose-td:border-white/10 prose-td:px-6 prose-td:py-4
-              prose-td:text-[15px] prose-td:text-slate-600 dark:prose-td:text-white/60
-            ">
+                            prose-headings:font-black prose-headings:tracking-tight
+                            prose-h1:text-4xl prose-h1:sm:text-5xl prose-h1:mb-6 prose-h1:text-black prose-h1:dark:text-white
+                            
+                            prose-h2:text-2xl prose-h2:sm:text-3xl prose-h2:mt-16 prose-h2:mb-6
+                            prose-h2:text-black prose-h2:dark:text-white prose-h2:border-b prose-h2:border-slate-200 prose-h2:dark:border-white/10 prose-h2:pb-4
+                            
+                            prose-h3:text-xl prose-h3:mt-10 prose-h3:text-slate-800 prose-h3:dark:text-white/90
+                            prose-p:text-slate-600 prose-p:dark:text-white/60 prose-p:leading-loose prose-p:text-[16px] prose-p:font-medium
+                            
+                            prose-a:text-primary hover:prose-a:text-cyan-400 prose-a:no-underline prose-a:border-b prose-a:border-primary/30 hover:prose-a:border-cyan-400 transition-colors
+                            
+                            prose-code:text-rose-500 dark:prose-code:text-cyan-400 prose-code:font-bold
+                            prose-code:bg-slate-100 dark:prose-code:bg-cyan-400/10
+                            prose-code:px-2 prose-code:py-0.5 prose-code:rounded-md prose-code:text-[14px]
+                            prose-code:before:content-none prose-code:after:content-none
+                            
+                            prose-pre:bg-[#0d0d12] prose-pre:border prose-pre:border-white/10 prose-pre:rounded-2xl
+                            prose-pre:p-6 prose-pre:overflow-x-auto prose-pre:text-[14px] prose-pre:shadow-2xl prose-pre:shadow-black/50
+                            
+                            prose-blockquote:not-italic prose-blockquote:border-s-4 prose-blockquote:border-blue-500
+                            prose-blockquote:bg-blue-50 dark:prose-blockquote:bg-blue-500/10
+                            prose-blockquote:rounded-r-2xl prose-blockquote:py-4 prose-blockquote:px-6
+                            prose-blockquote:text-slate-700 dark:prose-blockquote:text-blue-200 prose-blockquote:font-semibold
+                            
+                            prose-hr:border-slate-200 dark:prose-hr:border-white/10 prose-hr:my-12
+                            prose-strong:text-black dark:prose-strong:text-white prose-strong:font-bold
+                            prose-li:text-slate-600 dark:prose-li:text-white/70 prose-li:text-[16px] prose-li:font-medium
+                            prose-ul:my-6 prose-ol:my-6
+                            
+                            prose-table:border-collapse prose-table:w-full prose-table:rounded-2xl prose-table:overflow-hidden prose-table:border prose-table:border-slate-200 dark:prose-table:border-white/10
+                            prose-thead:bg-slate-50 dark:prose-thead:bg-white/5 prose-thead:border-b prose-thead:border-slate-200 dark:prose-thead:border-white/10
+                            prose-th:text-start prose-th:text-sm prose-th:font-bold prose-th:text-slate-800 dark:prose-th:text-white prose-th:px-6 prose-th:py-4
+                            prose-td:border-t prose-td:border-slate-200 dark:prose-td:border-white/10 prose-td:px-6 prose-td:py-4
+                            prose-td:text-[15px] prose-td:text-slate-600 dark:prose-td:text-white/60
+                        ">
                             <DocContent />
                         </div>
 
                         {/* Developer Feedback & Tools */}
                         <div className="mt-20 pt-10 border-t border-slate-200 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
 
-                            {/* Feedback Widget */}
-                            <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50 dark:bg-[#111115] border border-slate-200 dark:border-white/10 px-6 py-4 rounded-2xl w-full md:w-auto shadow-sm">
-                                <span className="text-sm font-bold text-slate-700 dark:text-white/70">{t("feedback_title")}</span>
-                                <div className="flex items-center gap-2">
-                                    <button type="button" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-xs font-bold hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/30 transition-all">
-                                        <ThumbsUp className="size-3.5" /> {t("feedback_yes")}
-                                    </button>
-                                    <button type="button" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 text-xs font-bold hover:bg-rose-500/10 hover:text-rose-500 hover:border-rose-500/30 transition-all">
-                                        <ThumbsDown className="size-3.5" /> {t("feedback_no")}
-                                    </button>
-                                </div>
-                            </div>
+                            {/* Feedback Form */}
+                            <DocsFeedback title={doc.frontmatter.title} />
 
                             {/* GitHub Link & Last Updated */}
                             <div className="flex flex-col items-center md:items-end gap-3 text-sm font-medium text-slate-500 dark:text-white/40">
-                                <Link href="#" className="flex items-center gap-2 hover:text-black dark:hover:text-white transition-colors group">
+                                <Link
+                                    href={`https://github.com/Ali-Haggag7/CS-Arena/blob/main/content/docs/${currentSlug}.${locale}.mdx`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 hover:text-black dark:hover:text-white transition-colors group"
+                                >
                                     <Edit3 className="size-4 group-hover:text-primary transition-colors" />
                                     {t("edit_github")}
                                 </Link>
                                 <div className="flex items-center gap-2 text-xs">
                                     <Github className="size-3.5 opacity-50" />
-                                    {t("last_updated")}
+                                    {t("last_updated")}: {doc.frontmatter.lastUpdated ? new Date(doc.frontmatter.lastUpdated).toLocaleDateString() : t("recently")}
                                 </div>
                             </div>
                         </div>

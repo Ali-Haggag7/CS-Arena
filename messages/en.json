@@ -167,13 +167,14 @@
         "previous": "Previous",
         "next": "Next",
         "search_docs": "Search documentation...",
-        "search_cmd": "Ctrl+K",
         "version": "Version",
         "edit_github": "Edit this page on GitHub",
         "feedback_title": "Was this page helpful?",
         "feedback_yes": "Yes",
         "feedback_no": "No",
-        "last_updated": "Last updated just now"
+        "last_updated": "Last updated",
+        "recently": "recently",
+        "no_results": "No results found"
     },
     "about": {
         "title": "About CS-Arena",
