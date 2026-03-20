@@ -13,6 +13,7 @@ import UpvoteButton from "@/components/project/UpvoteButton";
 import GithubStats from "@/components/shared/GithubStats";
 import JoinTeamButton from "@/components/shared/JoinTeamButton";
 import ProjectCard, { ProjectTypeCard } from "@/components/project/ProjectCard";
+import ContributorsSection from "@/components/project/ContributorsSection";
 import { Calendar, Layers, Sparkles, Activity, Briefcase, MapPin, ExternalLink, Github, ChevronUp } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { auth } from "@/auth";
@@ -289,6 +290,8 @@ async function ProjectContent({ id }: { id: string }) {
             </div>
           )}
         </div>
+
+        <ContributorsSection contributors={post.contributors ?? []} />
 
         <div className="bg-white dark:bg-[#111115] rounded-2xl p-6 border border-slate-200 dark:border-white/10 shadow-sm flex justify-between items-center">
           <div className="flex items-center gap-3">

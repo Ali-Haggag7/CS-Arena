@@ -26,7 +26,13 @@ const PROJECT_FIELDS = `
 
 const PROJECT_FIELDS_FULL = `
   ${PROJECT_FIELDS},
-  pitch
+  pitch,
+  contributors[]-> {
+    _id,
+    name,
+    image,
+    username
+  }
 `;
 
 const AUTHOR_FIELDS = `

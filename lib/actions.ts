@@ -442,6 +442,21 @@ export const handleRequestAction = async (
       .set({ status })
       .commit();
 
+    if (status === "accepted") {
+      const requestData = await writeClient.getDocument(requestId);
+      if (requestData?.applicant?._ref && requestData?.project?._ref) {
+        await writeClient
+          .patch(requestData.project._ref)
+          .setIfMissing({ contributors: [] })
+          .append("contributors", [{
+            _type: "reference",
+            _ref: requestData.applicant._ref,
+            _key: requestData.applicant._ref
+          }])
+          .commit();
+      }
+    }
+
     let emailSubject = "";
     let emailHtml = "";
 

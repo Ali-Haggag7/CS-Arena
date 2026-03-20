@@ -381,7 +381,8 @@
         "no_architecture": "لم يتم تقديم معمارية مفصلة أو عرض لهذا المشروع.",
         "engagement": "تفاعل المشروع",
         "similar_projects": "اكتشف مشاريع مماثلة",
-        "hiring": "يبحث عن مساهمين"
+        "hiring": "يبحث عن مساهمين",
+        "team_members": "أعضاء الفريق"
     },
     "project_components": {
         "join_error_login": "يجب تسجيل الدخول للانضمام إلى فريق.",
