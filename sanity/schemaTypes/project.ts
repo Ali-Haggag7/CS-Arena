@@ -28,6 +28,13 @@ export const project = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "contributors",
+      title: "Team Members / Contributors",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "author" }] }],
+      initialValue: [],
+    }),
+    defineField({
       name: "domain",
       title: "Project Domain",
       type: "reference",
@@ -56,14 +63,9 @@ export const project = defineType({
     }),
     defineField({
       name: "githubLink",
+      title: "Project Link (Source or Live)",
       type: "url",
-      validation: (Rule) =>
-        Rule.required().custom((url) => {
-          if (typeof url === "string" && !url.includes("github.com")) {
-            return "Must be a valid GitHub repository URL";
-          }
-          return true;
-        }),
+      validation: (Rule) => Rule.required().uri({ scheme: ['http', 'https'] }),
     }),
     defineField({
       name: "techStack",

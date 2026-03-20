@@ -27,6 +27,7 @@ const formSchema = z.object({
     .url("Please provide a valid image URL"),
   projectLink: z
     .string()
+    .min(1, "Required")
     .url("Please provide a valid URL"),
   pitch: z
     .string()
@@ -157,7 +158,7 @@ export const createProject = async (
       description: formData.get("description") as string,
       techStack: formData.get("techStack") as string,
       image: formData.get("image") as string,
-      githubLink: formData.get("projectLink") as string,
+      projectLink: formData.get("projectLink") as string,
       domainId: formData.get("domainId") as string,
       subDomain: formData.get("subDomain") as string,
       projectType: formData.get("projectType") as string,
@@ -211,6 +212,61 @@ export const createProject = async (
   } catch (error) {
     console.error("[createProject]", error);
     return { success: false, error: "An unexpected error occurred." };
+  }
+};
+
+
+export const updateProject = async (projectId: string, formData: FormData, pitch: string) => {
+  const session = await auth();
+  if (!session) return { success: false, error: "Not authenticated" };
+
+  try {
+    const existing = await client.withConfig({ useCdn: false }).fetch(
+      `*[_type == "project" && _id == $id][0]{author}`,
+      { id: projectId }
+    );
+
+    if (existing?.author?._ref !== session.id) {
+      return { success: false, error: "Not authorized" };
+    }
+
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const projectType = formData.get("projectType") as string;
+    const domainId = formData.get("domainId") as string;
+    const subDomain = formData.get("subDomain") as string;
+    const techStack = formData.get("techStack") as string;
+    const projectLink = formData.get("projectLink") as string;
+    const image = formData.get("image") as string;
+    const isLookingForContributors = formData.get("isLookingForContributors") === "true";
+    const rolesNeeded = formData.get("rolesNeeded") as string;
+    const collaborationType = formData.get("collaborationType") as string;
+
+    const techStackArray = techStack ? techStack.split(",").map(t => t.trim()).filter(Boolean) : [];
+    const rolesArray = isLookingForContributors && rolesNeeded ? rolesNeeded.split(",").map(r => r.trim()).filter(Boolean) : [];
+
+    await writeClient
+      .patch(projectId)
+      .set({
+        title,
+        description,
+        projectType,
+        domain: { _type: "reference", _ref: domainId },
+        subDomain,
+        techStack: techStackArray,
+        githubLink: projectLink,
+        image,
+        isLookingForContributors,
+        rolesNeeded: rolesArray,
+        collaborationType: isLookingForContributors ? collaborationType : null,
+        pitch
+      })
+      .commit();
+
+    return { success: true };
+  } catch (error) {
+    console.error("Update error:", error);
+    return { success: false, error: "Failed to update project" };
   }
 };
 
@@ -297,56 +353,76 @@ export const updateUserProfile = async (formData: FormData) => {
   }
 };
 
-export const updateProject = async (projectId: string, formData: FormData, pitch: string) => {
-  const session = await auth();
-  if (!session) return { success: false, error: "Not authenticated" };
+// ─── Create Join Request ───────────────────────────────────────────────────────
 
+export const createJoinRequest = async (
+  projectId: string,
+  role: string,
+  message: string
+) => {
   try {
-    const existing = await client.withConfig({ useCdn: false }).fetch(
-      `*[_type == "project" && _id == $id][0]{author}`,
-      { id: projectId }
-    );
+    const session = await auth();
 
-    if (existing?.author?._ref !== session.id) {
-      return { success: false, error: "Not authorized" };
+    if (!session?.id) {
+      return { success: false, error: "You must be logged in to apply." };
     }
 
-    const title = formData.get("title") as string;
-    const description = formData.get("description") as string;
-    const projectType = formData.get("projectType") as string;
-    const domainId = formData.get("domainId") as string;
-    const subDomain = formData.get("subDomain") as string;
-    const techStack = formData.get("techStack") as string;
-    const projectLink = formData.get("projectLink") as string;
-    const image = formData.get("image") as string;
-    const isLookingForContributors = formData.get("isLookingForContributors") === "true";
-    const rolesNeeded = formData.get("rolesNeeded") as string;
-    const collaborationType = formData.get("collaborationType") as string;
+    const existingRequest = await client.withConfig({ useCdn: false }).fetch(
+      `*[_type == "joinRequest" && project._ref == $projectId && applicant._ref == $userId][0]`,
+      { projectId, userId: session.id }
+    );
 
-    const techStackArray = techStack ? techStack.split(",").map(t => t.trim()).filter(Boolean) : [];
-    const rolesArray = isLookingForContributors && rolesNeeded ? rolesNeeded.split(",").map(r => r.trim()).filter(Boolean) : [];
+    if (existingRequest) {
+      return { success: false, error: "لقد قمت بتقديم طلب لهذا المشروع بالفعل." };
+    }
 
-    await writeClient
-      .patch(projectId)
-      .set({
+    const projectData = await client.withConfig({ useCdn: false }).fetch(
+      `*[_type == "project" && _id == $projectId][0]{
         title,
-        description,
-        projectType,
-        domain: { _type: "reference", _ref: domainId },
-        subDomain,
-        techStack: techStackArray,
-        githubLink: projectLink,
-        image,
-        isLookingForContributors,
-        rolesNeeded: rolesArray,
-        collaborationType: isLookingForContributors ? collaborationType : null,
-        pitch
-      })
-      .commit();
+        author->{name, email}
+      }`,
+      { projectId }
+    );
+
+    await writeClient.create({
+      _type: "joinRequest",
+      project: { _type: "reference", _ref: projectId },
+      applicant: { _type: "reference", _ref: session.id },
+      role,
+      message,
+      status: "pending",
+    });
+
+    if (projectData?.author?.email) {
+      await resend.emails.send({
+        from: "CS-Arena <noreply@cs-arena.dev>",
+        to: projectData.author.email,
+        subject: `New Join Request for "${projectData.title}" 🚀`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+            <h2 style="color: #10b981;">New Team Application! 🎉</h2>
+            <p>Hello <strong>${projectData.author.name}</strong>,</p>
+            <p>Someone just applied to join your project <strong>"${projectData.title}"</strong>.</p>
+            
+            <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 0 0 10px 0;"><strong>Role Requested:</strong> ${role}</p>
+              <p style="margin: 0;"><strong>Applicant's Message:</strong></p>
+              <blockquote style="margin: 10px 0 0 0; font-style: italic; color: #475569;">"${message}"</blockquote>
+            </div>
+
+            <p>Click the button below to review this request in your dashboard:</p>
+            <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/dashboard?tab=requests" 
+                style="display: inline-block; padding: 12px 24px; background-color: #10b981; color: white; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 10px;">
+              Review Request
+            </a>
+          </div>
+        `,
+      });
+    }
 
     return { success: true };
   } catch (error) {
-    console.error("Update error:", error);
-    return { success: false, error: "Failed to update project" };
+    console.error("[createJoinRequest]", error);
+    return { success: false, error: "حدث خطأ غير متوقع أثناء إرسال الطلب." };
   }
 };

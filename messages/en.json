@@ -468,5 +468,20 @@
         "saving": "Saving...",
         "success": "Profile updated successfully!",
         "error": "Failed to update profile."
+    },
+    "join_team": {
+        "button_text": "Request to Join Team",
+        "modal_title": "Join Request",
+        "project": "Project:",
+        "success_title": "Submitted Successfully!",
+        "success_desc": "Your request has been recorded. The project owner will review it soon.",
+        "role_required": "Required Role",
+        "role_suggested": "Suggested Role",
+        "role_placeholder": "e.g., Frontend Developer",
+        "pitch": "Pitch / Message",
+        "pitch_placeholder": "Tell the project owner why you are the right fit for this role...",
+        "sending": "Sending...",
+        "send_request": "Send Request",
+        "error_length": "Message must be at least 10 characters."
     }
 }

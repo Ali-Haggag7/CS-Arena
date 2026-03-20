@@ -4,8 +4,9 @@ import { project } from "./project";
 import { changelog } from "./changelog";
 import { university } from './university'
 import { domain } from './domain'
+import { joinRequest } from "./joinRequest";
 
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [author, project, changelog, university, domain],
+  types: [author, project, changelog, university, domain, joinRequest],
 };

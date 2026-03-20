@@ -63,12 +63,23 @@ async function ProjectContent({ id }: { id: string }) {
   if (!post) return notFound();
 
   const isLoggedIn = !!session?.id;
+  const isOwner = session?.id === post.author?._id;
+
+  let hasApplied = false;
+  if (isLoggedIn) {
+    const existingRequest = await client.withConfig({ useCdn: false }).fetch(
+      `*[_type == "joinRequest" && project._ref == $projectId && applicant._ref == $userId][0]`,
+      { projectId: post._id, userId: session.id }
+    );
+    hasApplied = !!existingRequest;
+  }
+
   const parsedContent = md.render(post.pitch || "");
   const t = await getTranslations("project_details");
   const locale = await getLocale();
   const isRtl = locale === "ar";
 
-  const isGithubLink = post.githubLink?.toLowerCase().includes("github.com");
+  const isGithubLink = post.githubLink ? post.githubLink.toLowerCase().includes("github.com") : false;
   const dynamicHeading = getDynamicHeading(post.domain?.name, isRtl, t);
 
   return (
@@ -188,7 +199,7 @@ async function ProjectContent({ id }: { id: string }) {
 
                 <div className="mt-1 w-full md:w-auto">
                   {isLoggedIn ? (
-                    <JoinTeamButton projectName={post.title} ownerEmail={post.author?.email ?? ""} />
+                    <JoinTeamButton projectId={post._id} projectName={post.title} rolesNeeded={post.rolesNeeded} hasApplied={hasApplied} isOwner={isOwner} />
                   ) : (
                     <div className="flex flex-col items-center gap-1.5 w-full md:w-auto">
                       <button

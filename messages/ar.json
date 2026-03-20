@@ -468,5 +468,20 @@
         "saving": "جاري الحفظ...",
         "success": "تم تحديث بياناتك بنجاح!",
         "error": "حدث خطأ أثناء التحديث. حاول مرة أخرى."
+    },
+    "join_team": {
+        "button_text": "طلب انضمام للفريق",
+        "modal_title": "طلب انضمام",
+        "project": "مشروع:",
+        "success_title": "تم الإرسال بنجاح!",
+        "success_desc": "تم تسجيل طلبك. سيقوم صاحب المشروع بمراجعته قريباً.",
+        "role_required": "الدور المطلوب (Role)",
+        "role_suggested": "الدور المقترح (Role)",
+        "role_placeholder": "مثال: Frontend Developer",
+        "pitch": "رسالة التقديم (Pitch)",
+        "pitch_placeholder": "أخبر صاحب المشروع لماذا أنت الشخص المناسب لهذا الدور...",
+        "sending": "جاري الإرسال...",
+        "send_request": "إرسال الطلب",
+        "error_length": "الرسالة يجب أن تكون 10 أحرف على الأقل."
     }
 }
