@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/avatar";
 import { Check, X, Loader2, Mail, Briefcase, Clock, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 export default function ProjectRequests({ requests }: { requests: any[] }) {
     const [localRequests, setLocalRequests] = useState(requests);
@@ -71,16 +72,22 @@ export default function ProjectRequests({ requests }: { requests: any[] }) {
                 <div key={request._id} className="p-5 bg-slate-50 dark:bg-[#161618] border border-slate-200 dark:border-white/10 rounded-2xl transition-colors">
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                         <div className="flex gap-4 items-start">
-                            <Avatar className="size-12 ring-2 ring-primary/20">
-                                <AvatarImage src={request.applicant?.image} alt={request.applicant?.name} />
-                                <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                                    {request.applicant?.name?.charAt(0)}
-                                </AvatarFallback>
-                            </Avatar>
+                            <Link href={`/user/${request.applicant?._id}`} className="shrink-0 group">
+                                <Avatar className="size-12 ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all duration-300">
+                                    <AvatarImage src={request.applicant?.image} alt={request.applicant?.name} />
+                                    <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                                        {request.applicant?.name?.charAt(0)}
+                                    </AvatarFallback>
+                                </Avatar>
+                            </Link>
+
                             <div>
-                                <h4 className="text-base font-bold text-black dark:text-white">
-                                    {request.applicant?.name}
-                                </h4>
+                                <Link href={`/user/${request.applicant?._id}`} className="group inline-block">
+                                    <h4 className="text-base font-bold text-black dark:text-white group-hover:text-primary transition-colors duration-200">
+                                        {request.applicant?.name}
+                                    </h4>
+                                </Link>
+
                                 <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs font-medium text-slate-500 dark:text-white/50">
                                     <span className="flex items-center gap-1.5 bg-white dark:bg-black px-2 py-1 rounded-md border border-slate-200 dark:border-white/10">
                                         <Briefcase className="size-3 text-primary" />
