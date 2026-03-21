@@ -27,7 +27,7 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
   const locale = useLocale();
 
   return (
-    <li className="startup-card group relative">
+    <div className="startup-card group relative">
       <div
         className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
         style={{ boxShadow: "inset 0 0 0 1px rgba(59,130,246,0.2), 0 0 30px rgba(59,130,246,0.05)" }}
@@ -43,11 +43,11 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
           )}
         </div>
         <div className="flex gap-3">
-          <div className="flex gap-1 items-center text-black/30 dark:text-white/40">
+          <div className="flex gap-1 items-center text-black/50 dark:text-white/50">
             <Eye className="size-3.5" />
             <span className="text-12-medium">{views ?? 0}</span>
           </div>
-          <div className="flex gap-1 items-center text-black/30 dark:text-white/40">
+          <div className="flex gap-1 items-center text-black/50 dark:text-white/50">
             <ThumbsUp className="size-3.5" />
             <span className="text-12-medium">{upvotes ?? 0}</span>
           </div>
@@ -58,7 +58,7 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
         <div className="flex-1 min-w-0">
           <Link
             href={`/user/${author?._id}`}
-            className="text-black/50 dark:text-white/50 hover:text-primary transition-colors duration-200 text-sm font-medium line-clamp-1"
+            className="text-black/60 dark:text-white/60 hover:text-primary transition-colors duration-200 text-sm font-medium line-clamp-1"
           >
             {author?.name}
           </Link>
@@ -174,7 +174,7 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
           <Link href={`/project/${_id}`}>{t("details")}</Link>
         </Button>
       </div>
-    </li>
+    </div>
   );
 };
 

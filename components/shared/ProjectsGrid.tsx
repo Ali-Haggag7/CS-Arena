@@ -34,7 +34,7 @@ const ProjectsGrid = ({ posts }: { posts: ProjectTypeCard[] }) => {
     return (
         <ul className="card_grid">
             {posts.map((post, index) => (
-                <motion.div
+                <motion.li
                     key={post._id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -45,7 +45,7 @@ const ProjectsGrid = ({ posts }: { posts: ProjectTypeCard[] }) => {
                     }}
                 >
                     <ProjectCard post={post} />
-                </motion.div>
+                </motion.li>
             ))}
         </ul>
     );
