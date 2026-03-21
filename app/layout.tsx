@@ -38,6 +38,9 @@ export async function generateMetadata(): Promise<Metadata> {
     keywords: t("keywords").split(", "),
     authors: [{ name: "Ali Haggag" }],
     manifest: "/manifest.json",
+    verification: {
+      google: "Hw7DN2AewiWsmwVINhf3fhUFxjt83ci1o5VCE95_8Wk",
+    },
     appleWebApp: {
       capable: true,
       statusBarStyle: "black-translucent",
