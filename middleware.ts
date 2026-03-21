@@ -1,17 +1,45 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export default auth((req) => {
-    const isLoggedIn = !!req.auth;
-    const isOnboarded = req.auth?.isOnboarded;
+const rateLimit = new Map<string, { count: number; resetTime: number }>();
+
+function checkRateLimit(ip: string, limit: number = 60): boolean {
+    const now = Date.now();
+    const windowMs = 60 * 1000;
+    const record = rateLimit.get(ip);
+
+    if (!record || now > record.resetTime) {
+        rateLimit.set(ip, { count: 1, resetTime: now + windowMs });
+        return true;
+    }
+
+    if (record.count >= limit) return false;
+
+    record.count++;
+    return true;
+}
+
+export default auth((req: any) => {
+    const ip = req.headers.get("x-forwarded-for") ?? "unknown";
     const path = req.nextUrl.pathname;
 
-    // If the user is logged in but not onboarded, and they are trying to access a page other than onboarding, redirect them to the onboarding page
+    if (path.startsWith("/api/") && !path.startsWith("/api/auth")) {
+        if (!checkRateLimit(ip, 30)) {
+            return NextResponse.json(
+                { error: "Too many requests" },
+                { status: 429 }
+            );
+        }
+    }
+
+    const isLoggedIn = !!req.auth;
+    const isOnboarded = req.auth?.isOnboarded;
+
     if (isLoggedIn && !isOnboarded && path !== "/onboarding") {
         return NextResponse.redirect(new URL("/onboarding", req.url));
     }
 
-    // If the user is logged in and onboarded, and they are trying to access the onboarding page, redirect them to the home page
     if (isLoggedIn && isOnboarded && path === "/onboarding") {
         return NextResponse.redirect(new URL("/", req.url));
     }
@@ -19,16 +47,8 @@ export default auth((req) => {
     return NextResponse.next();
 });
 
-// We only want to run this middleware on pages that require authentication, so we exclude API routes, static files, and the favicon
 export const config = {
     matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - api (API routes)
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         */
-        "/((?!api|_next/static|_next/image|favicon.ico).*)",
+        "/((?!_next/static|_next/image|favicon.ico).*)",
     ],
 };
