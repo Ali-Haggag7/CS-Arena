@@ -36,7 +36,7 @@ export default auth((req: any) => {
     const isLoggedIn = !!req.auth;
     const isOnboarded = req.auth?.isOnboarded;
 
-    if (isLoggedIn && !isOnboarded && path !== "/onboarding") {
+    if (isLoggedIn && !isOnboarded && path !== "/onboarding" && !path.startsWith("/api")) {
         return NextResponse.redirect(new URL("/onboarding", req.url));
     }
 
