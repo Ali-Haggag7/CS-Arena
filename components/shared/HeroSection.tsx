@@ -73,9 +73,9 @@ const HeroSection = ({
             {/* Heading */}
             <motion.h1
                 className="relative z-10 font-work-sans font-extrabold text-white text-center text-[32px] leading-[40px] xs:text-[40px] xs:leading-[50px] sm:text-[58px] sm:leading-[68px] max-w-4xl my-3"
-                initial={{ opacity: 0, y: 24 }}
+                initial={{ opacity: 1, y: 0 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
             >
                 {t("title1")}{" "}
                 <span className="text-primary">
@@ -91,7 +91,7 @@ const HeroSection = ({
                 className="relative z-10 text-[14px] sm:text-[17px] font-medium text-white/50 max-w-sm sm:max-w-xl text-center mt-2 leading-relaxed px-2"
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
+                transition={{ duration: 0.3, delay: 0.05, ease: "easeOut" }}
             >
                 {t("subtitle")}
             </motion.p>
