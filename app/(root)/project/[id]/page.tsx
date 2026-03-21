@@ -80,7 +80,28 @@ async function ProjectContent({ id }: { id: string }) {
   const locale = await getLocale();
   const isRtl = locale === "ar";
 
-  const isGithubLink = post.githubLink ? post.githubLink.toLowerCase().includes("github.com") : false;
+  const getCleanGithubRepo = (url: string | undefined | null) => {
+    if (!url) return null;
+    try {
+      const urlObj = new URL(url.startsWith("http") ? url : `https://${url}`);
+
+      if (urlObj.hostname.includes("github.com")) {
+        const pathParts = urlObj.pathname.split("/").filter(Boolean);
+
+        if (pathParts.length >= 2) {
+          const owner = pathParts[0];
+          const repo = pathParts[1].replace(".git", "");
+          return `https://github.com/${owner}/${repo}`;
+        }
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  };
+
+  const cleanGithubLink = getCleanGithubRepo(post.githubLink);
+  const isValidGithubRepo = !!cleanGithubLink;
   const dynamicHeading = getDynamicHeading(post.domain?.name, isRtl, t);
 
   return (
@@ -146,7 +167,7 @@ async function ProjectContent({ id }: { id: string }) {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
             <Link
               href={`/user/${post.author?._id}`}
-              className="flex gap-3 sm:gap-4 items-center group"
+              className="flex gap-3 sm:gap-4 items-center group shrink-0"
               aria-label={`View ${post.author?.name}'s profile`}
             >
               <Image
@@ -166,7 +187,7 @@ async function ProjectContent({ id }: { id: string }) {
             </Link>
 
             {post.isLookingForContributors && (
-              <div className="flex flex-col items-start md:items-end gap-3 w-full md:w-auto bg-emerald-50 dark:bg-emerald-500/5 p-4 rounded-xl border border-emerald-100 dark:border-emerald-500/10">
+              <div className="flex flex-col items-start md:items-end gap-3 w-full md:w-auto bg-emerald-50 dark:bg-emerald-500/5 p-4 rounded-xl border border-emerald-100 dark:border-emerald-500/10 shrink-0">
                 <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm">
                   <span className="relative flex h-2.5 w-2.5 shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -176,21 +197,21 @@ async function ProjectContent({ id }: { id: string }) {
                 </div>
 
                 {(post.rolesNeeded?.length > 0 || post.collaborationType) && (
-                  <div className="flex flex-col gap-1.5 w-full">
+                  <div className="flex flex-col gap-1.5 w-full md:w-auto">
                     {post.rolesNeeded?.length > 0 && (
-                      <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                        <Briefcase className="size-3 text-slate-400 dark:text-white/30" />
+                      <div className="flex flex-wrap md:justify-end items-center gap-1.5 text-xs">
+                        <Briefcase className="size-3 text-slate-400 dark:text-white/30 shrink-0" />
                         <span className="text-slate-500 dark:text-white/40">{isRtl ? "الأدوار:" : "Roles:"}</span>
                         {post.rolesNeeded.map((role: string, idx: number) => (
-                          <span key={idx} className="bg-white dark:bg-white/10 text-slate-700 dark:text-white/80 px-2 py-0.5 rounded-md border border-slate-200 dark:border-white/5">
+                          <span key={idx} className="bg-white dark:bg-white/10 text-slate-700 dark:text-white/80 px-2 py-0.5 rounded-md border border-slate-200 dark:border-white/5 whitespace-nowrap">
                             {role}
                           </span>
                         ))}
                       </div>
                     )}
                     {post.collaborationType && (
-                      <div className="flex items-center gap-1.5 text-xs">
-                        <MapPin className="size-3 text-slate-400 dark:text-white/30" />
+                      <div className="flex items-center md:justify-end gap-1.5 text-xs">
+                        <MapPin className="size-3 text-slate-400 dark:text-white/30 shrink-0" />
                         <span className="text-slate-500 dark:text-white/40">{isRtl ? "التعاون:" : "Mode:"}</span>
                         <span className="text-slate-700 dark:text-white/80 font-medium">{post.collaborationType}</span>
                       </div>
@@ -202,15 +223,15 @@ async function ProjectContent({ id }: { id: string }) {
                   {isLoggedIn ? (
                     <JoinTeamButton projectId={post._id} projectName={post.title} rolesNeeded={post.rolesNeeded} hasApplied={hasApplied} isOwner={isOwner} />
                   ) : (
-                    <div className="flex flex-col items-center gap-1.5 w-full md:w-auto">
+                    <div className="flex flex-col items-center md:items-end gap-1.5 w-full md:w-auto">
                       <button
                         type="button"
                         disabled
-                        className="w-full px-6 py-2 bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-white/30 rounded-lg text-sm font-bold cursor-not-allowed border border-slate-200 dark:border-white/10 select-none pointer-events-none"
+                        className="w-full md:w-auto px-6 py-2 bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-white/30 rounded-lg text-sm font-bold cursor-not-allowed border border-slate-200 dark:border-white/10 select-none pointer-events-none"
                       >
                         {isRtl ? "انضم للفريق" : "Join Team"}
                       </button>
-                      <p className="text-[11px] text-slate-500 dark:text-white/40 font-medium select-none">
+                      <p className="text-[11px] text-slate-500 dark:text-white/40 font-medium select-none text-center md:text-right">
                         {isRtl ? "سجل دخول لتقديم طلب انضمام" : "Sign in to request to join"}
                       </p>
                     </div>
@@ -221,28 +242,31 @@ async function ProjectContent({ id }: { id: string }) {
           </div>
 
           {post.githubLink && (
-            <div className="mt-6 pt-6 border-t border-slate-100 dark:border-white/5">
-              {isGithubLink ? (
+            <div className={`mt-6 pt-6 ${isValidGithubRepo ? "" : "border-t border-slate-100 dark:border-white/5"}`}>
+              {isValidGithubRepo ? (
                 <Suspense fallback={<Skeleton className="h-20 w-full rounded-xl bg-slate-100 dark:bg-white/5" />}>
-                  <GithubStats githubLink={post.githubLink} />
+                  <GithubStats githubLink={cleanGithubLink as string} />
                 </Suspense>
               ) : (
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10">
                   <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-primary/10 rounded-lg">
+                    <div className="p-2.5 bg-primary/10 rounded-lg shrink-0">
                       <ExternalLink className="size-5 text-primary" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-black dark:text-white">{isRtl ? "رابط المشروع الخارجي" : "External Project Link"}</h4>
-                      <p className="text-xs text-slate-500 dark:text-white/50 mt-0.5">{isRtl ? "استكشف المصدر أو التصميم الأصلي" : "Explore the source or design files"}</p>
+                      <h4 className="text-sm font-bold text-black dark:text-white">
+                        {isRtl ? "رابط المشروع الخارجي" : "External Project Link"}
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-white/50 mt-0.5">
+                        {isRtl ? "استكشف المصدر أو التصميم الأصلي" : "Explore the source or design files"}
+                      </p>
                     </div>
                   </div>
                   <Link
                     href={post.githubLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto px-6 py-2.5 bg-black dark:bg-white text-white dark:text-black text-sm font-bold rounded-lg hover:bg-primary dark:hover:bg-primary dark:hover:text-white transition-colors text-center"
-                  >
+                    className="w-full sm:w-auto px-6 py-2.5 text-sm font-bold rounded-lg transition-colors text-center shrink-0 bg-black text-white hover:bg-primary dark:bg-white dark:text-black dark:hover:bg-primary dark:hover:text-white">
                     {isRtl ? "زيارة الرابط" : "Visit Link"}
                   </Link>
                 </div>

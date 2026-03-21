@@ -90,6 +90,7 @@ const SearchForm = ({
                     options={universities}
                     currentValue={currentUni}
                     onChange={(val) => updateFilter("university", val)}
+                    allLabel={t("all_universities")}
                 />
                 <CustomFilterSelect
                     name="domain"
@@ -97,6 +98,7 @@ const SearchForm = ({
                     options={domains}
                     currentValue={currentDomain}
                     onChange={(val) => updateFilter("domain", val)}
+                    allLabel={t("all_domains")}
                 />
             </div>
         </div>

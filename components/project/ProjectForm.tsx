@@ -242,6 +242,13 @@ export default function ProjectForm({
       if (selectedSubDomain) {
         const subDomainLabel = ecosystemData[selectedSubDomain]?.title || selectedSubDomain;
         formData.set("subDomain", subDomainLabel);
+      } else {
+        formData.set("subDomain", "");
+      }
+
+      if (!isLookingForTeam) {
+        formData.set("rolesNeeded", "");
+        formData.set("collaborationType", "");
       }
 
       if (!finalTechValue.trim()) {
@@ -412,7 +419,8 @@ export default function ProjectForm({
               <label htmlFor="rolesNeeded" className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-white/60 uppercase tracking-widest mb-2">
                 <Briefcase className="size-4" /> {t("label_roles")} <span className="text-red-500">*</span>
               </label>
-              <input id="rolesNeeded" name="rolesNeeded" placeholder={t("placeholder_roles")} required={isLookingForTeam} className={inputClass(false)} />
+              <input id="rolesNeeded" name="rolesNeeded" placeholder={t("placeholder_roles")} required={isLookingForTeam} className={inputClass(!!fieldErrors.rolesNeeded)} />
+              <FieldError errors={fieldErrors.rolesNeeded} />
               <p className="text-[11px] font-medium text-slate-500 dark:text-white/40 mt-2">{t("hint_roles")}</p>
             </div>
             <div>
@@ -422,7 +430,9 @@ export default function ProjectForm({
                 options={collabOptions}
                 placeholder={t("placeholder_collab")}
                 required={isLookingForTeam}
+                hasError={!!fieldErrors.collaborationType}
               />
+              <FieldError errors={fieldErrors.collaborationType} />
             </div>
           </div>
         )}

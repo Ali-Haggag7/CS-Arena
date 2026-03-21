@@ -411,7 +411,9 @@
         "aria_form": "Search projects",
         "placeholder": "Search projects, tech stacks...",
         "aria_input": "Search query",
-        "aria_submit": "Submit search"
+        "aria_submit": "Submit search",
+        "all_universities": "All Universities",
+        "all_domains": "All Domains"
     },
     "metadata": {
         "title": "CS Arena",

@@ -411,7 +411,9 @@
         "aria_form": "البحث في المشاريع",
         "placeholder": "ابحث عن المشاريع، التقنيات المستخدمة...",
         "aria_input": "كلمة البحث",
-        "aria_submit": "تنفيذ البحث"
+        "aria_submit": "تنفيذ البحث",
+        "all_universities": "جميع الجامعات",
+        "all_domains": "جميع التخصصات"
     },
     "metadata": {
         "title": "CS Arena",

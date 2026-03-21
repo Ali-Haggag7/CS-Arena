@@ -7,6 +7,7 @@ import slugify from "slugify";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { client } from "@/sanity/lib/client";
+import { cookies } from "next/headers";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -529,5 +530,33 @@ export const deleteJoinRequest = async (requestId: string) => {
   } catch (error) {
     console.error("[deleteJoinRequest]", error);
     return { success: false, error: "Failed to delete request" };
+  }
+};
+
+export const incrementProjectView = async (id: string) => {
+  const cookieStore = await cookies();
+  const cookieName = `viewed_project_${id}`;
+
+  if (cookieStore.has(cookieName)) {
+    return { success: false, message: "Already viewed recently" };
+  }
+
+  try {
+    await writeClient
+      .patch(id)
+      .setIfMissing({ views: 0 })
+      .inc({ views: 1 })
+      .commit();
+
+    cookieStore.set(cookieName, "true", {
+      maxAge: 60 * 60,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to increment views:", error);
+    return { success: false };
   }
 };

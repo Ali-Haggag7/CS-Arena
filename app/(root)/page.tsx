@@ -54,7 +54,7 @@ export default async function Home({
     <>
       <HeroSection query={query} locale={locale} universities={universities} domains={domains} />
 
-      <section className="section_container">
+      <section className="section_container overflow-x-hidden w-full max-w-full">
         <Suspense fallback={<ProjectsGridSkeleton />}>
           <ProjectsFetcher params={params} query={query} tech={tech} t={t} />
         </Suspense>
