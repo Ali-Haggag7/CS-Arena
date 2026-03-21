@@ -66,14 +66,14 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
           {author?.university?.name && (
             <div className="flex items-center gap-1 mt-0.5 text-slate-400 dark:text-slate-500">
               <GraduationCap className="size-3 shrink-0" />
-              <span className="text-[11px] font-medium line-clamp-1">{author.university.name}</span>
+              <span className="text-[11px] font-medium line-clamp-1 text-slate-500 dark:text-slate-400">{author.university.name}</span>
             </div>
           )}
 
           <Link href={`/project/${_id}`}>
-            <h3 className="text-[18px] font-bold text-black dark:text-white line-clamp-1 mt-1 group-hover:text-primary transition-colors duration-200">
+            <h2 className="text-[18px] font-bold text-black dark:text-white line-clamp-1 mt-1 group-hover:text-primary transition-colors duration-200">
               {title}
-            </h3>
+            </h2>
           </Link>
         </div>
 
@@ -120,10 +120,10 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
               </Link>
             ))
           ) : (
-            <span className="text-[11px] text-black/30 dark:text-white/20">{t("no_stack")}</span>
+            <span className="text-[11px] text-black/60 dark:text-white/60">{t("no_stack")}</span>
           )}
           {(techStack?.length ?? 0) > 3 && (
-            <span className="text-[11px] text-black/30 dark:text-white/30 px-1">
+            <span className="text-[11px] text-black/60 dark:text-white/60 px-1">
               +{(techStack?.length ?? 0) - 3}
             </span>
           )}
@@ -163,12 +163,12 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
         ) : techStack?.[0] ? (
           <Link
             href={`/?tech=${techStack[0].toLowerCase()}`}
-            className="text-[13px] font-medium text-black/40 dark:text-white/30 hover:text-primary transition-colors duration-200"
+            className="text-[13px] font-medium text-black/60 dark:text-white/60 hover:text-primary transition-colors duration-200"
           >
             {techStack[0]}
           </Link>
         ) : (
-          <span className="text-[13px] text-black/30 dark:text-white/20">{t("project")}</span>
+          <span className="text-[13px] text-black/60 dark:text-white/60">{t("project")}</span>
         )}
         <Button className="startup-card_btn" asChild>
           <Link href={`/project/${_id}`}>{t("details")}</Link>

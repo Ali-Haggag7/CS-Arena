@@ -129,7 +129,7 @@ const MobileMenu = ({ session, currentLocale }: { session: any, currentLocale: s
                     </div>
 
                     <div className="px-5 py-4 border-t border-gray-100 dark:border-white/[0.06] mt-2">
-                        <p className="text-[11px] font-bold text-slate-400 dark:text-white/30 uppercase tracking-widest mb-3">{t("preferences")}</p>
+                        <p className="text-[11px] font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest mb-3">{t("preferences")}</p>
                         <div className="flex items-center gap-3">
                             <div className="flex-1 flex justify-center py-2 bg-slate-100 dark:bg-white/5 rounded-xl">
                                 <ThemeToggle />

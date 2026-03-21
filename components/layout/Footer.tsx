@@ -58,7 +58,7 @@ const Footer = async () => {
                             <span className="text-[18px] font-black text-black dark:text-white tracking-tight">Arena</span>
                         </Link>
 
-                        <p className="text-[14px] text-slate-500 dark:text-white/40 max-w-sm leading-relaxed mb-6">
+                        <p className="text-[14px] text-slate-500 dark:text-white/50 max-w-sm leading-relaxed mb-6">
                             {t("description")}
                         </p>
 
@@ -95,7 +95,7 @@ const Footer = async () => {
 
                 <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-white/[0.06] to-transparent mb-8" />
 
-                <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[13px] text-slate-500 dark:text-white/40">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[13px] text-slate-500 dark:text-white/50">
                     <p>{t("copyright", { year: currentYear })}</p>
                     <div className="flex items-center gap-1.5 font-medium">
                         <span>{t("built_with")}</span>
@@ -132,7 +132,7 @@ const FooterColumn = ({
                     <Link
                         href={href}
                         prefetch={prefetch}
-                        className="text-[14px] text-slate-500 dark:text-white/40 hover:text-primary dark:hover:text-primary transition-all duration-300 flex items-center gap-2 group"
+                        className="text-[14px] text-slate-500 dark:text-white/50 hover:text-primary dark:hover:text-primary transition-all duration-300 flex items-center gap-2 group"
                     >
                         <ArrowRight className="size-3 opacity-0 rtl:rotate-180 -ms-5 group-hover:opacity-100 group-hover:ms-0 transition-all duration-300" />
                         <span className="truncate max-w-[150px] inline-block">{label}</span>
