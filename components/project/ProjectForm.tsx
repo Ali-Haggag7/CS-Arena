@@ -1,9 +1,13 @@
 "use client";
 
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Send, AlertCircle, Loader2, FileCode2, Users, Briefcase, MapPin, ChevronDown, Check, Link as LinkIcon, Plus } from "lucide-react";
+import {
+  Send, AlertCircle, Loader2, FileCode2, Users,
+  Briefcase, MapPin, ChevronDown, Check,
+  Link as LinkIcon, Plus,
+} from "lucide-react";
 import { createProject } from "@/lib/actions";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslations, useLocale } from "next-intl";
@@ -15,23 +19,72 @@ import * as commands from "@uiw/react-md-editor/commands";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 type FieldErrors = Record<string, string[] | undefined>;
 type DropdownItem = { value: string; label: string };
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
 const inputClass = (hasError: boolean) =>
   `w-full p-4 rounded-xl border text-[15px] font-medium
-   bg-white dark:bg-[#111115]
-   text-black dark:text-white
-   placeholder:text-slate-400 dark:placeholder:text-white/30
-   focus:outline-none focus:ring-2 focus:ring-primary/50 
-   shadow-sm dark:shadow-none
-   transition-all duration-300
-   ${hasError
+    bg-white dark:bg-[#111115]
+    text-black dark:text-white
+    placeholder:text-slate-400 dark:placeholder:text-white/30
+    focus:outline-none focus:ring-2 focus:ring-primary/50
+    shadow-sm dark:shadow-none
+    transition-all duration-300
+    ${hasError
     ? "border-red-500 ring-1 ring-red-500 bg-red-50 dark:bg-red-500/5"
     : "border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20"
   }`;
 
-const labelClass = "text-xs font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest block mb-2";
+const labelClass =
+  "text-xs font-bold text-slate-500 dark:text-white/50 uppercase tracking-widest block mb-2";
+
+const getDynamicPlaceholders = (domainName: string, isRtl: boolean) => {
+  const lower = domainName.toLowerCase();
+
+  if (lower.includes("ai") || lower.includes("data") || lower.includes("ذكاء")) {
+    return {
+      title: isRtl ? "مثال: نموذج تحليل المشاعر، نظام توصية ذكي..." : "e.g., Sentiment Analysis Model, Smart Recommender...",
+      linkLabel: isRtl ? "رابط المشروع (GitHub, Kaggle, Hugging Face)" : "Project Link (GitHub, Kaggle, Hugging Face)",
+      linkPlaceholder: "https://kaggle.com/...",
+      pitchHint: isRtl
+        ? "صف مجموعة البيانات (Dataset)، هيكل النموذج، الدقة، ونتائج التدريب."
+        : "Describe your Dataset, Model Architecture, Accuracy, and Training results.",
+    };
+  }
+
+  if (lower.includes("cyber") || lower.includes("security")) {
+    return {
+      title: isRtl ? "مثال: أداة فحص الثغرات، خوارزمية تشفير مخصصة..." : "e.g., Vulnerability Scanner, Custom Encryption Algo...",
+      linkLabel: isRtl ? "رابط السكربت أو الورقة البحثية" : "Script / Research Paper Link",
+      linkPlaceholder: "https://github.com/... or Google Drive link",
+      pitchHint: isRtl
+        ? "اشرح الثغرة، طريقة الاستغلال، وخطوات الحماية (Mitigation)."
+        : "Describe the vulnerability, exploitation method, and mitigation steps.",
+    };
+  }
+
+  return {
+    title: isRtl ? "مثال: تطبيق تواصل اجتماعي، منصة إدارة مهام..." : "e.g., Social Media App, Task Manager...",
+    linkLabel: isRtl ? "الكود المصدري (GitHub) أو رابط الموقع المباشر" : "Source Code (GitHub, GitLab) or Live URL",
+    linkPlaceholder: "https://github.com/...",
+    pitchHint: isRtl
+      ? "استخدم Markdown لوصف معمارية المشروع، الميزات الأساسية، وخطوات التشغيل."
+      : "Use Markdown to describe your project architecture, core features, and setup instructions.",
+  };
+};
+
+const editorCommands = [
+  commands.bold, commands.italic, commands.strikethrough, commands.divider,
+  commands.link, commands.quote, commands.code, commands.codeBlock, commands.divider,
+  commands.unorderedListCommand, commands.orderedListCommand,
+];
+const editorExtraCommands = [commands.codeEdit, commands.codePreview];
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 const FieldError = ({ errors }: { errors?: string[] }) => {
   if (!errors?.length) return null;
@@ -52,7 +105,7 @@ const CustomDropdown = ({
   hasError = false,
   value,
   onChange,
-  disabled = false
+  disabled = false,
 }: {
   name: string;
   label: string | React.ReactNode;
@@ -66,14 +119,14 @@ const CustomDropdown = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [internalSelected, setInternalSelected] = useState<DropdownItem | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   const currentValue = value !== undefined ? value : internalSelected?.value;
   const selectedOption = options.find((opt) => opt.value === currentValue);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -83,7 +136,7 @@ const CustomDropdown = ({
 
   const handleSelect = (option: DropdownItem) => {
     setInternalSelected(option);
-    if (onChange) onChange(option.value);
+    onChange?.(option.value);
     setIsOpen(false);
   };
 
@@ -94,7 +147,7 @@ const CustomDropdown = ({
       </label>
 
       {onChange === undefined && (
-        <input type="hidden" name={name} value={currentValue || ""} required={required} />
+        <input type="hidden" name={name} value={currentValue ?? ""} required={required} />
       )}
 
       <button
@@ -103,7 +156,12 @@ const CustomDropdown = ({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         className={`w-full p-4 rounded-xl border flex items-center justify-between text-[15px] font-medium transition-all duration-300
           ${disabled ? "opacity-50 cursor-not-allowed bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10" : ""}
-          ${isOpen ? "border-primary ring-1 ring-primary bg-white dark:bg-[#111115]" : hasError ? "border-red-500 ring-1 ring-red-500 bg-red-50 dark:bg-red-500/5" : "border-slate-200 dark:border-white/10 bg-white dark:bg-[#111115] hover:border-slate-300 dark:hover:border-white/20"}
+          ${isOpen
+            ? "border-primary ring-1 ring-primary bg-white dark:bg-[#111115]"
+            : hasError
+              ? "border-red-500 ring-1 ring-red-500 bg-red-50 dark:bg-red-500/5"
+              : "border-slate-200 dark:border-white/10 bg-white dark:bg-[#111115] hover:border-slate-300 dark:hover:border-white/20"
+          }
           ${selectedOption ? "text-black dark:text-white" : "text-slate-400 dark:text-white/30"}`}
       >
         <span className="truncate pr-4">{selectedOption ? selectedOption.label : placeholder}</span>
@@ -118,7 +176,10 @@ const CustomDropdown = ({
                 key={option.value}
                 onClick={() => handleSelect(option)}
                 className={`px-4 py-3 text-sm font-medium cursor-pointer transition-colors flex items-center justify-between
-                  ${currentValue === option.value ? "bg-primary/10 text-primary" : "text-slate-600 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/5"}`}
+                  ${currentValue === option.value
+                    ? "bg-primary/10 text-primary"
+                    : "text-slate-600 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/5"
+                  }`}
               >
                 {option.label}
                 {currentValue === option.value && <Check className="size-4" />}
@@ -131,75 +192,53 @@ const CustomDropdown = ({
   );
 };
 
-const editorCommands = [commands.bold, commands.italic, commands.strikethrough, commands.divider, commands.link, commands.quote, commands.code, commands.codeBlock, commands.divider, commands.unorderedListCommand, commands.orderedListCommand];
-const editorExtraCommands = [commands.codeEdit, commands.codePreview];
-
-const getDynamicPlaceholders = (domainName: string, isRtl: boolean) => {
-  const lower = domainName.toLowerCase();
-
-  if (lower.includes("ai") || lower.includes("data") || lower.includes("ذكاء")) {
-    return {
-      title: isRtl ? "مثال: نموذج تحليل المشاعر، نظام توصية ذكي..." : "e.g., Sentiment Analysis Model, Smart Recommender...",
-      linkLabel: isRtl ? "رابط المشروع (GitHub, Kaggle, Hugging Face)" : "Project Link (GitHub, Kaggle, Hugging Face)",
-      linkPlaceholder: "https://kaggle.com/...",
-      pitchHint: isRtl ? "صف مجموعة البيانات (Dataset)، هيكل النموذج، الدقة، ونتائج التدريب." : "Describe your Dataset, Model Architecture, Accuracy, and Training results.",
-    };
-  } else if (lower.includes("cyber") || lower.includes("security")) {
-    return {
-      title: isRtl ? "مثال: أداة فحص الثغرات، خوارزمية تشفير مخصصة..." : "e.g., Vulnerability Scanner, Custom Encryption Algo...",
-      linkLabel: isRtl ? "رابط السكربت أو الورقة البحثية" : "Script / Research Paper Link",
-      linkPlaceholder: "https://github.com/... or Google Drive link",
-      pitchHint: isRtl ? "اشرح الثغرة، طريقة الاستغلال، وخطوات الحماية (Mitigation)." : "Describe the vulnerability, exploitation method, and mitigation steps.",
-    };
-  }
-
-  return {
-    title: isRtl ? "مثال: تطبيق تواصل اجتماعي، منصة إدارة مهام..." : "e.g., Social Media App, Task Manager...",
-    linkLabel: isRtl ? "الكود المصدري (GitHub) أو رابط الموقع المباشر" : "Source Code (GitHub, GitLab) or Live URL",
-    linkPlaceholder: "https://github.com/...",
-    pitchHint: isRtl ? "استخدم Markdown لوصف معمارية المشروع، الميزات الأساسية، وخطوات التشغيل." : "Use Markdown to describe your project architecture, core features, and setup instructions.",
-  };
-};
+// ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function ProjectForm({
   domains,
-  userDomainName = ""
+  userDomainName = "",
 }: {
-  domains: { _id: string, name: string }[],
-  userDomainName?: string
+  domains: { _id: string; name: string }[];
+  userDomainName?: string;
 }) {
   const [pitch, setPitch] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [generalError, setGeneralError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-
   const [isLookingForTeam, setIsLookingForTeam] = useState(false);
-  const [selectedDomainId, setSelectedDomainId] = useState<string>("");
-  const [selectedSubDomain, setSelectedSubDomain] = useState<string>("");
-  const [selectedTech, setSelectedTech] = useState<string>("");
-  const [customTech, setCustomTech] = useState<string>("");
+  const [selectedDomainId, setSelectedDomainId] = useState("");
+  const [selectedSubDomain, setSelectedSubDomain] = useState("");
+  const [selectedTech, setSelectedTech] = useState("");
+  const [customTech, setCustomTech] = useState("");
+  const [selectedProjectType, setSelectedProjectType] = useState("");
+  const [selectedCollabType, setSelectedCollabType] = useState("");
 
   const router = useRouter();
   const { toast } = useToast();
   const t = useTranslations("create_project");
+  const tVal = useTranslations("validation");
   const locale = useLocale();
   const isRtl = locale === "ar";
 
-  const currentDomainName = domains.find(d => d._id === selectedDomainId)?.name || userDomainName;
+  const clearError = (field: string) => {
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const currentDomainName = domains.find((d) => d._id === selectedDomainId)?.name ?? userDomainName;
   const dynamicTexts = getDynamicPlaceholders(currentDomainName, isRtl);
-
-  const domainOptions = domains.map(d => ({ value: d._id, label: d.name }));
-
+  const domainOptions = domains.map((d) => ({ value: d._id, label: d.name }));
   const domainKey = getDomainKey(currentDomainName);
   const ecosystemData = TECH_ECOSYSTEM[domainKey].subdomains;
 
-  const subDomainOptions = Object.keys(ecosystemData).map(key => ({
+  const subDomainOptions = Object.keys(ecosystemData).map((key) => ({
     value: key,
-    label: ecosystemData[key].title
+    label: ecosystemData[key].title,
   }));
 
   const techOptions = selectedSubDomain
-    ? ecosystemData[selectedSubDomain]?.techs.map((t: string) => ({ value: t, label: t })) || []
+    ? ecosystemData[selectedSubDomain]?.techs.map((t: string) => ({ value: t, label: t })) ?? []
     : [];
 
   const projectTypeOptions = [
@@ -234,25 +273,36 @@ export default function ProjectForm({
       setFieldErrors({});
 
       const formData = new FormData(e.currentTarget);
-      formData.append("isLookingForContributors", isLookingForTeam.toString());
-
       const finalTechValue = selectedTech === "Other" ? customTech : selectedTech;
-      formData.set("techStack", finalTechValue);
 
-      if (selectedSubDomain) {
-        const subDomainLabel = ecosystemData[selectedSubDomain]?.title || selectedSubDomain;
-        formData.set("subDomain", subDomainLabel);
-      } else {
-        formData.set("subDomain", "");
-      }
+      formData.set("isLookingForContributors", isLookingForTeam.toString());
+      formData.set("projectType", selectedProjectType);
+      formData.set("domainId", selectedDomainId);
+      formData.set("techStack", finalTechValue);
+      formData.set(
+        "subDomain",
+        selectedSubDomain ? (ecosystemData[selectedSubDomain]?.title ?? selectedSubDomain) : ""
+      );
+      formData.set("collaborationType", isLookingForTeam ? selectedCollabType : "");
 
       if (!isLookingForTeam) {
         formData.set("rolesNeeded", "");
-        formData.set("collaborationType", "");
       }
 
       if (!finalTechValue.trim()) {
-        setFieldErrors({ techStack: ["Please select or enter a primary technology."] });
+        setFieldErrors({ techStack: [tVal("required_tech")] });
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (!selectedProjectType) {
+        setFieldErrors({ projectType: [tVal("required_type")] });
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (isLookingForTeam && !selectedCollabType) {
+        setFieldErrors({ collaborationType: [tVal("required_type")] });
         setIsSubmitting(false);
         return;
       }
@@ -266,17 +316,13 @@ export default function ProjectForm({
             description: t("toast_success_desc"),
             className: "bg-emerald-500 text-white border-none",
           });
-          setTimeout(() => {
-            router.push(`/project/${result.data?.projectId}`);
-          }, 1500);
+          setTimeout(() => router.push(`/project/${result.data?.projectId}`), 1500);
+        } else if (result.validationErrors) {
+          setFieldErrors(result.validationErrors);
+          setGeneralError(t("error_general"));
+          document.querySelector(".border-red-500")?.scrollIntoView({ behavior: "smooth", block: "center" });
         } else {
-          if (result.validationErrors) {
-            setFieldErrors(result.validationErrors);
-            setGeneralError(t("error_general"));
-            document.querySelector(".border-red-500")?.scrollIntoView({ behavior: "smooth", block: "center" });
-          } else {
-            setGeneralError(result.error ?? t("error_fallback"));
-          }
+          setGeneralError(result.error ?? t("error_fallback"));
         }
       } catch {
         setGeneralError(t("error_unexpected"));
@@ -284,11 +330,18 @@ export default function ProjectForm({
         setIsSubmitting(false);
       }
     },
-    [pitch, isLookingForTeam, selectedTech, customTech, selectedSubDomain, ecosystemData, router, toast, t]
+    [pitch, isLookingForTeam, selectedTech, customTech, selectedSubDomain,
+      selectedProjectType, selectedCollabType, selectedDomainId,
+      ecosystemData, router, toast, t, tVal]
   );
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white dark:bg-[#161618] p-6 sm:p-10 rounded-3xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl space-y-8 font-work-sans" noValidate>
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="bg-white dark:bg-[#161618] p-6 sm:p-10 rounded-3xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-2xl space-y-8 font-work-sans"
+    >
+      {/* Header */}
       <div className="flex items-center gap-4 border-b border-slate-100 dark:border-white/5 pb-6">
         <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
           <FileCode2 className="size-6 text-primary" />
@@ -299,10 +352,20 @@ export default function ProjectForm({
         </div>
       </div>
 
+      {/* Title & Type */}
       <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
         <div>
-          <label htmlFor="title" className={labelClass}>{t("label_title")} <span className="text-red-500">*</span></label>
-          <input id="title" name="title" required placeholder={dynamicTexts.title} className={inputClass(!!fieldErrors.title)} />
+          <label htmlFor="title" className={labelClass}>
+            {t("label_title")} <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="title"
+            name="title"
+            required
+            placeholder={dynamicTexts.title}
+            className={inputClass(!!fieldErrors.title)}
+            onChange={() => clearError("title")}
+          />
           <FieldError errors={fieldErrors.title} />
         </div>
         <div>
@@ -312,11 +375,13 @@ export default function ProjectForm({
             options={projectTypeOptions}
             placeholder={t("placeholder_project_type")}
             hasError={!!fieldErrors.projectType}
+            onChange={(val) => { setSelectedProjectType(val); clearError("projectType"); }}
           />
           <FieldError errors={fieldErrors.projectType} />
         </div>
       </div>
 
+      {/* Domain / SubDomain / Tech */}
       <div className="grid sm:grid-cols-3 gap-6 sm:gap-4 border p-4 sm:p-6 rounded-2xl border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.02]">
         <div>
           <CustomDropdown
@@ -326,9 +391,8 @@ export default function ProjectForm({
             placeholder={t("placeholder_domain")}
             hasError={!!fieldErrors.domainId}
             value={selectedDomainId}
-            onChange={(val) => setSelectedDomainId(val)}
+            onChange={(val) => { setSelectedDomainId(val); clearError("domainId"); }}
           />
-          <input type="hidden" name="domainId" value={selectedDomainId} />
           <FieldError errors={fieldErrors.domainId} />
         </div>
 
@@ -340,7 +404,7 @@ export default function ProjectForm({
             placeholder="Select path..."
             disabled={!selectedDomainId}
             value={selectedSubDomain}
-            onChange={(val) => setSelectedSubDomain(val)}
+            onChange={(val) => { setSelectedSubDomain(val); clearError("subDomain"); }}
           />
         </div>
 
@@ -353,7 +417,7 @@ export default function ProjectForm({
             disabled={!selectedSubDomain}
             hasError={!!fieldErrors.techStack}
             value={selectedTech}
-            onChange={(val) => setSelectedTech(val)}
+            onChange={(val) => { setSelectedTech(val); clearError("techStack"); }}
           />
 
           {selectedTech === "Other" && (
@@ -363,7 +427,7 @@ export default function ProjectForm({
                 <input
                   type="text"
                   value={customTech}
-                  onChange={(e) => setCustomTech(e.target.value)}
+                  onChange={(e) => { setCustomTech(e.target.value); clearError("techStack"); }}
                   placeholder="Type technology..."
                   className={`${inputClass(!!fieldErrors.techStack)} ltr:pl-10 rtl:pr-10`}
                 />
@@ -374,6 +438,7 @@ export default function ProjectForm({
         </div>
       </div>
 
+      {/* Links */}
       <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
         <div>
           <label htmlFor="projectLink" className={`${labelClass} flex items-center gap-2`}>
@@ -381,35 +446,73 @@ export default function ProjectForm({
           </label>
           <div className="relative">
             <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-400 rtl:right-4 rtl:left-auto" />
-            <input id="projectLink" name="projectLink" type="url" required placeholder={dynamicTexts.linkPlaceholder} className={`${inputClass(!!fieldErrors.projectLink)} ltr:pl-10 rtl:pr-10`} />
+            <input
+              id="projectLink"
+              name="projectLink"
+              type="url"
+              required
+              placeholder={dynamicTexts.linkPlaceholder}
+              className={`${inputClass(!!fieldErrors.projectLink)} ltr:pl-10 rtl:pr-10`}
+              onChange={() => clearError("projectLink")}
+            />
           </div>
           <FieldError errors={fieldErrors.projectLink} />
         </div>
         <div>
-          <label htmlFor="image" className={labelClass}>{t("label_image")} <span className="text-red-500">*</span></label>
-          <input id="image" name="image" type="url" required placeholder={t("placeholder_image")} className={inputClass(!!fieldErrors.image)} />
+          <label htmlFor="image" className={labelClass}>
+            {t("label_image")} <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="image"
+            name="image"
+            type="url"
+            required
+            placeholder={t("placeholder_image")}
+            className={inputClass(!!fieldErrors.image)}
+            onChange={() => clearError("image")}
+          />
           <FieldError errors={fieldErrors.image} />
         </div>
       </div>
 
+      {/* Description */}
       <div>
-        <label htmlFor="description" className={labelClass}>{t("label_desc")} <span className="text-red-500">*</span></label>
-        <textarea id="description" name="description" required rows={3} placeholder={t("placeholder_desc")} className={`${inputClass(!!fieldErrors.description)} resize-none`} />
+        <label htmlFor="description" className={labelClass}>
+          {t("label_desc")} <span className="text-red-500">*</span>
+        </label>
+        <textarea
+          id="description"
+          name="description"
+          required
+          rows={3}
+          placeholder={t("placeholder_desc")}
+          className={`${inputClass(!!fieldErrors.description)} resize-none`}
+          onChange={() => clearError("description")}
+        />
         <FieldError errors={fieldErrors.description} />
       </div>
 
+      {/* Team Toggle */}
       <div className="p-6 rounded-2xl border border-primary/20 bg-primary/5 dark:bg-primary/10 transition-all duration-300">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/20 rounded-lg"><Users className="size-5 text-primary" /></div>
+            <div className="p-2 bg-primary/20 rounded-lg">
+              <Users className="size-5 text-primary" />
+            </div>
             <div>
               <h3 className="text-base font-bold text-black dark:text-white">{t("team_title")}</h3>
               <p className="text-xs text-slate-500 dark:text-white/50 mt-0.5">{t("team_subtitle")}</p>
             </div>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" aria-label="Looking for team members" className="sr-only peer" checked={isLookingForTeam} onChange={(e) => setIsLookingForTeam(e.target.checked)} />
-            <div className="w-11 h-6 bg-slate-300 dark:bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+            <input
+              type="checkbox"
+              aria-label="Looking for team members"
+              className="sr-only peer"
+              checked={isLookingForTeam}
+              onChange={(e) => setIsLookingForTeam(e.target.checked)}
+            />
+            <div className="w-11 h-6 bg-slate-300 dark:bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary" />
           </label>
         </div>
 
@@ -419,7 +522,14 @@ export default function ProjectForm({
               <label htmlFor="rolesNeeded" className="flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-white/60 uppercase tracking-widest mb-2">
                 <Briefcase className="size-4" /> {t("label_roles")} <span className="text-red-500">*</span>
               </label>
-              <input id="rolesNeeded" name="rolesNeeded" placeholder={t("placeholder_roles")} required={isLookingForTeam} className={inputClass(!!fieldErrors.rolesNeeded)} />
+              <input
+                id="rolesNeeded"
+                name="rolesNeeded"
+                required={isLookingForTeam}
+                placeholder={t("placeholder_roles")}
+                className={inputClass(!!fieldErrors.rolesNeeded)}
+                onChange={() => clearError("rolesNeeded")}
+              />
               <FieldError errors={fieldErrors.rolesNeeded} />
               <p className="text-[11px] font-medium text-slate-500 dark:text-white/40 mt-2">{t("hint_roles")}</p>
             </div>
@@ -431,6 +541,7 @@ export default function ProjectForm({
                 placeholder={t("placeholder_collab")}
                 required={isLookingForTeam}
                 hasError={!!fieldErrors.collaborationType}
+                onChange={(val) => { setSelectedCollabType(val); clearError("collaborationType"); }}
               />
               <FieldError errors={fieldErrors.collaborationType} />
             </div>
@@ -438,14 +549,16 @@ export default function ProjectForm({
         )}
       </div>
 
+      {/* Pitch Editor */}
       <div data-color-mode="dark" dir={isRtl ? "rtl" : "ltr"} className={isRtl ? "md-editor-rtl" : ""}>
-        <label className={labelClass}>{t("label_pitch")} <span className="text-red-500">*</span></label>
+        <label className={labelClass}>
+          {t("label_pitch")} <span className="text-red-500">*</span>
+        </label>
         <p className="text-sm text-slate-500 dark:text-white/40 mb-3">{dynamicTexts.pitchHint}</p>
-
         <div className={`rounded-xl overflow-hidden transition-all duration-300 ${fieldErrors.pitch ? "border-2 border-red-500" : "border border-slate-200 dark:border-white/10 focus-within:border-primary"}`}>
           <MDEditor
             value={pitch}
-            onChange={(value) => setPitch(value ?? "")}
+            onChange={(value) => { setPitch(value ?? ""); clearError("pitch"); }}
             preview={isRtl ? "edit" : "live"}
             height={400}
             commands={editorCommands}
@@ -461,6 +574,7 @@ export default function ProjectForm({
         <FieldError errors={fieldErrors.pitch} />
       </div>
 
+      {/* General Error */}
       {generalError && (
         <div className="flex items-center gap-3 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/5 p-4 rounded-xl border border-red-200 animate-in fade-in">
           <AlertCircle className="size-5 shrink-0" />
@@ -468,8 +582,16 @@ export default function ProjectForm({
         </div>
       )}
 
-      <button type="submit" disabled={isSubmitting} className="w-full flex justify-center items-center gap-2 bg-primary text-white py-4 rounded-xl text-base font-bold transition-all hover:bg-blue-600 disabled:opacity-70 disabled:cursor-not-allowed group mt-4">
-        {isSubmitting ? <><Loader2 className="size-5 animate-spin" /><span>{t("btn_submitting")}</span></> : <><Send className="size-5 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" /><span>{t("btn_submit")}</span></>}
+      {/* Submit */}
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full flex justify-center items-center gap-2 bg-primary text-white py-4 rounded-xl text-base font-bold transition-all hover:bg-blue-600 disabled:opacity-70 disabled:cursor-not-allowed group mt-4"
+      >
+        {isSubmitting
+          ? <><Loader2 className="size-5 animate-spin" /><span>{t("btn_submitting")}</span></>
+          : <><Send className="size-5 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" /><span>{t("btn_submit")}</span></>
+        }
       </button>
     </form>
   );

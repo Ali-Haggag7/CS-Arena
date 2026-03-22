@@ -324,7 +324,7 @@
         "placeholder_pitch": "## Project Architecture\n\nExplain how you built this...",
         "toast_success_title": "Project deployed successfully! 🚀",
         "toast_success_desc": "Redirecting to your new project page...",
-        "error_general": "Please fix the highlighted fields below.",
+        "error_general": "Please fix the highlighted fields above.",
         "error_fallback": "Failed to create project.",
         "error_unexpected": "An unexpected error occurred. Please try again.",
         "btn_submitting": "Deploying to Arena...",
@@ -516,5 +516,18 @@
         "send_request": "Send Request",
         "error_length": "Message must be at least 10 characters.",
         "applied": "Applied Successfully!"
+    },
+    "validation": {
+        "min_title": "Title must be at least 3 characters.",
+        "max_title": "Title is too long.",
+        "min_desc": "Description is too short, provide more details.",
+        "max_desc": "Description is too long, keep it concise.",
+        "required_tech": "Please select at least one technology.",
+        "invalid_image": "Please provide a valid image URL.",
+        "required_link": "Project link is required.",
+        "invalid_link": "Please provide a valid URL.",
+        "min_pitch": "Architecture and pitch details are too short.",
+        "required_domain": "Please select a tech domain.",
+        "required_type": "Please select a project type."
     }
 }

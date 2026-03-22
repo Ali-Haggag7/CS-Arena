@@ -324,7 +324,7 @@
         "placeholder_pitch": "## الـ Architecture\n\nاشرح بنيت السيستم ده إزاي...",
         "toast_success_title": "مشروعك نزل الساحة بنجاح! 🚀",
         "toast_success_desc": "بنحولك لصفحة المشروع...",
-        "error_general": "ظبط الأخطاء اللي متعلم عليها تحت.",
+        "error_general": "ظبط الأخطاء اللي متعلم عليها فوق.",
         "error_fallback": "حصلت مشكلة والمشروع ماترفعش.",
         "error_unexpected": "حصل إيرور غير متوقع. جرب تاني.",
         "btn_submitting": "بيرفع المشروع...",
@@ -516,5 +516,18 @@
         "send_request": "ابعت الطلب",
         "error_length": "الـ Pitch لازم يكون 10 حروف على الأقل.",
         "applied": "قدمت بنجاح!"
+    },
+    "validation": {
+        "min_title": "اسم المشروع لازم يكون 3 حروف على الأقل.",
+        "max_title": "اسم المشروع طويل جداً.",
+        "min_desc": "الوصف قصير جداً، اكتب تفاصيل أكتر.",
+        "max_desc": "الوصف طويل جداً، خليه مختصر ومفيد.",
+        "required_tech": "لازم تختار تقنية واحدة على الأقل للـ Tech Stack.",
+        "invalid_image": "اللينك ده مش مظبوط، حط لينك صورة شغال.",
+        "required_link": "رابط المشروع مطلوب.",
+        "invalid_link": "اللينك ده مش مظبوط، حط رابط صحيح (URL).",
+        "min_pitch": "تفاصيل الـ Architecture والـ Pitch قصيرة جداً.",
+        "required_domain": "لازم تختار التراك التقني (Domain).",
+        "required_type": "لازم تختار نوع المشروع."
     }
 }
