@@ -24,6 +24,15 @@ export default auth((req: any) => {
     const ip = req.headers.get("x-forwarded-for") ?? "unknown";
     const path = req.nextUrl.pathname;
 
+    // ─── Studio Protection ─────────────────────────────────────────────────────
+    if (path.startsWith("/studio")) {
+        const adminEmail = process.env.ADMIN_EMAIL;
+        if (req.auth?.user?.email !== adminEmail) {
+            return NextResponse.redirect(new URL("/", req.url));
+        }
+    }
+
+    // ─── Rate Limiting ─────────────────────────────────────────────────────────
     if (path.startsWith("/api/") && !path.startsWith("/api/auth")) {
         if (!checkRateLimit(ip, 30)) {
             return NextResponse.json(
@@ -33,6 +42,7 @@ export default auth((req: any) => {
         }
     }
 
+    // ─── Onboarding Guard ──────────────────────────────────────────────────────
     const isLoggedIn = !!req.auth;
     const isOnboarded = req.auth?.isOnboarded;
 
