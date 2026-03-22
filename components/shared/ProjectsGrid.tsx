@@ -5,9 +5,18 @@ import ProjectCard, { ProjectTypeCard } from "@/components/project/ProjectCard";
 import { Layers } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 
 const ProjectsGrid = ({ posts }: { posts: ProjectTypeCard[] }) => {
     const t = useTranslations("project_components");
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const check = () => setIsMobile(window.innerWidth < 768);
+        check();
+        window.addEventListener("resize", check);
+        return () => window.removeEventListener("resize", check);
+    }, []);
 
     if (!posts?.length) {
         return (
@@ -36,11 +45,20 @@ const ProjectsGrid = ({ posts }: { posts: ProjectTypeCard[] }) => {
             {posts.map((post, index) => (
                 <motion.li
                     key={post._id}
+                    style={{ willChange: "transform, opacity" }}
                     initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    {...(isMobile
+                        ? {
+                            whileInView: { opacity: 1, y: 0 },
+                            viewport: { once: true, margin: "-50px" },
+                        }
+                        : {
+                            animate: { opacity: 1, y: 0 },
+                        }
+                    )}
                     transition={{
-                        duration: 0.35,
-                        delay: Math.min(index * 0.07, 0.4),
+                        duration: 0.4,
+                        delay: isMobile ? 0 : Math.min(index * 0.07, 0.3),
                         ease: "easeOut",
                     }}
                 >

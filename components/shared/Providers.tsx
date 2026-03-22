@@ -3,6 +3,16 @@
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 import { NextIntlClientProvider } from "next-intl";
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+
+function ScrollToTop() {
+    const pathname = usePathname();
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, [pathname]);
+    return null;
+}
 
 export default function Providers({
     children,
@@ -22,6 +32,7 @@ export default function Providers({
                     enableSystem
                     disableTransitionOnChange
                 >
+                    <ScrollToTop />
                     {children}
                 </ThemeProvider>
             </NextIntlClientProvider>
