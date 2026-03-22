@@ -462,7 +462,7 @@ export default function ProjectForm({
       </div>
 
       {generalError && (
-        <div className="flex items-center gap-3 text-red-600 bg-red-50 p-4 rounded-xl border border-red-200 animate-in fade-in">
+        <div className="flex items-center gap-3 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/5 p-4 rounded-xl border border-red-200 animate-in fade-in">
           <AlertCircle className="size-5 shrink-0" />
           <span className="text-sm font-semibold">{generalError}</span>
         </div>
