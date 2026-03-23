@@ -35,15 +35,16 @@ async function ProjectsFetcher({ params, query, tech, t }: any) {
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ query?: string; tech?: string; university?: string; domain?: string }>;
+  searchParams: Promise<{ query?: string; tech?: string; university?: string; domain?: string; subdomain?: string }>;
 }) {
-  const { query, tech, university, domain } = await searchParams;
+  const { query, tech, university, domain, subdomain } = await searchParams;
 
   const params = {
     search: query || null,
     tech: tech || null,
     universityId: university || null,
-    domainId: domain || null
+    domainId: domain || null,
+    subdomain: subdomain || null,
   };
 
   const locale = await getLocale();

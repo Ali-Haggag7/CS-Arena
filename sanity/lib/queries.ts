@@ -12,6 +12,7 @@ const PROJECT_FIELDS = `
     specialization -> { _id, name }
   },
   domain -> { _id, name, slug },
+  subDomain,
   projectType,
   views,
   upvotes,
@@ -47,7 +48,7 @@ const AUTHOR_FIELDS = `
   specialization -> { _id, name, slug }
 `;
 
-// Supports search, tech stack filtering, university filtering, and domain filtering
+// Supports search, tech stack filtering, university filtering, domain, and SUB-DOMAIN filtering
 export const PROJECTS_QUERY = defineQuery(`
   *[
     _type == "project" &&
@@ -55,7 +56,8 @@ export const PROJECTS_QUERY = defineQuery(`
     (!defined($search) || title match $search + "*" || author->name match $search + "*" || $search in techStack) &&
     (!defined($tech) || $tech in techStack) &&
     (!defined($universityId) || author->university._ref == $universityId) &&
-    (!defined($domainId) || domain._ref == $domainId)
+    (!defined($domainId) || domain._ref == $domainId) &&
+    (!defined($subdomain) || subDomain == $subdomain)
   ] | order(_createdAt desc) {
     ${PROJECT_FIELDS}
   }
