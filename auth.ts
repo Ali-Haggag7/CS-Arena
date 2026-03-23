@@ -26,7 +26,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       const { name, email, image } = user;
 
-      const providerId = account.provider === 'github' ? String(profile?.id) : String(account.providerAccountId);
+      const providerId = account.provider === 'github'
+        ? String(profile?.id)
+        : String(account.providerAccountId);
 
       const username = account.provider === 'github'
         ? (profile as any).login
