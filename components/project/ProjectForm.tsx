@@ -280,10 +280,12 @@ export default function ProjectForm({
       formData.set("projectType", selectedProjectType);
       formData.set("domainId", selectedDomainId);
       formData.set("techStack", finalTechValue);
+
       formData.set(
         "subDomain",
-        selectedSubDomain ? (ecosystemData[selectedSubDomain]?.title ?? selectedSubDomain) : ""
+        selectedSubDomain ? selectedSubDomain : ""
       );
+
       formData.set("collaborationType", isLookingForTeam ? selectedCollabType : "");
 
       if (!isLookingForTeam) {
@@ -333,7 +335,7 @@ export default function ProjectForm({
     },
     [pitch, isLookingForTeam, selectedTech, customTech, selectedSubDomain,
       selectedProjectType, selectedCollabType, selectedDomainId,
-      ecosystemData, router, toast, t, tVal]
+      router, toast, t, tVal]
   );
 
   return (
