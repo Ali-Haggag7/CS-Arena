@@ -51,7 +51,7 @@ const AboutPage = async () => {
                         <span>{t("hero_badge")}</span>
                     </div>
 
-                    <h1 className="text-5xl sm:text-6xl md:text-8xl font-black text-black dark:text-white tracking-tighter leading-[1.1] mb-8">
+                    <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-black dark:text-white tracking-tight leading-[1.1] mb-8">
                         {t("hero_title1")} <br className="hidden sm:block" />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-500 to-cyan-400">
                             {t("hero_title2")}

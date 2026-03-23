@@ -7,6 +7,8 @@ import ProjectsGrid from "@/components/shared/ProjectsGrid";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Skeleton } from "@/components/shadcn/skeleton";
 
+export const revalidate = 60;
+
 async function ProjectsFetcher({ params, query, tech, t }: any) {
   const { data: posts } = await sanityFetch({ query: PROJECTS_QUERY, params });
 

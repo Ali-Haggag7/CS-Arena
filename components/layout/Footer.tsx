@@ -97,10 +97,17 @@ const Footer = async () => {
 
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-[13px] text-slate-500 dark:text-white/50">
                     <p>{t("copyright", { year: currentYear })}</p>
-                    <div className="flex items-center gap-1.5 font-medium">
-                        <span>{t("built_with")}</span>
-                        <span className="text-black dark:text-white font-bold ml-0.5">{t("egypt")}</span>
-                        <Heart className="size-4 text-red-500 fill-red-500 animate-pulse ml-0.5" />
+                    <div dir="ltr" className="flex items-center gap-1.5 text-sm font-medium text-slate-500 dark:text-white/60">
+                        <span>Built by</span>
+                        <a
+                            href="https://alihaggag.me"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400 hover:opacity-80 transition-all duration-300"
+                            title="Ali Haggag on LinkedIn"
+                        >
+                            Ali Haggag
+                        </a>
                     </div>
                 </div>
 

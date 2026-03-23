@@ -143,7 +143,7 @@ export default function DocsSidebar({ currentSlug }: { currentSlug: string }) {
                                                     <Link
                                                         href={`/docs/${item.slug}`}
                                                         prefetch={true}
-                                                        className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative group ${isActive
+                                                        className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative group ${isActive
                                                             ? "bg-primary/10 dark:bg-primary/10 text-primary shadow-sm"
                                                             : "text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/5"
                                                             }`}
@@ -152,7 +152,7 @@ export default function DocsSidebar({ currentSlug }: { currentSlug: string }) {
                                                             <span className="absolute -start-[14px] top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-full shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
                                                         )}
                                                         {tItems(item.titleKey)}
-                                                        {isActive && <div className="absolute right-2 size-1.5 rounded-full bg-primary animate-pulse" />}
+                                                        {isActive && <div className="absolute start-1 top-4 size-1.5 rounded-full bg-primary animate-pulse" />}
                                                     </Link>
                                                 </li>
                                             );

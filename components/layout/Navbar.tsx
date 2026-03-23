@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { auth, signOut, signIn } from "@/auth";
 import { Github, LayoutDashboard, User as UserIcon, LogOut } from "lucide-react";
@@ -5,8 +6,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/avatar"
 import ThemeToggle from "@/components/shared/ThemeToggle";
 import MobileMenu from "@/components/shared/MobileMenu";
 import LanguageToggle from "@/components/shared/LanguageToggle";
-import FeedbackButton from "@/components/shared/FeedbackButton";
 import { getLocale, getTranslations } from "next-intl/server";
+
+const FeedbackButton = dynamic(() => import("@/components/shared/FeedbackButton"));
 
 const Navbar = async () => {
   const session = await auth();

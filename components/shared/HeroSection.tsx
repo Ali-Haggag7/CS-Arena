@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import SearchForm from "@/components/shared/SearchForm";
 import TechFilters from "@/components/shared/TechFilters";
 import { useEffect, useState } from "react";
@@ -46,77 +46,74 @@ const HeroSection = ({
     }, [displayed, deleting, wordIndex, words]);
 
     return (
-        <section className="relative z-20 min-h-[100svh] sm:min-h-[580px] flex flex-col items-center justify-center py-12 sm:py-16 px-4 sm:px-6 bg-gray-950 dark:bg-[#0d0d0f]">
+        <LazyMotion features={domAnimation}>
+            <section className="relative z-20 min-h-[100svh] sm:min-h-[580px] flex flex-col items-center justify-center py-12 sm:py-16 px-4 sm:px-6 bg-gray-950 dark:bg-[#0d0d0f]">
 
-            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-                <div className="absolute inset-0 grid-bg" aria-hidden="true" />
-                <div
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[200px] sm:w-[600px] sm:h-[300px] rounded-full opacity-15 sm:opacity-20 blur-[80px] sm:blur-[100px]"
-                    style={{ background: "radial-gradient(ellipse, #3b82f6 0%, transparent 70%)" }}
-                    aria-hidden="true"
-                />
-            </div>
+                <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                    <div className="absolute inset-0 grid-bg" aria-hidden="true" />
+                    <div
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[200px] sm:w-[600px] sm:h-[300px] rounded-full opacity-15 sm:opacity-20 blur-[80px] sm:blur-[100px]"
+                        style={{ background: "radial-gradient(ellipse, #3b82f6 0%, transparent 70%)" }}
+                        aria-hidden="true"
+                    />
+                </div>
 
-            {/* Badge */}
-            <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className="relative z-10 mb-5 sm:mb-6"
-            >
-                <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full text-[12px] sm:text-sm font-medium bg-primary/10 text-primary border border-primary/20">
-                    <span className="size-1.5 rounded-full bg-primary animate-pulse shrink-0" />
-                    {t("badge")}
-                </span>
-            </motion.div>
+                <m.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="relative z-10 mb-5 sm:mb-6"
+                >
+                    <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full text-[12px] sm:text-sm font-medium bg-primary/10 text-primary border border-primary/20">
+                        <span className="size-1.5 rounded-full bg-primary animate-pulse shrink-0" />
+                        {t("badge")}
+                    </span>
+                </m.div>
 
-            {/* Heading */}
-            <motion.h1
-                className="relative z-10 font-work-sans font-extrabold text-white text-center text-[32px] leading-[40px] xs:text-[40px] xs:leading-[50px] sm:text-[58px] sm:leading-[68px] max-w-4xl my-3"
-                initial={{ opacity: 1, y: 0 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-            >
-                {t("title1")}{" "}
-                <span className="text-primary">
-                    {displayed}
-                    <span className="animate-pulse text-primary/70">|</span>
-                </span>
-                <br />
-                <span className="text-white/80">{t("title2")}</span>
-            </motion.h1>
+                <m.h1
+                    className="relative z-10 font-work-sans font-extrabold text-white text-center text-[32px] leading-[40px] xs:text-[40px] xs:leading-[50px] sm:text-[58px] sm:leading-[68px] max-w-4xl my-3"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                >
+                    {t("title1")}{" "}
+                    <span className="text-primary">
+                        {displayed}
+                        <span className="animate-pulse text-primary/70">|</span>
+                    </span>
+                    <br />
+                    <span className="text-white/80">{t("title2")}</span>
+                </m.h1>
 
-            {/* Subheading */}
-            <motion.p
-                className="relative z-10 text-[14px] sm:text-[17px] font-medium text-white/50 max-w-sm sm:max-w-xl text-center mt-2 leading-relaxed px-2"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.05, ease: "easeOut" }}
-            >
-                {t("subtitle")}
-            </motion.p>
+                <m.p
+                    className="relative z-10 text-[14px] sm:text-[17px] font-medium text-white/50 max-w-sm sm:max-w-xl text-center mt-2 leading-relaxed px-2"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
+                >
+                    {t("subtitle")}
+                </m.p>
 
-            {/* Search */}
-            <motion.div
-                className="w-full relative z-30 max-w-2xl mt-2 flex flex-col items-center"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.25, ease: "easeOut" }}
-            >
-                <SearchForm query={query} universities={universities} domains={domains} />
-            </motion.div>
+                <m.div
+                    className="w-full relative z-30 max-w-2xl mt-2 flex flex-col items-center"
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.25, ease: "easeOut" }}
+                >
+                    <SearchForm query={query} universities={universities} domains={domains} />
+                </m.div>
 
-            {/* Filters */}
-            <motion.div
-                className="w-full relative z-10"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.35 }}
-            >
-                <TechFilters domains={domains} />
-            </motion.div>
+                <m.div
+                    className="w-full relative z-10"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.35 }}
+                >
+                    <TechFilters domains={domains} />
+                </m.div>
 
-        </section>
+            </section>
+        </LazyMotion>
     );
 };
 
