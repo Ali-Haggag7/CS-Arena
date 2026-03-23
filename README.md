@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://csarena.tech/cs-arena-logo-512.png" alt="CS Arena Logo" width="80" height="80" />
+<img src="./public/cs-arena-logo-192.png" alt="CS Arena Logo" width="80" height="80" />
 
 # CS Arena
 

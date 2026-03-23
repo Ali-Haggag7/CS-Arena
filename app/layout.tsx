@@ -54,6 +54,8 @@ export async function generateMetadata(): Promise<Metadata> {
       title: t("title"),
       description: t("description"),
       type: "website",
+      url: "https://csarena.tech",
+      images: [{ url: "/cs-arena-logo-512.png" }],
     },
   };
 }
@@ -64,6 +66,14 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "CS Arena",
+    "url": "https://csarena.tech",
+    "logo": "/cs-arena-logo-512.png",
+  };
+
   return (
     <html
       lang={locale}
@@ -71,6 +81,12 @@ export default async function RootLayout({
       suppressHydrationWarning
       className="dark"
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      </head>
       <body className={`${workSans.variable} ${cairo.variable} font-work-sans antialiased bg-gray-50 dark:bg-[#0d0d0f]`}>
         <Providers locale={locale} messages={messages}>
           {children}
