@@ -5,7 +5,7 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true,
+  useCdn: false,
   stega: {
     enabled: false, // Disable visual editing overlays in production
   },
