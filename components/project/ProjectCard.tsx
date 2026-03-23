@@ -85,8 +85,9 @@ const ProjectCard = ({ post }: { post: ProjectTypeCard }) => {
           <Image
             src={author?.image || "https://placehold.co/40x40"}
             alt={author?.name || "Author"}
-            width={40} height={40}
-            className="rounded-full ring-1 ring-black/10 dark:ring-white/10 group-hover:ring-primary/40 transition-all duration-300"
+            width={40}
+            height={40}
+            className="w-10 h-10 aspect-square rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10 group-hover:ring-primary/40 transition-all duration-300"
           />
         </Link>
       </div>

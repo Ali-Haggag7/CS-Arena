@@ -60,8 +60,9 @@ async function ProfileContent({ id }: { id: string }) {
               <Image
                 src={user.image || "https://placehold.co/160x160"}
                 alt={user.name ?? "User avatar"}
-                width={140} height={140}
-                className="relative rounded-full ring-4 ring-white dark:ring-[#111115] object-cover bg-slate-100 dark:bg-black"
+                width={140}
+                height={140}
+                className="relative w-[140px] h-[140px] aspect-square rounded-full ring-4 ring-white dark:ring-[#111115] object-cover bg-slate-100 dark:bg-black"
                 priority
               />
             </div>

@@ -25,8 +25,9 @@ const RecruitmentCard = ({ post, t }: { post: any; t: any }) => {
                     <Image
                         src={post.author?.image || "https://placehold.co/48x48"}
                         alt={post.author?.name || "Author"}
-                        width={48} height={48}
-                        className="rounded-full ring-2 ring-slate-100 dark:ring-white/5 object-cover"
+                        width={48}
+                        height={48}
+                        className="w-12 h-12 aspect-square rounded-full ring-2 ring-slate-100 dark:ring-white/5 object-cover"
                     />
                     <div>
                         <p className="text-xs font-bold text-slate-400 dark:text-white/30 uppercase tracking-wider mb-0.5">

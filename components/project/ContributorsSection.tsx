@@ -37,7 +37,7 @@ export default function ContributorsSection({ contributors }: { contributors: Co
                             alt={contributor.name}
                             width={36}
                             height={36}
-                            className="rounded-full ring-2 ring-slate-100 dark:ring-white/10 group-hover:ring-primary/30 transition-all object-cover"
+                            className="w-9 h-9 aspect-square rounded-full ring-2 ring-slate-100 dark:ring-white/10 group-hover:ring-primary/30 transition-all object-cover"
                         />
                         <div>
                             <p className="text-sm font-bold text-black dark:text-white group-hover:text-primary transition-colors">

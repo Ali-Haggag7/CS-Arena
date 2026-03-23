@@ -78,8 +78,9 @@ const PodiumCard = ({ project, rank }: { project: LeaderboardProject; rank: numb
                     <Image
                         src={project.author?.image || "https://placehold.co/80x80"}
                         alt={project.author?.username ?? "Author"}
-                        width={80} height={80}
-                        className={`relative rounded-full object-cover ring-4 size-20 transition-transform duration-500 group-hover:scale-110 ${isFirst ? "ring-yellow-500/50" : isSecond ? "ring-slate-400/50" : "ring-amber-600/50"}`}
+                        width={80}
+                        height={80}
+                        className={`relative aspect-square rounded-full object-cover ring-4 size-20 transition-transform duration-500 group-hover:scale-110 ${isFirst ? "ring-yellow-500/50" : isSecond ? "ring-slate-400/50" : "ring-amber-600/50"}`}
                     />
                 </div>
 
@@ -154,8 +155,9 @@ const RankedProjects = ({ projects, emptyMessage }: { projects: LeaderboardProje
                                     <Image
                                         src={project.author?.image || "https://placehold.co/56x56"}
                                         alt={project.author?.username ?? "Author"}
-                                        width={56} height={56}
-                                        className="rounded-2xl object-cover ring-2 ring-transparent group-hover:ring-primary/30 transition-all duration-300 size-12 sm:size-14"
+                                        width={56}
+                                        height={56}
+                                        className="aspect-square rounded-2xl object-cover ring-2 ring-transparent group-hover:ring-primary/30 transition-all duration-300 size-12 sm:size-14"
                                     />
                                     <div className="absolute -bottom-1 -right-1 bg-white dark:bg-[#111115] rounded-full p-1 border border-slate-200 dark:border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-75 sm:scale-100">
                                         <Hexagon className="size-3 text-primary fill-primary/20" />

@@ -159,8 +159,9 @@ const OpenSourcePage = async () => {
                                     <Image
                                         src={user.avatar_url}
                                         alt={user.login}
-                                        width={80} height={80}
-                                        className="size-20 rounded-full grayscale group-hover:grayscale-0 transition-all duration-500 ring-4 ring-slate-100 dark:ring-white/5 group-hover:ring-emerald-500/30"
+                                        width={80}
+                                        height={80}
+                                        className="size-20 aspect-square rounded-full grayscale group-hover:grayscale-0 transition-all duration-500 ring-4 ring-slate-100 dark:ring-white/5 group-hover:ring-emerald-500/30 object-cover"
                                     />
                                 </div>
                                 <p className="font-bold text-black dark:text-white text-sm">@{user.login}</p>
