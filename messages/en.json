@@ -344,6 +344,7 @@
         "type_hack": "Hackathon/Competition",
         "type_open": "Open Source",
         "type_personal": "Personal/Learning",
+        "type_course": "Course Project",
         "collab_online": "Online",
         "collab_offline": "Offline (Same University/City)",
         "collab_hybrid": "Hybrid"

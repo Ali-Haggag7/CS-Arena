@@ -242,6 +242,7 @@ export default function ProjectForm({
     : [];
 
   const projectTypeOptions = [
+    { value: "Course Project", label: t("type_course") },
     { value: "Graduation Project", label: t("type_grad") },
     { value: "Hackathon/Competition", label: t("type_hack") },
     { value: "Open Source", label: t("type_open") },

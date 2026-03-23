@@ -344,6 +344,7 @@
         "type_hack": "هاكاثون / مسابقة",
         "type_open": "مفتوح المصدر (Open Source)",
         "type_personal": "شخصي / للتعليم",
+        "type_course": "مشروع دراسي",
         "collab_online": "أونلاين (Remote)",
         "collab_offline": "نفس الجامعة/المدينة (Offline)",
         "collab_hybrid": "مكس (Hybrid)"
