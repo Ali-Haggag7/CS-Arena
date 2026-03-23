@@ -173,8 +173,9 @@ async function ProjectContent({ id }: { id: string }) {
               <Image
                 src={post.author?.image || "https://placehold.co/48x48"}
                 alt={post.author?.name ?? "Author"}
-                width={56} height={56}
-                className="rounded-full ring-2 ring-slate-100 dark:ring-white/5 group-hover:ring-primary/40 transition-all duration-300 shrink-0 object-cover"
+                width={56}
+                height={56}
+                className="w-14 h-14 aspect-square rounded-full object-cover shrink-0 ring-2 ring-slate-100 dark:ring-white/5 group-hover:ring-primary/40 transition-all duration-300"
               />
               <div>
                 <p className="text-lg font-bold text-black dark:text-white group-hover:text-primary transition-colors duration-200">
