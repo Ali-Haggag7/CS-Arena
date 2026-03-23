@@ -21,13 +21,14 @@ export async function generateMetadata() {
 const AllProjects = async ({
     searchParams
 }: {
-    searchParams: { search?: string; tech?: string; sort?: string; page?: string; domain?: string; university?: string }
+    searchParams: { search?: string; tech?: string; sort?: string; page?: string; domain?: string; university?: string; subdomain?: string }
 }) => {
     const search = searchParams.search || null;
     const tech = searchParams.tech || null;
     const sort = searchParams.sort || "newest";
     const domain = searchParams.domain || null;
     const university = searchParams.university || null;
+    const subdomain = searchParams.subdomain || null;
 
     const t = await getTranslations("explore");
 
@@ -35,7 +36,8 @@ const AllProjects = async ({
         search,
         tech,
         universityId: university,
-        domainId: domain
+        domainId: domain,
+        subdomain,
     });
 
     if (sort === "popular") {
