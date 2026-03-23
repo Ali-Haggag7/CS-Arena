@@ -7,7 +7,7 @@ import ProjectsGrid from "@/components/shared/ProjectsGrid";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Skeleton } from "@/components/shadcn/skeleton";
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 async function ProjectsFetcher({ params, query, tech, t }: any) {
   const { data: posts } = await sanityFetch({ query: PROJECTS_QUERY, params });
@@ -49,8 +49,17 @@ export default async function Home({
   const locale = await getLocale();
   const t = await getTranslations("home");
 
-  const universities = await client.fetch(`*[_type == "university"] | order(name asc) { _id, name }`);
-  const domains = await client.fetch(`*[_type == "domain"] | order(name asc) { _id, name }`);
+  const universities = await client.fetch(
+    `*[_type == "university"] | order(name asc) { _id, name }`,
+    {},
+    { next: { revalidate: 0 } }
+  );
+
+  const domains = await client.fetch(
+    `*[_type == "domain"] | order(name asc) { _id, name }`,
+    {},
+    { next: { revalidate: 0 } }
+  );
 
   return (
     <>
